@@ -24,6 +24,7 @@ namespace ESMS_Data.Models
         public string Email { get; set; }
         public int? DepartmentId { get; set; }
         public int RoleId { get; set; }
+        public int? CurrentSemester { get; set; }
         public string RollNumber { get; set; }
         public bool? IsActive { get; set; }
 

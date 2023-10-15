@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ESMSContext>();
 
 // Add Service
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AdminService>();
 
 // Add Repository
 builder.Services.AddScoped<UserRepository>();

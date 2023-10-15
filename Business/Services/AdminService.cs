@@ -9,21 +9,21 @@ using System.Threading.Tasks;
 
 namespace Business.Services
 {
-    public class UserService : IUserService
+    public class AdminService : IUserService
     {
         private readonly UserRepository _repository;
-        public UserService(UserRepository repository)
+        public AdminService(UserRepository repository)
         {
             _repository = repository;
         }
         public async Task<ResultModel> GetAll()
         {
             ResultModel resultModel = new ResultModel();
-            var res = await _repository.GetAll();
+            var userList = await _repository.GetBasic();
 
             resultModel.IsSuccess = true;
             resultModel.StatusCode = (int)HttpStatusCode.OK;
-            resultModel.Data = res;
+            resultModel.Data = userList;
 
             return resultModel;
         }

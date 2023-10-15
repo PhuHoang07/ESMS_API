@@ -7,10 +7,10 @@ namespace ESMS_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class AdminController : ControllerBase
     {
-        private readonly UserService _userService;
-        public UserController(UserService userService) {
+        private readonly AdminService _userService;
+        public AdminController(AdminService userService) {
             _userService = userService;
         }
         

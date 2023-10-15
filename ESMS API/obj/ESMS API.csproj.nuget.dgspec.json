@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\ESMS\\ESMS Project\\ESMS API\\ESMS API.csproj": {}
+    "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS API\\ESMS API.csproj": {}
   },
   "projects": {
-    "D:\\ESMS\\ESMS Project\\ESMS API\\ESMS API.csproj": {
+    "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS API\\ESMS API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\ESMS\\ESMS Project\\ESMS API\\ESMS API.csproj",
+        "projectUniqueName": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS API\\ESMS API.csproj",
         "projectName": "ESMS API",
-        "projectPath": "D:\\ESMS\\ESMS Project\\ESMS API\\ESMS API.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\ESMS\\ESMS Project\\ESMS API\\obj\\",
+        "projectPath": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS API\\ESMS API.csproj",
+        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+        "outputPath": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -28,8 +28,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\ESMS\\ESMS Project\\ESMS Data\\ESMS Data.csproj": {
-                "projectPath": "D:\\ESMS\\ESMS Project\\ESMS Data\\ESMS Data.csproj"
+              "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj": {
+                "projectPath": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj"
               }
             }
           }
@@ -44,24 +44,6 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore.SqlServer": {
-              "target": "Package",
-              "version": "[6.0.23, )"
-            },
-            "Microsoft.EntityFrameworkCore.Sqlite": {
-              "target": "Package",
-              "version": "[6.0.23, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[6.0.23, )"
-            },
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
-              "target": "Package",
-              "version": "[6.0.16, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
@@ -86,21 +68,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\ESMS\\ESMS Project\\ESMS Data\\ESMS Data.csproj": {
+    "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\ESMS\\ESMS Project\\ESMS Data\\ESMS Data.csproj",
+        "projectUniqueName": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj",
         "projectName": "ESMS Data",
-        "projectPath": "D:\\ESMS\\ESMS Project\\ESMS Data\\ESMS Data.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\ESMS\\ESMS Project\\ESMS Data\\obj\\",
+        "projectPath": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj",
+        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+        "outputPath": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -163,7 +145,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -12,3 +12,17 @@ D:\ESMS\ESMS Project\ESMS Data\obj\Debug\net6.0\refint\ESMS Data.dll
 D:\ESMS\ESMS Project\ESMS Data\obj\Debug\net6.0\ESMS Data.pdb
 D:\ESMS\ESMS Project\ESMS Data\obj\Debug\net6.0\ESMS Data.genruntimeconfig.cache
 D:\ESMS\ESMS Project\ESMS Data\obj\Debug\net6.0\ref\ESMS Data.dll
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\bin\Debug\net6.0\ESMS Data.deps.json
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\bin\Debug\net6.0\ESMS Data.runtimeconfig.json
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\bin\Debug\net6.0\ESMS Data.dll
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\bin\Debug\net6.0\ESMS Data.pdb
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.csproj.AssemblyReference.cache
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.GeneratedMSBuildEditorConfig.editorconfig
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.AssemblyInfoInputs.cache
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.AssemblyInfo.cs
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.csproj.CoreCompileInputs.cache
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.dll
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\refint\ESMS Data.dll
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.pdb
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ESMS Data.genruntimeconfig.cache
+E:\Visual Studio\Projects\ESMS_API\ESMS Data\obj\Debug\net6.0\ref\ESMS Data.dll

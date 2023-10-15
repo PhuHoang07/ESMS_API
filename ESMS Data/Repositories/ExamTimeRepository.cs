@@ -10,5 +10,10 @@ namespace ESMS_Data.Repositories
 {
     public class ExamTimeRepository : RepositoryBase<ExamTime>
     {
+        private ESMSContext _context;
+        public ExamTimeRepository(ESMSContext context) : base(context)
+        {
+            _context = context;
+        }
     }
 }

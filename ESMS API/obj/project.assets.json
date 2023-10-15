@@ -927,6 +927,19 @@
           }
         }
       },
+      "Business/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "ESMS Data": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Business.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Business.dll": {}
+        }
+      },
       "ESMS Data/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
@@ -2730,6 +2743,11 @@
         "version.txt"
       ]
     },
+    "Business/1.0.0": {
+      "type": "project",
+      "path": "../Business/Business.csproj",
+      "msbuildProject": "../Business/Business.csproj"
+    },
     "ESMS Data/1.0.0": {
       "type": "project",
       "path": "../ESMS Data/ESMS Data.csproj",
@@ -2738,7 +2756,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "ESMS Data >= 1.0.0",
+      "Business >= 1.0.0",
       "Swashbuckle.AspNetCore >= 6.5.0"
     ]
   },
@@ -2769,8 +2787,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj": {
-              "projectPath": "E:\\Visual Studio\\Projects\\ESMS_API\\ESMS Data\\ESMS Data.csproj"
+            "E:\\Visual Studio\\Projects\\ESMS_API\\Business\\Business.csproj": {
+              "projectPath": "E:\\Visual Studio\\Projects\\ESMS_API\\Business\\Business.csproj"
             }
           }
         }

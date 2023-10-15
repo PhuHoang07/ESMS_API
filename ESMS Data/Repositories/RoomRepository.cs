@@ -10,5 +10,10 @@ namespace ESMS_Data.Repositories
 {
     public class RoomRepository : RepositoryBase<Room>
     {
+        private ESMSContext _context;
+        public RoomRepository(ESMSContext context) : base(context)
+        {
+            _context = context;
+        }
     }
 }

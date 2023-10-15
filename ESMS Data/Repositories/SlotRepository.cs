@@ -10,5 +10,10 @@ namespace ESMS_Data.Repositories
 {
     public class SlotRepository : RepositoryBase<Slot>
     {
+        private ESMSContext _context;
+        public SlotRepository(ESMSContext context) : base(context)
+        {
+            _context = context;
+        }
     }
 }

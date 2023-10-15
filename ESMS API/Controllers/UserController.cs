@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Repositories;
+﻿using Business;
+using Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,17 +9,17 @@ namespace ESMS_API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository userRepository;
-        public UserController() {
-            userRepository = new UserRepository();
+        private readonly UserService _userService;
+        public UserController(UserService userService) {
+            _userService = userService;
         }
         
         [HttpGet]
         [Route("getAll")]
-        public async Task<IActionResult> GetListStudent()
+        public async Task<IActionResult> GetAll()
         {
-            var studentList =  userRepository.GetAll().ToList();
-            return Ok(studentList);
+            var res = await _userService.GetAll();
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }
 }

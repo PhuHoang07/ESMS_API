@@ -23,10 +23,20 @@ namespace ESMS_Data.Repositories
 
         public async Task<List<object>> GetBasic()
         {
+            // get basic info of users and available roles
             var qr = from user in _users
                      join role in _roles
                      on user.RoleId equals role.Id
-                     select new { user.UserName, user.Name, user.Email, RoleName = role.Name};
+                     select new
+                     {
+                         user.UserName,
+                         user.Name,
+                         user.Email,
+                         Role = role.Name,
+                         AvailableRoles =  (from r in _roles
+                                           where r.Id != user.RoleId
+                                           select r.Name).ToList()
+                     };
 
             return await qr.ToListAsync<object>();
         }

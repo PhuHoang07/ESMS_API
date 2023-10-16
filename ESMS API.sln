@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESMS API", "ESMS API\ESMS API.csproj", "{89C693D4-8930-4473-B5C1-A392349661E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESMS Data", "ESMS Data\ESMS Data.csproj", "{9D432DD9-75F8-44BE-B1B1-5808F001FF84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{2A45C3FE-5CFC-420B-81CC-24488DD0C114}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89C693D4-8930-4473-B5C1-A392349661E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89C693D4-8930-4473-B5C1-A392349661E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89C693D4-8930-4473-B5C1-A392349661E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89C693D4-8930-4473-B5C1-A392349661E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D432DD9-75F8-44BE-B1B1-5808F001FF84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D432DD9-75F8-44BE-B1B1-5808F001FF84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D432DD9-75F8-44BE-B1B1-5808F001FF84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D432DD9-75F8-44BE-B1B1-5808F001FF84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A45C3FE-5CFC-420B-81CC-24488DD0C114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A45C3FE-5CFC-420B-81CC-24488DD0C114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A45C3FE-5CFC-420B-81CC-24488DD0C114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A45C3FE-5CFC-420B-81CC-24488DD0C114}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2ED0B727-864F-4DC0-8A0D-3D50C4B20A12}
+	EndGlobalSection
+EndGlobal

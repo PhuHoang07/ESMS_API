@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    public interface IUserService
+    public interface IAdminService
     {
         public Task<ResultModel> GetAll();
     }

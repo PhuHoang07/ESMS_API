@@ -1,4 +1,6 @@
+using Business.Interfaces;
 using Business.Services;
+using ESMS_Data.Interfaces;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories;
 
@@ -15,10 +17,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ESMSContext>();
 
 // Add Service
-builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Add Repository
-builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

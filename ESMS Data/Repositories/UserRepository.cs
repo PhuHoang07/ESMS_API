@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Interfaces;
+using ESMS_Data.Models;
 using ESMS_Data.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Repositories
 {
-    public class UserRepository : RepositoryBase<User>
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
         private ESMSContext _context;
         private DbSet<User> _users;
@@ -21,7 +22,7 @@ namespace ESMS_Data.Repositories
             _roles = _context.Set<Role>();
         }
 
-        public async Task<List<object>> GetBasic()
+        public async Task<List<object>> GetAll()
         {
             // get basic info of users and available roles
             var qr = from user in _users

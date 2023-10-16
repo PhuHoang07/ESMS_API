@@ -1,4 +1,5 @@
 ﻿using Business;
+using Business.Interfaces;
 using Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,16 +10,16 @@ namespace ESMS_API.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly AdminService _userService;
-        public AdminController(AdminService userService) {
-            _userService = userService;
+        private readonly IAdminService _service;
+        public AdminController(IAdminService service) {
+            _service = service;
         }
         
         [HttpGet]
         [Route("getAll")]
         public async Task<IActionResult> GetAll()
         {
-            var res = await _userService.GetAll();
+            var res = await _service.GetAll();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

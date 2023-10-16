@@ -6,20 +6,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ESMS_Data.Interfaces;
 
 namespace Business.Services
 {
-    public class AdminService : IUserService
+    public class AdminService : IAdminService
     {
-        private readonly UserRepository _repository;
-        public AdminService(UserRepository repository)
+        private readonly IUserRepository _repository;
+        public AdminService(IUserRepository repository)
         {
             _repository = repository;
         }
         public async Task<ResultModel> GetAll()
         {
             ResultModel resultModel = new ResultModel();
-            var userList = await _repository.GetBasic();
+            var userList = await _repository.GetAll();
 
             resultModel.IsSuccess = true;
             resultModel.StatusCode = (int)HttpStatusCode.OK;

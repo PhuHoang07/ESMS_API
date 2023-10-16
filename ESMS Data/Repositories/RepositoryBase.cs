@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Interfaces;
+using ESMS_Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Repository
 {
-    public class RepositoryBase<T> where T : class
+    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         private ESMSContext _context;
         private DbSet<T> _dbSet;
@@ -32,16 +33,16 @@ namespace ESMS_Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> GetAll()
-        {
-            return await _dbSet.ToListAsync();
-        }
-
         public async Task Update(T entity)
         {
             var tracker = _context.Attach(entity);
             tracker.State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<T>> GetAll()
+        {
+            return await _dbSet.ToListAsync();
+        }        
     }
 }

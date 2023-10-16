@@ -17,14 +17,32 @@ namespace Business.Services
         {
             _repository = repository;
         }
-        public async Task<ResultModel> GetAll()
+        public async Task<ResultModel> Get()
+        {
+            // Similar to find by username, empty string return all values
+            return await FindByUserName("");
+        }
+
+        public async Task<ResultModel> FindByUserName(String userName)
         {
             ResultModel resultModel = new ResultModel();
-            var userList = await _repository.GetAll();
+            var userList = await _repository.Get(userName);
 
             resultModel.IsSuccess = true;
             resultModel.StatusCode = (int)HttpStatusCode.OK;
             resultModel.Data = userList;
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetUserDetails(String userName)
+        {
+            ResultModel resultModel = new ResultModel();
+            var user = await _repository.GetUserDetails(userName);
+
+            resultModel.IsSuccess = true;
+            resultModel.StatusCode = (int)HttpStatusCode.OK;
+            resultModel.Data = user;
 
             return resultModel;
         }

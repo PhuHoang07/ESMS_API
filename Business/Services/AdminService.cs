@@ -17,7 +17,7 @@ namespace Business.Services
         {
             _repository = repository;
         }
-        public async Task<ResultModel> Get()
+        public async Task<ResultModel> GetUserList()
         {
             // Similar to find by username, empty string return all values
             return await FindByUserName("");
@@ -26,11 +26,20 @@ namespace Business.Services
         public async Task<ResultModel> FindByUserName(String userName)
         {
             ResultModel resultModel = new ResultModel();
-            var userList = await _repository.Get(userName);
 
-            resultModel.IsSuccess = true;
-            resultModel.StatusCode = (int)HttpStatusCode.OK;
-            resultModel.Data = userList;
+            try
+            {
+                var userList = await _repository.GetUserList(userName);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = userList;
+            } catch(Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
 
             return resultModel;
         }
@@ -38,11 +47,43 @@ namespace Business.Services
         public async Task<ResultModel> GetUserDetails(String userName)
         {
             ResultModel resultModel = new ResultModel();
-            var user = await _repository.GetUserDetails(userName);
 
-            resultModel.IsSuccess = true;
-            resultModel.StatusCode = (int)HttpStatusCode.OK;
-            resultModel.Data = user;
+            try
+            {
+                var user = await _repository.GetUserDetails(userName);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = user;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            
+            return resultModel;
+        }
+
+        public async Task<ResultModel> SetRole(String userName, int roleId)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var user = await _repository.GetUser(userName);
+                user.RoleId = roleId;
+                await _repository.Update(user);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = 200;
+                resultModel.Message = "Update thành công!";
+            }catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
 
             return resultModel;
         }

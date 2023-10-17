@@ -43,6 +43,6 @@ namespace ESMS_Data.Repository
         public async Task<List<T>> GetAll()
         {
             return await _dbSet.ToListAsync();
-        }        
+        }
     }
 }

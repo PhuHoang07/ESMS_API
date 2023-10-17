@@ -9,8 +9,9 @@ namespace Business.Interfaces
 {
     public interface IAdminService
     {
-        public Task<ResultModel> Get();
+        public Task<ResultModel> GetUserList();
         public Task<ResultModel> FindByUserName(String userName);
         public Task<ResultModel> GetUserDetails(String userName);
+        public Task<ResultModel> SetRole(String userName, int roleId);
     }
 }

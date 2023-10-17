@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepositoryBase<User>
     {
-        public Task<List<object>> Get(String userName);
+        public Task<List<object>> GetUserList(String userName);
         public Task<object> GetUserDetails(String userName);
+        public Task<User> GetUser(String userName);
     }
 }

@@ -24,7 +24,7 @@ namespace ESMS_Data.Repositories
             _departments = _context.Set<Department>();
         }
 
-        public async Task<List<object>> Get(String userName)
+        public async Task<List<object>> GetUserList(String userName)
         {
             // get basic info of users and available roles
             var qr = from user in _users
@@ -39,7 +39,7 @@ namespace ESMS_Data.Repositories
                          Role = role.Name,
                          AvailableRoles =  (from r in _roles
                                            where r.Id != user.RoleId
-                                           select r.Name).ToList()
+                                           select new {r.Id, r.Name}).ToList()
                      };
 
             return await qr.ToListAsync<object>();
@@ -74,6 +74,11 @@ namespace ESMS_Data.Repositories
                      };
 
             return await qr.FirstOrDefaultAsync();
+        }
+
+        public async Task<User> GetUser(String userName)
+        {          
+            return await _users.FindAsync(userName);
         }
     }
 }

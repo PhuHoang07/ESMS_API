@@ -17,9 +17,9 @@ namespace ESMS_API.Controllers
 
         [HttpGet]
         [Route("users")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetUserList()
         {
-            var res = await _service.Get();
+            var res = await _service.GetUserList();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

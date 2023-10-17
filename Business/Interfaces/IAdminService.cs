@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Repositories;
+﻿using ESMS_Data.Entities;
+using ESMS_Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace Business.Interfaces
         public Task<ResultModel> GetUserList();
         public Task<ResultModel> FindByUserName(String userName);
         public Task<ResultModel> GetUserDetails(String userName);
-        public Task<ResultModel> SetRole(String userName, int roleId);
+        public Task<ResultModel> SetRole(RoleReqModel req);
     }
 }

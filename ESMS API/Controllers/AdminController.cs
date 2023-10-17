@@ -1,6 +1,7 @@
 ﻿using Business;
 using Business.Interfaces;
 using Business.Services;
+using ESMS_Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,14 @@ namespace ESMS_API.Controllers
         public async Task<IActionResult> GetUserDetails(String userName)
         {
             var res = await _service.GetUserDetails(userName);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [HttpPut]
+        [Route("users/setRole")]
+        public async Task<IActionResult> SetRole([FromBody] RoleReqModel req)
+        {            
+            var res = await _service.SetRole(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

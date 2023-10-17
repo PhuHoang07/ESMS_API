@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ESMS_Data.Interfaces;
+using ESMS_Data.Entities;
 
 namespace Business.Services
 {
@@ -66,13 +67,14 @@ namespace Business.Services
             return resultModel;
         }
 
-        public async Task<ResultModel> SetRole(String userName, int roleId)
+        public async Task<ResultModel> SetRole(RoleReqModel req)
         {
             ResultModel resultModel = new ResultModel();
             try
             {
-                var user = await _repository.GetUser(userName);
-                user.RoleId = roleId;
+                var user = await _repository.GetUser(req.UserName);
+
+                user.RoleId = req.RoleId;
                 await _repository.Update(user);
 
                 resultModel.IsSuccess = true;

@@ -3,6 +3,7 @@ using Business.Services;
 using ESMS_Data.Interfaces;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add DbContext
-builder.Services.AddDbContext<ESMSContext>();
+builder.Services.AddDbContext<ESMSContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"));
+});
 
 // Add Service
 builder.Services.AddScoped<IAdminService, AdminService>();

@@ -17,7 +17,6 @@ namespace ESMS_Data.Models
         public string RoomNumber { get; set; }
         public string Form { get; set; }
         public string Type { get; set; }
-        public string Semester { get; set; }
         public string Proctor { get; set; }
 
         public virtual ExamTime IdtNavigation { get; set; }

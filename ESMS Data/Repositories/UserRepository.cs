@@ -39,7 +39,8 @@ namespace ESMS_Data.Repositories
                          Role = role.Name,
                          AvailableRoles =  (from r in _roles
                                            where r.Id != user.RoleId
-                                           select new {r.Id, r.Name}).ToList()
+                                           select new {r.Id, r.Name}).ToList(),
+                         user.IsActive
                      };
 
             return await qr.ToListAsync<object>();

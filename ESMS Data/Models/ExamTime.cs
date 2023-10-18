@@ -18,6 +18,7 @@ namespace ESMS_Data.Models
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
         public int SlotId { get; set; }
+        public string Semester { get; set; }
 
         public virtual Slot Slot { get; set; }
         public virtual ICollection<ExamSchedule> ExamSchedules { get; set; }

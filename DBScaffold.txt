@@ -1,1 +1,0 @@
-dotnet ef dbcontext scaffold "Server=(local);uid=sa;pwd=12345;database= ESMS;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models --force --no-onconfiguring

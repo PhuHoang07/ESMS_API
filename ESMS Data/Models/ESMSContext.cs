@@ -127,8 +127,7 @@ namespace ESMS_Data.Models
                 entity.HasOne(d => d.Slot)
                     .WithMany(p => p.ExamTimes)
                     .HasForeignKey(d => d.SlotId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ExamTime_Slot1");
+                    .HasConstraintName("FK_ExamTime_Slot");
             });
 
             modelBuilder.Entity<Participation>(entity =>

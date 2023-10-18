@@ -11,6 +11,6 @@ namespace ESMS_Data.Interfaces
         public Task Add(T entity);
         public Task Delete(T entity);
         public Task Update(T entity);
-        public Task<List<T>> GetAll();
+        public IQueryable<T> GetAll();
     }
 }

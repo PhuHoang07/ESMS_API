@@ -40,9 +40,9 @@ namespace ESMS_Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return await _dbSet.ToListAsync();
+            return _dbSet;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace ESMS_Data.Models
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
         public int RoleId { get; set; }
         public int? CurrentSemester { get; set; }
         public string RollNumber { get; set; }

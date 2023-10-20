@@ -15,64 +15,53 @@ namespace ESMS_Data.Repositories
         private ESMSContext _context;
         private DbSet<User> _users;
         private DbSet<Role> _roles;
-        private DbSet<Department> _departments;
         public UserRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _users = _context.Set<User>();
             _roles = _context.Set<Role>();
-            _departments = _context.Set<Department>();
         }
 
         public async Task<List<object>> GetUserList(String userName)
         {
-            // get basic info of users and available roles
-            var qr = from user in _users
-                     join role in _roles
-                     on user.RoleId equals role.Id
-                     where user.UserName.Contains(userName)
-                     select new
-                     {
-                         user.UserName,
-                         user.Name,
-                         user.Email,
-                         Role = role.Name,
-                         AvailableRoles =  (from r in _roles
-                                           where r.Id != user.RoleId
-                                           select new {r.Id, r.Name}).ToList(),
-                         user.IsActive
-                     };
+            var qr = _users.Where(u => u.UserName.Contains(userName))
+                           .Include(u => u.Role)
+                           .Select(u => new
+                           {
+                               u.UserName,
+                               u.Name,
+                               u.Email,
+                               u.PhoneNumber,
+                               Role = u.Role.Name,
+                               AvailableRoles = _roles.Where(r => r.Id != u.Role.Id)
+                                                      .Select(r => new {r.Id, r.Name})
+                                                      .ToList<object>()
+                           });
 
             return await qr.ToListAsync<object>();
         }
 
         public async Task<object> GetUserDetails(String userName)
         {
-            var qr = from user in _users                     
-
-                     join role in _roles
-                     on user.RoleId equals role.Id
-
-                     join dpm in _departments
-                     on user.DepartmentId equals dpm.Id
-
-                     where user.UserName == userName
-
-                     select new
-                     {
-                         user.UserName,
-                         user.Image,
-                         user.Name,
-                         user.DateOfBirth,
-                         user.Gender,
-                         user.Idcard,
-                         user.Address,
-                         user.PhoneNumber,
-                         user.Email,
-                         RollNumber = role.Name == "Student" ? user.RollNumber : null,
-                         Major = role.Name == "Student" ? dpm.Name : null,
-                         Department = role.Name != "Student" ? dpm.Name : null
-                     };
+            var qr = _users.Where(u => u.UserName.Equals(userName))
+                           .Include(u => u.Role)
+                           .Include(u => u.Department)
+                           .Select(u => new
+                           {
+                               u.UserName,
+                               u.Image,
+                               u.Name,
+                               u.DateOfBirth,
+                               u.Gender,
+                               u.Idcard,
+                               u.Address,
+                               u.PhoneNumber,
+                               u.Email,
+                               Department = u.Department.Name,
+                               Role = u.Role.Name,
+                               u.CurrentSemester,
+                               u.RollNumber
+                           });
 
             return await qr.FirstOrDefaultAsync();
         }

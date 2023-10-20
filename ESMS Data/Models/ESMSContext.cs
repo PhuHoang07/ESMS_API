@@ -51,9 +51,6 @@ namespace ESMS_Data.Models
 
                 entity.ToTable("ExamSchedule");
 
-                entity.HasIndex(e => e.Proctor, "UK_ExamSchedule")
-                    .IsUnique();
-
                 entity.Property(e => e.Idt).HasColumnName("IDT");
 
                 entity.Property(e => e.SubjectId)
@@ -76,13 +73,12 @@ namespace ESMS_Data.Models
 
                 entity.Property(e => e.Type)
                     .IsRequired()
-                    .HasMaxLength(10)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.IdtNavigation)
                     .WithMany(p => p.ExamSchedules)
                     .HasForeignKey(d => d.Idt)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ExamSchedule_ExamTime");
 
                 entity.HasOne(d => d.RoomNumberNavigation)
@@ -112,11 +108,11 @@ namespace ESMS_Data.Models
                 entity.HasIndex(e => new { e.Date, e.Start, e.End }, "UK_ExamTime")
                     .IsUnique();
 
-                entity.Property(e => e.Idt)
-                    .ValueGeneratedNever()
-                    .HasColumnName("IDT");
+                entity.Property(e => e.Idt).HasColumnName("IDT");
 
                 entity.Property(e => e.Date).HasColumnType("date");
+
+                entity.Property(e => e.PublishDate).HasColumnType("date");
 
                 entity.Property(e => e.Semester)
                     .HasMaxLength(20)
@@ -283,6 +279,7 @@ namespace ESMS_Data.Models
                 entity.HasOne(d => d.Department)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.DepartmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Department");
 
                 entity.HasOne(d => d.Role)

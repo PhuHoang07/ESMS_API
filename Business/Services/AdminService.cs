@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ESMS_Data.Interfaces;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.RequestModel;
 
 namespace Business.Services
 {

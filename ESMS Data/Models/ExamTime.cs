@@ -17,6 +17,7 @@ namespace ESMS_Data.Models
         public DateTime Date { get; set; }
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
+        public DateTime? PublishDate { get; set; }
         public int? SlotId { get; set; }
         public string Semester { get; set; }
 

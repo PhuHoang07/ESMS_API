@@ -1,7 +1,7 @@
 ﻿using Business;
 using Business.Interfaces;
 using Business.Services;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.RequestModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

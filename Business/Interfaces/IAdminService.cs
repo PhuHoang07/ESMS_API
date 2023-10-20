@@ -1,4 +1,4 @@
-﻿using ESMS_Data.Entities;
+﻿using ESMS_Data.Entities.RequestModel;
 using ESMS_Data.Repositories;
 using System;
 using System.Collections.Generic;

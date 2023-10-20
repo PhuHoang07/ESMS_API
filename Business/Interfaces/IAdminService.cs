@@ -13,6 +13,6 @@ namespace Business.Interfaces
         public Task<ResultModel> GetUserList();
         public Task<ResultModel> FindByUserName(String userName);
         public Task<ResultModel> GetUserDetails(String userName);
-        public Task<ResultModel> SetRole(RoleReqModel req);
+        public Task<ResultModel> SetRole(UserReqModel req);
     }
 }

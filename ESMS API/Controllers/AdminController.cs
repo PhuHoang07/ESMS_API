@@ -41,8 +41,8 @@ namespace ESMS_API.Controllers
         }
 
         [HttpPut]
-        [Route("users/setRole")]
-        public async Task<IActionResult> SetRole([FromBody] RoleReqModel req)
+        [Route("users/update")]
+        public async Task<IActionResult> SetRole([FromBody] UserReqModel req)
         {            
             var res = await _service.SetRole(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);

@@ -67,7 +67,7 @@ namespace Business.Services
             return resultModel;
         }
 
-        public async Task<ResultModel> SetRole(RoleReqModel req)
+        public async Task<ResultModel> SetRole(UserReqModel req)
         {
             ResultModel resultModel = new ResultModel();
             try

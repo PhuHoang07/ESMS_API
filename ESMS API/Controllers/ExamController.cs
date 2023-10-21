@@ -1,4 +1,5 @@
 ﻿using Business.Interfaces;
+using Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,8 @@ namespace ESMS_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok();
+            var res = await _examService.GetAll();
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }
 }

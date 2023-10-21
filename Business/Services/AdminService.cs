@@ -13,10 +13,10 @@ namespace Business.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly IUserRepository _repository;
-        public AdminService(IUserRepository repository)
+        private readonly IUserRepository _userRepository;
+        public AdminService(IUserRepository userRepository)
         {
-            _repository = repository;
+            _userRepository = userRepository;
         }
         public async Task<ResultModel> GetUserList()
         {
@@ -30,7 +30,7 @@ namespace Business.Services
 
             try
             {
-                var userList = await _repository.GetUserList(userName);
+                var userList = await _userRepository.GetUserList(userName);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
@@ -51,7 +51,7 @@ namespace Business.Services
 
             try
             {
-                var user = await _repository.GetUserDetails(userName);
+                var user = await _userRepository.GetUserDetails(userName);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
@@ -72,10 +72,10 @@ namespace Business.Services
             ResultModel resultModel = new ResultModel();
             try
             {
-                var user = await _repository.GetUser(req.UserName);
+                var user = await _userRepository.GetUser(req.UserName);
 
                 user.RoleId = req.RoleId;
-                await _repository.Update(user);
+                await _userRepository.Update(user);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = 200;

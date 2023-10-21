@@ -14,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 // Add DbContext
 builder.Services.AddDbContext<ESMSContext>(options =>
 {
@@ -22,9 +23,12 @@ builder.Services.AddDbContext<ESMSContext>(options =>
 
 // Add Service
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IExamService, ExamService>();
 
 // Add Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IExamTimeRepository, ExamTimeRepository>();
+
 
 var app = builder.Build();
 

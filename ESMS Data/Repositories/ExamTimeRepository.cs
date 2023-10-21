@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Interfaces;
+using ESMS_Data.Models;
 using ESMS_Data.Repository;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Repositories
 {
-    public class ExamTimeRepository : RepositoryBase<ExamTime>
+    public class ExamTimeRepository : RepositoryBase<ExamTime>, IExamTimeRepository
     {
         private ESMSContext _context;
         public ExamTimeRepository(ESMSContext context) : base(context)

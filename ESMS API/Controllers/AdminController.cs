@@ -11,16 +11,16 @@ namespace ESMS_API.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IAdminService _service;
-        public AdminController(IAdminService service) {
-            _service = service;
+        private readonly IAdminService _adminService;
+        public AdminController(IAdminService adminService) {
+            _adminService = adminService;
         }
 
         [HttpGet]
         [Route("users")]
         public async Task<IActionResult> GetUserList()
         {
-            var res = await _service.GetUserList();
+            var res = await _adminService.GetUserList();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
@@ -28,7 +28,7 @@ namespace ESMS_API.Controllers
         [Route("users/find")]
         public async Task<IActionResult> FindByUserName([FromQuery] String username)
         {
-            var res = await _service.FindByUserName(username);
+            var res = await _adminService.FindByUserName(username);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
@@ -36,7 +36,7 @@ namespace ESMS_API.Controllers
         [Route("users/{userName}")]
         public async Task<IActionResult> GetUserDetails(String userName)
         {
-            var res = await _service.GetUserDetails(userName);
+            var res = await _adminService.GetUserDetails(userName);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
@@ -44,7 +44,7 @@ namespace ESMS_API.Controllers
         [Route("users/update")]
         public async Task<IActionResult> SetRole([FromBody] UserReqModel req)
         {            
-            var res = await _service.SetRole(req);
+            var res = await _adminService.SetRole(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

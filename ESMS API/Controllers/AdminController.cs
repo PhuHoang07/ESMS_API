@@ -1,6 +1,7 @@
 ﻿using Business;
 using Business.Interfaces;
 using Business.Services;
+using ESMS_Data.Entities;
 using ESMS_Data.Entities.RequestModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,10 @@ namespace ESMS_API.Controllers
         public AdminController(IAdminService adminService) {
             _adminService = adminService;
         }
-
+        /// <summary>
+        /// Get all account list
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("users")]
         public async Task<IActionResult> GetUserList()

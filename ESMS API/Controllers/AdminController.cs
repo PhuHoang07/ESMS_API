@@ -30,9 +30,9 @@ namespace ESMS_API.Controllers
 
         [HttpGet]
         [Route("users/find")]
-        public async Task<IActionResult> FindByUserName([FromQuery] String username)
+        public async Task<IActionResult> GetUserList([FromQuery] String username)
         {
-            var res = await _adminService.FindByUserName(username);
+            var res = await _adminService.GetUserList(username);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

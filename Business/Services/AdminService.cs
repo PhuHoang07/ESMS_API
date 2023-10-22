@@ -20,11 +20,11 @@ namespace Business.Services
         }
         public async Task<ResultModel> GetUserList()
         {
-            // Similar to find by username, empty string return all values
-            return await FindByUserName("");
+            // Empty string return all values
+            return await GetUserList("");
         }
 
-        public async Task<ResultModel> FindByUserName(String userName)
+        public async Task<ResultModel> GetUserList(String userName)
         {
             ResultModel resultModel = new ResultModel();
 

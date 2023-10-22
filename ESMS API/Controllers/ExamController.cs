@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ESMS_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/exams")]
     [ApiController]
     public class ExamController : ControllerBase
     {
@@ -17,9 +17,18 @@ namespace ESMS_API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [Route("current")]
+        public async Task<IActionResult> GetCurrent()
         {
-            var res = await _examService.GetAll();
+            var res = await _examService.GetCurrent();
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [HttpGet]
+        [Route("filter")]
+        public async Task<IActionResult> Get(String semester)
+        {
+            var res = await _examService.Get(semester);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

@@ -11,7 +11,7 @@ namespace Business.Interfaces
     public interface IAdminService
     {
         public Task<ResultModel> GetUserList();
-        public Task<ResultModel> FindByUserName(String userName);
+        public Task<ResultModel> GetUserList(String userName);
         public Task<ResultModel> GetUserDetails(String userName);
         public Task<ResultModel> SetRole(UserReqModel req);
     }

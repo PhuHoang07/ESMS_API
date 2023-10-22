@@ -22,9 +22,13 @@ namespace ESMS_Data.Repositories
             _examSchedules = _context.Set<ExamSchedule>();
         }
 
-        public new async Task<object> GetAll()
+        public new async Task<List<object>> GetAll(String semester)
         {
-            var qr = (await _examTimes.ToListAsync())
+            var list = await _examTimes
+                                .Where(et => et.Semester.Equals(semester))
+                                .ToListAsync();
+
+            var qr = list
                         .GroupBy(e => e.Semester)
                         .Select(group => new
                         {
@@ -47,7 +51,8 @@ namespace ESMS_Data.Repositories
                                                               })
                             })
                         });
-            return qr;
+
+            return qr.ToList<object>();
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Business.Interfaces
 {
     public interface IExamService
     {
-        public Task<ResultModel> GetAll();
+        public Task<ResultModel> GetCurrent();
+        public Task<ResultModel> Get(String semester);
     }
 }

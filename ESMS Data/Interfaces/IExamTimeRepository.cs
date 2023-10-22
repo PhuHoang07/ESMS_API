@@ -9,6 +9,6 @@ namespace ESMS_Data.Interfaces
 {
     public interface IExamTimeRepository : IRepositoryBase<ExamTime>
     {
-        public Task<object> GetAll();
+        public Task<List<object>> GetAll(String semester);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Business.Interfaces;
+using Business.Utils;
 using ESMS_Data.Interfaces;
 using ESMS_Data.Repositories;
 using System;
@@ -13,18 +14,26 @@ namespace Business.Services
     public class ExamService : IExamService
     {
         private readonly IExamTimeRepository _examTimeRepository;
+        private readonly Utils.Utils utils;
         public ExamService(IExamTimeRepository examTimeRepository)
         {
             _examTimeRepository = examTimeRepository;
+            utils = new Utils.Utils();
+        }        
+
+        public async Task<ResultModel> GetCurrent()
+        {
+            String semester = utils.GetCurrentSemester();
+            return await Get(semester);            
         }
 
-        public async Task<ResultModel> GetAll()
+        public async Task<ResultModel> Get(string semester)
         {
             ResultModel resultModel = new ResultModel();
 
             try
             {
-                var examList = await _examTimeRepository.GetAll();
+                var examList = await _examTimeRepository.GetAll(semester);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;

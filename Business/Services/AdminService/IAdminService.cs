@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces
+namespace Business.Services.AdminService
 {
     public interface IAdminService
     {
         public Task<ResultModel> GetUserList();
-        public Task<ResultModel> GetUserList(String userName);
-        public Task<ResultModel> GetUserDetails(String userName);
+        public Task<ResultModel> GetUserList(string userName);
+        public Task<ResultModel> GetUserDetails(string userName);
         public Task<ResultModel> SetRole(UserReqModel req);
     }
 }

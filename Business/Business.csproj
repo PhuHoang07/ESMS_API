@@ -10,4 +10,8 @@
     <ProjectReference Include="..\ESMS Data\ESMS Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

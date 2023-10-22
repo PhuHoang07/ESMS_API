@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Interfaces
+namespace ESMS_Data.Repositories.RepositoryBase
 {
     public interface IRepositoryBase<T> where T : class
     {

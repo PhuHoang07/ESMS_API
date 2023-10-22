@@ -1,5 +1,4 @@
-﻿using ESMS_Data.Interfaces;
-using ESMS_Data.Models;
+﻿using ESMS_Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Repository
+namespace ESMS_Data.Repositories.RepositoryBase
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {

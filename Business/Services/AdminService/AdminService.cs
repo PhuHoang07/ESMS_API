@@ -1,15 +1,13 @@
-﻿using Business.Interfaces;
-using ESMS_Data.Repositories;
-using System;
+﻿using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ESMS_Data.Interfaces;
 using ESMS_Data.Entities.RequestModel;
+using ESMS_Data.Repositories.UserRepository;
 
-namespace Business.Services
+namespace Business.Services.AdminService
 {
     public class AdminService : IAdminService
     {
@@ -24,7 +22,7 @@ namespace Business.Services
             return await GetUserList("");
         }
 
-        public async Task<ResultModel> GetUserList(String userName)
+        public async Task<ResultModel> GetUserList(string userName)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -35,7 +33,8 @@ namespace Business.Services
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = userList;
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 resultModel.IsSuccess = false;
                 resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -45,7 +44,7 @@ namespace Business.Services
             return resultModel;
         }
 
-        public async Task<ResultModel> GetUserDetails(String userName)
+        public async Task<ResultModel> GetUserDetails(string userName)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -63,7 +62,7 @@ namespace Business.Services
                 resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
                 resultModel.Message = ex.Message;
             }
-            
+
             return resultModel;
         }
 
@@ -80,7 +79,8 @@ namespace Business.Services
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = 200;
                 resultModel.Message = "Update thành công!";
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 resultModel.IsSuccess = false;
                 resultModel.StatusCode = (int)HttpStatusCode.BadRequest;

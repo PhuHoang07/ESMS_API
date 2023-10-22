@@ -1,6 +1,5 @@
-﻿using ESMS_Data.Interfaces;
-using ESMS_Data.Models;
-using ESMS_Data.Repository;
+﻿using ESMS_Data.Models;
+using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Repositories
+namespace ESMS_Data.Repositories.UserRepository
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {
@@ -22,7 +21,7 @@ namespace ESMS_Data.Repositories
             _roles = _context.Set<Role>();
         }
 
-        public async Task<List<object>> GetUserList(String userName)
+        public async Task<List<object>> GetUserList(string userName)
         {
             var qr = _users.Where(u => u.UserName.Contains(userName))
                            .Include(u => u.Role)
@@ -34,14 +33,14 @@ namespace ESMS_Data.Repositories
                                u.PhoneNumber,
                                Role = u.Role.Name,
                                AvailableRoles = _roles.Where(r => r.Id != u.Role.Id)
-                                                      .Select(r => new {r.Id, r.Name})
+                                                      .Select(r => new { r.Id, r.Name })
                                                       .ToList<object>()
                            });
 
             return await qr.ToListAsync<object>();
         }
 
-        public async Task<object> GetUserDetails(String userName)
+        public async Task<object> GetUserDetails(string userName)
         {
             var qr = _users.Where(u => u.UserName.Equals(userName))
                            .Include(u => u.Role)
@@ -66,8 +65,8 @@ namespace ESMS_Data.Repositories
             return await qr.FirstOrDefaultAsync();
         }
 
-        public async Task<User> GetUser(String userName)
-        {          
+        public async Task<User> GetUser(string userName)
+        {
             return await _users.FindAsync(userName);
         }
     }

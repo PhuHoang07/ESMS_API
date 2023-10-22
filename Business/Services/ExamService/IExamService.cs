@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces
+namespace Business.Services.ExamService
 {
     public interface IExamService
     {
         public Task<ResultModel> GetCurrent();
-        public Task<ResultModel> Get(String semester);
+        public Task<ResultModel> Get(string semester);
     }
 }

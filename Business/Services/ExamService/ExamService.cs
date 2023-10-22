@@ -1,7 +1,6 @@
-﻿using Business.Interfaces;
+﻿using Business.Services.ExamService;
 using Business.Utils;
-using ESMS_Data.Interfaces;
-using ESMS_Data.Repositories;
+using ESMS_Data.Repositories.ExamTimeRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Services
+namespace Business.Services.ExamService
 {
     public class ExamService : IExamService
     {
@@ -19,12 +18,12 @@ namespace Business.Services
         {
             _examTimeRepository = examTimeRepository;
             utils = new Utils.Utils();
-        }        
+        }
 
         public async Task<ResultModel> GetCurrent()
         {
-            String semester = utils.GetCurrentSemester();
-            return await Get(semester);            
+            string semester = utils.GetCurrentSemester();
+            return await Get(semester);
         }
 
         public async Task<ResultModel> Get(string semester)

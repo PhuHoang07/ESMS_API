@@ -1,8 +1,8 @@
-using Business.Interfaces;
-using Business.Services;
-using ESMS_Data.Interfaces;
+using Business.Services.AdminService;
+using Business.Services.ExamService;
 using ESMS_Data.Models;
-using ESMS_Data.Repositories;
+using ESMS_Data.Repositories.ExamTimeRepository;
+using ESMS_Data.Repositories.UserRepository;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;

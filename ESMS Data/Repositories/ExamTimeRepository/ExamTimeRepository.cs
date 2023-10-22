@@ -1,6 +1,5 @@
-﻿using ESMS_Data.Interfaces;
-using ESMS_Data.Models;
-using ESMS_Data.Repository;
+﻿using ESMS_Data.Models;
+using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Repositories
+namespace ESMS_Data.Repositories.ExamTimeRepository
 {
     public class ExamTimeRepository : RepositoryBase<ExamTime>, IExamTimeRepository
     {
@@ -22,7 +21,7 @@ namespace ESMS_Data.Repositories
             _examSchedules = _context.Set<ExamSchedule>();
         }
 
-        public new async Task<List<object>> GetAll(String semester)
+        public new async Task<List<object>> GetAll(string semester)
         {
             var list = await _examTimes
                                 .Where(et => et.Semester.Equals(semester))

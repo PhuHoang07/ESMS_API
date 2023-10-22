@@ -1,5 +1,5 @@
-﻿using Business.Interfaces;
-using Business.Services;
+﻿using Business.Services;
+using Business.Services.ExamService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,14 +1,15 @@
 ﻿using ESMS_Data.Models;
+using ESMS_Data.Repositories.RepositoryBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Interfaces
+namespace ESMS_Data.Repositories.ExamTimeRepository
 {
     public interface IExamTimeRepository : IRepositoryBase<ExamTime>
     {
-        public Task<List<object>> GetAll(String semester);
+        public Task<List<object>> GetAll(string semester);
     }
 }

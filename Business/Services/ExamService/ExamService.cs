@@ -23,7 +23,7 @@ namespace Business.Services.ExamService
         public async Task<ResultModel> GetCurrent()
         {
             string semester = utils.GetCurrentSemester();
-            return await Get(semester);
+            return await Get("summer23");
         }
 
         public async Task<ResultModel> Get(string semester)

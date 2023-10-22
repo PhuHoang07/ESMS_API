@@ -29,8 +29,8 @@ namespace ESMS_API.Controllers
         }
 
         [HttpGet]
-        [Route("users/find")]
-        public async Task<IActionResult> GetUserList([FromQuery] String username)
+        [Route("users/search")]
+        public async Task<IActionResult> GetUserList([FromQuery] string? username = "")
         {
             var res = await _adminService.GetUserList(username);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
@@ -38,7 +38,7 @@ namespace ESMS_API.Controllers
 
         [HttpGet]
         [Route("users/{userName}")]
-        public async Task<IActionResult> GetUserDetails(String userName)
+        public async Task<IActionResult> GetUserDetails(string userName)
         {
             var res = await _adminService.GetUserDetails(userName);
             return res.IsSuccess ? Ok(res) : BadRequest(res);

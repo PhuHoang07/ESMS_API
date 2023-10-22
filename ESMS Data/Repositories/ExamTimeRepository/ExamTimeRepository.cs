@@ -24,7 +24,7 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
         public new async Task<List<object>> GetAll(string semester)
         {
             var list = await _examTimes
-                                .Where(et => et.Semester.Equals(semester))
+                                .Where(et => et.Semester.Contains(semester))
                                 .ToListAsync();
 
             var qr = list

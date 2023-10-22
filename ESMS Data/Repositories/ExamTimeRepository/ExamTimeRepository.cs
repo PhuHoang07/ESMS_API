@@ -23,9 +23,10 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
 
         public new async Task<List<object>> GetAll(string semester)
         {
-            var list = await _examTimes
-                                .Where(et => et.Semester.Contains(semester))
-                                .ToListAsync();
+            var list = await (String.IsNullOrEmpty(semester) ? 
+                                _examTimes :
+                                _examTimes.Where(et => et.Semester.Equals(semester)))
+                             .ToListAsync();
 
             var qr = list
                         .GroupBy(e => e.Semester)

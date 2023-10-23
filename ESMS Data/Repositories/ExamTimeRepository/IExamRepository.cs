@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Repositories.ExamTimeRepository
 {
-    public interface IExamTimeRepository : IRepositoryBase<ExamTime>
+    public interface IExamRepository : IRepositoryBase<ExamTime>
     {
         public IQueryable<ExamTime> FilterSemester(IQueryable<ExamTime> qr, string semester);
         public IQueryable<ExamTime> FilterSubject(IQueryable<ExamTime> qr, List<string> subject);

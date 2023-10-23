@@ -36,7 +36,7 @@ builder.Services.AddScoped<IExamService, ExamService>();
 
 // Add Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IExamTimeRepository, ExamTimeRepository>();
+builder.Services.AddScoped<IExamRepository, ExamRepository>();
 
 
 // Add Authentication

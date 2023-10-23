@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Repositories.ExamTimeRepository
 {
-    public class ExamTimeRepository : RepositoryBase<ExamTime>, IExamTimeRepository
+    public class ExamRepository : RepositoryBase<ExamTime>, IExamRepository
     {
         private ESMSContext _context;
         private DbSet<ExamTime> _examTimes;
         private DbSet<ExamSchedule> _examSchedules;
-        public ExamTimeRepository(ESMSContext context) : base(context)
+        public ExamRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _examTimes = _context.Set<ExamTime>();

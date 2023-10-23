@@ -12,9 +12,9 @@ namespace Business.Services.ExamService
 {
     public class ExamService : IExamService
     {
-        private readonly IExamTimeRepository _examTimeRepository;
+        private readonly IExamRepository _examTimeRepository;
         private readonly Utils.Utils utils;
-        public ExamService(IExamTimeRepository examTimeRepository)
+        public ExamService(IExamRepository examTimeRepository)
         {
             _examTimeRepository = examTimeRepository;
             utils = new Utils.Utils();

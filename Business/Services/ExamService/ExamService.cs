@@ -1,5 +1,6 @@
 ﻿using Business.Services.ExamService;
 using Business.Utils;
+using ESMS_Data.Entities.RequestModel;
 using ESMS_Data.Repositories.ExamTimeRepository;
 using System;
 using System.Collections.Generic;
@@ -23,26 +24,30 @@ namespace Business.Services.ExamService
         public async Task<ResultModel> GetCurrent()
         {
             string semester = utils.GetCurrentSemester();
-            return await Get(semester);
+            return await Get(new ExamFilterReqModel { Semester = semester });
         }
 
-        public async Task<ResultModel> Get(string semester, List<string> subjects = null)
+        public async Task<ResultModel> Get(ExamFilterReqModel req)
         {
             ResultModel resultModel = new ResultModel();
-
+            
             try
             {
                 var qr = _examTimeRepository.GetAll();
 
-                if (!String.IsNullOrEmpty(semester))
+                if (!String.IsNullOrEmpty(req.Semester))
                 {
-                    qr = _examTimeRepository.FilterSemester(qr, semester);
+                    qr = _examTimeRepository.FilterSemester(qr, req.Semester);
                 }
 
-                if (subjects.Any())
+                if (req.Subjects != null)
                 {
-                    qr = _examTimeRepository.FilterSubject(qr, subjects);
+                    qr = _examTimeRepository.FilterSubject(qr, req.Subjects);
                 }
+
+                qr = _examTimeRepository.FilterDate(qr, req.From, req.To);
+
+                qr = _examTimeRepository.FilterTime(qr, req.Start, req.End);
 
                 var examList = await _examTimeRepository.GroupBySemester(qr);
 

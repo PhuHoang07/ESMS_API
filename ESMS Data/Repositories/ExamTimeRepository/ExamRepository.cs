@@ -69,12 +69,16 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
 
         public IQueryable<ExamTime> FilterDate(IQueryable<ExamTime> qr, DateTime from, DateTime to)
         {
-            throw new NotImplementedException();
+            qr = qr.Where(et => et.Date >= from && et.Date <= to);
+
+            return qr;
         }
 
         public IQueryable<ExamTime> FilterTime(IQueryable<ExamTime> qr, TimeSpan start, TimeSpan end)
         {
-            throw new NotImplementedException();
+            qr = qr.Where(et => et.Start >= start && et.Start <= end);
+
+            return qr;
         }
 
         public async Task<List<object>> GroupBySemester(IQueryable<ExamTime> qr)

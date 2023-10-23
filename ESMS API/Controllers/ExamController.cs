@@ -1,5 +1,6 @@
 ﻿using Business.Services;
 using Business.Services.ExamService;
+using ESMS_Data.Entities.RequestModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,10 +27,9 @@ namespace ESMS_API.Controllers
 
         [HttpGet]
         [Route("filter")]
-        public async Task<IActionResult> Get([FromQuery] string? semester,
-                                             [FromQuery] List<string>? subjects)
+        public async Task<IActionResult> Get([FromQuery] ExamFilterReqModel req)
         {
-            var res = await _examService.Get(semester, subjects);
+            var res = await _examService.Get(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
@@ -114,6 +115,14 @@ builder.Services.AddSwaggerGen(option =>
         Version = "v1",
         Description = "API for ESMS System"
     });
+
+    // Using Time instead of Ticks
+    option.MapType<TimeSpan>(() => new OpenApiSchema
+    {
+        Type = "string",
+        //Example = new OpenApiString("00:00")
+    });
+
     option.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
         //In = ParameterLocation.Header,
@@ -133,7 +142,7 @@ builder.Services.AddSwaggerGen(option =>
 
                 AuthorizationUrl = new Uri($"https://accounts.google.com/o/oauth2/auth"),
                 TokenUrl = new Uri("https://oauth2.googleapis.com/token"),
-                
+
                 Scopes = new Dictionary<string, string>
                     {
                         {

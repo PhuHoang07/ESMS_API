@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ESMS_Data.Entities.RequestModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,6 @@ namespace Business.Services.ExamService
     public interface IExamService
     {
         public Task<ResultModel> GetCurrent();
-        public Task<ResultModel> Get(string semester, List<string> subjects);
+        public Task<ResultModel> Get(ExamFilterReqModel req);
     }
 }

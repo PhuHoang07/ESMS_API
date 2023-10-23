@@ -23,7 +23,7 @@ namespace Business.Services.ExamService
         public async Task<ResultModel> GetCurrent()
         {
             string semester = utils.GetCurrentSemester();
-            return await Get("summer23");
+            return await Get(semester);
         }
 
         public async Task<ResultModel> Get(string semester)
@@ -32,7 +32,14 @@ namespace Business.Services.ExamService
 
             try
             {
-                var examList = await _examTimeRepository.GetAll(semester);
+                var qr = _examTimeRepository.GetAll();
+
+                if (!String.IsNullOrEmpty(semester))
+                {
+                    qr = _examTimeRepository.FilterSemester(qr, semester);
+                }
+
+                var examList = await _examTimeRepository.GroupBySemester(qr);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;

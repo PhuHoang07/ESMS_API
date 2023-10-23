@@ -1,6 +1,7 @@
 ﻿using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +22,33 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
             _examSchedules = _context.Set<ExamSchedule>();
         }
 
-        public new async Task<List<object>> GetAll(string semester)
+        public IQueryable<ExamTime> FilterSemester(IQueryable<ExamTime> qr, string semester)
         {
-            var list = await (String.IsNullOrEmpty(semester) ? 
-                                _examTimes :
-                                _examTimes.Where(et => et.Semester.Equals(semester)))
-                             .ToListAsync();
+            qr = qr.Where(et => et.Semester.Equals(semester));
 
-            var qr = list
+            return qr;
+        }
+
+        public IQueryable<ExamTime> FilterSubject(IQueryable<ExamTime> qr, List<string> subject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<ExamTime> FilterDate(IQueryable<ExamTime> qr, DateTime from, DateTime to)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<ExamTime> FilterTime(IQueryable<ExamTime> qr, TimeSpan start, TimeSpan end)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<object>> GroupBySemester(IQueryable<ExamTime> qr)
+        {
+            var list = await qr.ToListAsync();
+
+            var group = list
                         .GroupBy(e => e.Semester)
                         .Select(group => new
                         {
@@ -52,7 +72,7 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
                             })
                         });
 
-            return qr.ToList<object>();
+            return group.ToList<object>();
         }
     }
 }

@@ -10,6 +10,10 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
 {
     public interface IExamTimeRepository : IRepositoryBase<ExamTime>
     {
-        public Task<List<object>> GetAll(string semester);
+        public IQueryable<ExamTime> FilterSemester(IQueryable<ExamTime> qr, string semester);
+        public IQueryable<ExamTime> FilterSubject(IQueryable<ExamTime> qr, List<string> subject);
+        public IQueryable<ExamTime> FilterDate(IQueryable<ExamTime> qr, DateTime from, DateTime to);
+        public IQueryable<ExamTime> FilterTime(IQueryable<ExamTime> qr, TimeSpan start, TimeSpan end);
+        public Task<List<object>> GroupBySemester(IQueryable<ExamTime> qr);
     }
 }

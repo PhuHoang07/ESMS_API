@@ -26,9 +26,10 @@ namespace ESMS_API.Controllers
 
         [HttpGet]
         [Route("filter")]
-        public async Task<IActionResult> Get([FromQuery] string? semester = "")
+        public async Task<IActionResult> Get([FromQuery] string? semester,
+                                             [FromQuery] List<string>? subjects)
         {
-            var res = await _examService.Get(semester);
+            var res = await _examService.Get(semester, subjects);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

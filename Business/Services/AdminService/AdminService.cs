@@ -28,7 +28,7 @@ namespace Business.Services.AdminService
 
             try
             {
-                var userList = await _userRepository.GetUserList(userName);
+                var userList = await _userRepository.GetUserList(userName ?? "");
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;

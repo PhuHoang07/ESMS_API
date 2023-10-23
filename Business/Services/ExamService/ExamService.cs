@@ -26,7 +26,7 @@ namespace Business.Services.ExamService
             return await Get(semester);
         }
 
-        public async Task<ResultModel> Get(string semester)
+        public async Task<ResultModel> Get(string semester, List<string> subjects = null)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -37,6 +37,11 @@ namespace Business.Services.ExamService
                 if (!String.IsNullOrEmpty(semester))
                 {
                     qr = _examTimeRepository.FilterSemester(qr, semester);
+                }
+
+                if (subjects.Any())
+                {
+                    qr = _examTimeRepository.FilterSubject(qr, subjects);
                 }
 
                 var examList = await _examTimeRepository.GroupBySemester(qr);

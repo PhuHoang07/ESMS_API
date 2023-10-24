@@ -36,8 +36,12 @@ KeyVaultSecret keyVaultSecret = secretClient.GetSecret("ESMS-AzureSQL");
 
 builder.Services.AddDbContext<ESMSContext>(options =>
 {
+<<<<<<< HEAD
     //options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"));
     options.UseSqlServer(keyVaultSecret.Value);
+=======
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSQLServer"));
+>>>>>>> f0573b682bc3fadc95ebe06285b54c45668e8506
 });
 
 

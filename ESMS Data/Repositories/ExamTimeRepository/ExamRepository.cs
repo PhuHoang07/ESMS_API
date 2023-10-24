@@ -81,35 +81,34 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
             return qr;
         }
 
-        public async Task<List<object>> GroupBySemester(IQueryable<ExamTime> qr)
+        public async Task<Dictionary<string, List<object>>> GroupBySemester(IQueryable<ExamTime> qr)
         {
             var list = await qr.ToListAsync();
 
             var group = list
                         .GroupBy(e => e.Semester)
-                        .Select(group => new
-                        {
-                            Semester = group.Key,
-                            Times = group.Select(i => new
-                            {
-                                i.Idt,
-                                Date = i.Date.ToString("dd/MM/yyyy"),
-                                Start = i.Start.ToString(@"hh\:mm"),
-                                End = i.End.ToString(@"hh\:mm"),
-                                PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
-                                Slot = i.SlotId,
-                                ExamSchedules = i.ExamSchedules
-                                                        .Select(es => new
-                                                        {
-                                                            Subject = es.SubjectId,
-                                                            Room = es.RoomNumber,
-                                                            es.Form,
-                                                            es.Type
-                                                        })
-                            })
-                        });
+                        .ToDictionary(group => group.Key,                        
+                                    group => group.Select(i => new
+                                    {
+                                        i.Idt,
+                                        Date = i.Date.ToString("dd/MM/yyyy"),
+                                        Start = i.Start.ToString(@"hh\:mm"),
+                                        End = i.End.ToString(@"hh\:mm"),
+                                        PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
+                                        Slot = i.SlotId,
+                                        ExamSchedules = i.ExamSchedules
+                                                                .Select(es => new
+                                                                {
+                                                                    Subject = es.SubjectId,
+                                                                    Room = es.RoomNumber,
+                                                                    es.Form,
+                                                                    es.Type
+                                                                })
+                                    })
+                                    .ToList<object>()
+                        );
 
-            return group.ToList<object>();
+            return group;
         }
     }
 }

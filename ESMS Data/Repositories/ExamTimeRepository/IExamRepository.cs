@@ -14,6 +14,6 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
         public IQueryable<ExamTime> FilterSubject(IQueryable<ExamTime> qr, List<string> subject);
         public IQueryable<ExamTime> FilterDate(IQueryable<ExamTime> qr, DateTime from, DateTime to);
         public IQueryable<ExamTime> FilterTime(IQueryable<ExamTime> qr, TimeSpan start, TimeSpan end);
-        public Task<List<object>> GroupBySemester(IQueryable<ExamTime> qr);
+        public Task<Dictionary<string, List<object>>> GroupBySemester(IQueryable<ExamTime> qr);
     }
 }

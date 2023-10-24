@@ -1,3 +1,5 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Business.Services.AdminService;
 using Business.Services.ExamService;
 using ESMS_Data.Models;
@@ -26,14 +28,23 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 // Add DbContext
+// Using connection string from key vault 
+var keyVaultEndPoint = new Uri(builder.Configuration["VaultKey"]);
+var secretClient = new SecretClient(keyVaultEndPoint, new DefaultAzureCredential());
+
+KeyVaultSecret keyVaultSecret = secretClient.GetSecret("ESMS-AzureSQL");
+
 builder.Services.AddDbContext<ESMSContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"));
+    options.UseSqlServer(keyVaultSecret.Value);
 });
+
 
 // Add Service
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IExamService, ExamService>();
+
 
 // Add Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -184,8 +195,10 @@ builder.Services.AddSwaggerGen(option =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// Remove if allow using when deploying
+
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -197,7 +210,7 @@ if (app.Environment.IsDevelopment())
         //c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
 
     });
-}
+//}
 
 app.UseHttpsRedirection();
 

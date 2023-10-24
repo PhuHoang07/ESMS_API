@@ -28,7 +28,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Add DbContext
 builder.Services.AddDbContext<ESMSContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSQLServer"));
 });
 
 // Add Service

@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>ESMS_API</RootNamespace>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<UserSecretsId>bd446f67-27f6-4470-8704-80dec5fe4ee4</UserSecretsId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

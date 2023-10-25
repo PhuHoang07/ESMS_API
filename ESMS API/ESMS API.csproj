@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>ESMS_API</RootNamespace>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<UserSecretsId>bd446f67-27f6-4470-8704-80dec5fe4ee4</UserSecretsId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Identity" Version="1.10.3" />
+		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
+		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.62.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.23" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.23" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Business\Business.csproj" />
+	</ItemGroup>
+
+</Project>

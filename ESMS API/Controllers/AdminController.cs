@@ -1,8 +1,9 @@
 ﻿using Business;
 using Business.Services;
-using Business.Services.AdminService;
+using Business.Services.UserService;
 using ESMS_Data.Entities;
 using ESMS_Data.Entities.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,43 +13,44 @@ namespace ESMS_API.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IAdminService _adminService;
-        public AdminController(IAdminService adminService) {
-            _adminService = adminService;
+        private readonly IUserService _userService;
+        public AdminController(IUserService userService) {
+            _userService = userService;
         }
-        /// <summary>
-        /// Get all account list
-        /// </summary>
-        /// <returns></returns>
+   
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("users")]
         public async Task<IActionResult> GetUserList()
         {
-            var res = await _adminService.GetUserList();
+            var res = await _userService.GetUserList();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("users/search")]
         public async Task<IActionResult> GetUserList([FromQuery] string? username)
         {
-            var res = await _adminService.GetUserList(username);
+            var res = await _userService.GetUserList(username);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("users/{userName}")]
         public async Task<IActionResult> GetUserDetails(string userName)
         {
-            var res = await _adminService.GetUserDetails(userName);
+            var res = await _userService.GetUserDetails(userName);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("users/update")]
-        public async Task<IActionResult> SetRole([FromBody] UserReqModel req)
+        public async Task<IActionResult> Update([FromBody] UserSettingsReqModel req)
         {            
-            var res = await _adminService.SetRole(req);
+            var res = await _userService.UpdateSettings(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

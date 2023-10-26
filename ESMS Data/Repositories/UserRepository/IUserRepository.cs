@@ -11,7 +11,7 @@ namespace ESMS_Data.Repositories.UserRepository
     public interface IUserRepository : IRepositoryBase<User>
     {
         public Task<List<object>> GetUserList(string userName);
-        public Task<object> GetUserDetails(string userName);
-        public Task<User> GetUser(string userName);
+        public Task<object> GetUserDetails(string userNameOrEmail);
+        public Task<User> GetUser(string userNameOrEmail);
     }
 }

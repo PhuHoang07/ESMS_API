@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Entities.RequestModel
 {
-    public class UserReqModel
+    public class UserSettingsReqModel
     {
         public string UserName { set; get; }
-        public int RoleId { set; get; }
+        public int? RoleId { set; get; }
+        public bool? IsActive { set; get; }
     }
 }

@@ -1,34 +1,37 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Business.Services.AuthService;
+using ESMS_Data.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ESMS_API.Controllers
 {
 
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-
-        [HttpGet("accesstoken")]
-        public IActionResult GetAccessToken()
+        private readonly IAuthService _authService;
+        public AuthController(IAuthService authService, IConfiguration configuration)
         {
-            var authenticateResult = HttpContext.AuthenticateAsync().Result;
+            _authService = authService;
+        }
 
-            if (authenticateResult.Succeeded)
+        [HttpPost]
+        [Route("signin")]
+        public async Task<IActionResult> SignIn([FromBody] UserModel userModel)
+        {
+            var res = await _authService.Authenticate(userModel);
+
+            if (res.Data != null && res.StatusCode == 200)
             {
-                var accessToken = authenticateResult.Properties.GetTokenValue("access_token");
-
-                if (!string.IsNullOrEmpty(accessToken))
-                {
-                    return Ok(new { AccessToken = accessToken });
-                }
+                var user = (UserModel) res.Data;
+                res = _authService.GenerateToken(user);
             }
 
-            return BadRequest("Access token not found.");
-        }
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }        
     }
-
-
 }

@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Entities.RequestModel;
+using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -40,9 +41,9 @@ namespace ESMS_Data.Repositories.UserRepository
             return await qr.ToListAsync<object>();
         }
 
-        public async Task<object> GetUserDetails(string userName)
+        public async Task<object> GetUserDetails(string userNameOrEmail)
         {
-            var qr = _users.Where(u => u.UserName.Equals(userName))
+            var qr = _users.Where(u => u.UserName.Equals(userNameOrEmail) || u.Email.Equals(userNameOrEmail))
                            .Include(u => u.Role)
                            .Include(u => u.Department)
                            .Select(u => new
@@ -65,9 +66,11 @@ namespace ESMS_Data.Repositories.UserRepository
             return await qr.FirstOrDefaultAsync();
         }
 
-        public async Task<User> GetUser(string userName)
+        public async Task<User> GetUser(string userNameOrEmail)
         {
-            return await _users.FindAsync(userName);
+            return await _users
+                               .Include(u => u.Role)
+                               .FirstOrDefaultAsync(u => u.UserName.Equals(userNameOrEmail) || u.Email.Equals(userNameOrEmail));
         }
     }
 }

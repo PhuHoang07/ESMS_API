@@ -83,7 +83,7 @@ namespace Business.Services.AuthService
                                         signingCredentials: credentials
                                     );
 
-                resultModel.IsSuccess = false;
+                resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = new JwtSecurityTokenHandler().WriteToken(token);
             }

@@ -18,6 +18,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         private DbSet<ExamTime> _examTimes;
         private DbSet<ExamSchedule> _examSchedules;
         private DbSet<Subject> _subjects;
+        private DbSet<Slot> _slots;
 
         public ExamRepository(ESMSContext context) : base(context)
         {
@@ -25,6 +26,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             _examTimes = _context.Set<ExamTime>();
             _examSchedules = _context.Set<ExamSchedule>();
             _subjects = _context.Set<Subject>();
+            _slots = _context.Set<Slot>();
         }
 
         public new IQueryable<ExamTime> GetAll()
@@ -139,6 +141,19 @@ namespace ESMS_Data.Repositories.ExamRepository
                               .OrderBy(s => s);                               
 
             return await qr.ToListAsync();
+        }
+
+        public async Task<int?> GetSlot(TimeSpan start)
+        {
+            var qr = _slots.Where(s => s.Start <= start && start <= s.End)
+                           .Select(s => s.Id);
+
+            return await qr.FirstOrDefaultAsync();
+        }
+
+        public async Task<ExamTime> GetExamTime(int idt)
+        {
+            return await _examTimes.FindAsync(idt);
         }
     }
 }

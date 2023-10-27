@@ -17,5 +17,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public Task<Dictionary<string, List<object>>> GroupBySemester(IQueryable<ExamTime> qr);
         public Task<List<string>> GetSemester();
         public Task<List<string>> GetSubject();
+        public Task<int?> GetSlot(TimeSpan start);
+        public Task<ExamTime> GetExamTime(int idt);
     }
 }

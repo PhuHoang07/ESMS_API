@@ -53,5 +53,23 @@ namespace ESMS_API.Controllers
             var res = await _examService.GetSubject();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("add-time")]
+        public async Task<IActionResult> AddTime([FromBody] ExamTimeAddReqModel req)
+        {
+            var res = await _examService.AddTime(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("update-time")]
+        public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdReqModel req)
+        {
+            var res = await _examService.UpdateTime(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
     }
 }

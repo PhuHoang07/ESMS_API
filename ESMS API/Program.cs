@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,6 +110,9 @@ builder.Services.AddCors(options =>
                                 .AllowAnyMethod();
         });
 });
+
+// Allow reading TimeSpan in Json request
+builder.Services.AddMvc().AddNewtonsoftJson();
 
 
 var app = builder.Build();

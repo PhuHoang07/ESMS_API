@@ -10,14 +10,20 @@ namespace Business.Utils
     {
         public String GetCurrentSemester()
         {
-            int month = DateTime.Now.Month;
-            String year = DateTime.Now.ToString("yy");
-            String semester;
+            return GetSemester(DateTime.Now);
+        }
 
+        public String GetSemester(DateTime date)
+        {
+            int month = date.Month;
+            String year = date.ToString("yy");
+
+            String semester;
             if (month < 5)
             {
                 semester = "SPRING";
-            }else if (month < 9)
+            }
+            else if (month < 9)
             {
                 semester = "SUMMER";
             }
@@ -31,4 +37,5 @@ namespace Business.Utils
             return semester;
         }
     }
+
 }

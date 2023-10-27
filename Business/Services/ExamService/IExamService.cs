@@ -13,5 +13,8 @@ namespace Business.Services.ExamService
         public Task<ResultModel> Get(ExamFilterReqModel req);
         public Task<ResultModel> GetSemester();
         public Task<ResultModel> GetSubject();
+        public Task<ResultModel> AddTime(ExamTimeAddReqModel req);
+        public Task<ResultModel> UpdateTime(ExamTimeUpdReqModel req);
+        public Task<ResultModel> DeleteTime(int idt);
     }
 }

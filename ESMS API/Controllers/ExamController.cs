@@ -4,6 +4,7 @@ using ESMS_Data.Entities.RequestModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace ESMS_API.Controllers
 {
@@ -51,6 +52,24 @@ namespace ESMS_API.Controllers
         public async Task<IActionResult> GetSubject()
         {
             var res = await _examService.GetSubject();
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("add-time")]
+        public async Task<IActionResult> AddTime([FromBody] ExamTimeAddReqModel req)
+        {
+            var res = await _examService.AddTime(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("update-time")]
+        public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdReqModel req)
+        {
+            var res = await _examService.UpdateTime(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

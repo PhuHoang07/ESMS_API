@@ -1,6 +1,7 @@
 ﻿using Business.Services.ExamService;
 using Business.Utils;
 using ESMS_Data.Entities.RequestModel;
+using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using System;
 using System.Collections.Generic;
@@ -103,6 +104,141 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = subjects;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }       
+
+        private void ValidateTime(TimeSpan start, TimeSpan end)
+        {
+            if (start >= end)
+            {
+                throw new Exception("Invalid time: Start >= End");
+            }
+        }
+
+        private void ValidateDate(DateTime date, DateTime publishDate)
+        {
+            if (date > publishDate)
+            {
+                throw new Exception("Invalid date: Date > Publish date");
+            }
+        }
+
+        public async Task<ResultModel> AddTime(ExamTimeAddReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                ValidateTime(req.Start, req.End);
+                ValidateDate(req.Date, req.PublishDate);
+
+                var slot = await _examRepository.GetSlot(req.Start);
+
+                if (slot == 0)
+                {
+                    throw new Exception("Invalid time: Start does not belong to any Slot");
+                }
+
+                var currentSemester = utils.GetCurrentSemester();
+
+                if (!currentSemester.Equals(utils.GetSemester(req.Date)))
+                {
+                    throw new Exception("Invalid date: Date does not belong to current semester");
+                }
+
+                var examTime = new ExamTime
+                {
+                    Date = req.Date,
+                    Start = req.Start,
+                    End = req.End,
+                    PublishDate = req.PublishDate,
+                    SlotId = slot.Value,
+                    Semester = currentSemester
+                };
+
+                await _examRepository.Add(examTime);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> UpdateTime(ExamTimeUpdReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                ValidateTime(req.Start, req.End);
+                ValidateDate(req.Date, req.PublishDate);
+
+                var slot = await _examRepository.GetSlot(req.Start);
+
+                if (slot == 0)
+                {
+                    throw new Exception("Invalid time: Start does not belong to any Slot");
+                }
+
+                var currentSemester = utils.GetCurrentSemester();
+
+                if (!currentSemester.Equals(utils.GetSemester(req.Date)))
+                {
+                    throw new Exception("Invalid date: Date does not belong to current semester");
+                }
+
+                var currentExamTime = await _examRepository.GetExamTime(req.Idt);
+
+                currentExamTime.Date = req.Date;
+                currentExamTime.Start = req.Start;
+                currentExamTime.End = req.End;
+                currentExamTime.PublishDate = req.PublishDate;
+                currentExamTime.SlotId = slot;
+
+                await _examRepository.Update(currentExamTime);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Update successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> DeleteTime(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var currentExamTime = await _examRepository.GetExamTime(idt);
+                await _examRepository.Delete(currentExamTime);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Delete successfully";
             }
             catch (Exception ex)
             {

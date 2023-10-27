@@ -30,7 +30,7 @@ namespace Business.Services.ExamService
         public async Task<ResultModel> Get(ExamFilterReqModel req)
         {
             ResultModel resultModel = new ResultModel();
-            
+
             try
             {
                 var qr = _examTimeRepository.GetAll();
@@ -51,9 +51,38 @@ namespace Business.Services.ExamService
 
                 var examList = await _examTimeRepository.GroupBySemester(qr);
 
+                var currentSemester = utils.GetCurrentSemester();
+                // Inline equal care about sensitive case
+                if (!examList.ContainsKey(currentSemester) && (req.Semester ?? "").ToUpper().Equals(currentSemester))
+                {
+                    examList.Add(currentSemester, new List<object>());
+                }
+
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = examList;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
+
+        public ResultModel GetSemester()
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var semesters = _examTimeRepository.GetSemester();
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = semesters;
             }
             catch (Exception ex)
             {

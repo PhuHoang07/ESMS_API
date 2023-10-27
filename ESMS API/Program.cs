@@ -3,18 +3,12 @@ using Business.Services.ExamService;
 using Business.Services.SecretService;
 using Business.Services.UserService;
 using ESMS_Data.Models;
-using ESMS_Data.Repositories.ExamTimeRepository;
+using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.UserRepository;
-using Google.Apis.Auth.AspNetCore3;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -104,7 +98,17 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://127.0.0.1:5500")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+});
 
 
 var app = builder.Build();
@@ -119,6 +123,9 @@ var app = builder.Build();
 //}
 
 app.UseHttpsRedirection();
+
+// Add CORS
+app.UseCors("AllowOrigin");
 
 // Add JWT authentication
 app.UseAuthentication();

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Repositories.ExamTimeRepository
+namespace ESMS_Data.Repositories.ExamRepository
 {
     public interface IExamRepository : IRepositoryBase<ExamTime>
     {
@@ -15,5 +15,7 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
         public IQueryable<ExamTime> FilterDate(IQueryable<ExamTime> qr, DateTime from, DateTime to);
         public IQueryable<ExamTime> FilterTime(IQueryable<ExamTime> qr, TimeSpan start, TimeSpan end);
         public Task<Dictionary<string, List<object>>> GroupBySemester(IQueryable<ExamTime> qr);
+        public Task<List<string>> GetSemester();
+        public Task<List<string>> GetSubject();
     }
 }

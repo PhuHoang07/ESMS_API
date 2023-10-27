@@ -10,34 +10,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Repositories.ExamTimeRepository
+namespace ESMS_Data.Repositories.ExamRepository
 {
     public class ExamRepository : RepositoryBase<ExamTime>, IExamRepository
     {
         private ESMSContext _context;
         private DbSet<ExamTime> _examTimes;
         private DbSet<ExamSchedule> _examSchedules;
+        private DbSet<Subject> _subjects;
+
         public ExamRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _examTimes = _context.Set<ExamTime>();
             _examSchedules = _context.Set<ExamSchedule>();
+            _subjects = _context.Set<Subject>();
         }
 
         public new IQueryable<ExamTime> GetAll()
         {
-            return _examTimes.Include(et => et.ExamSchedules)
-                             .Select(et => new ExamTime
-                             {
-                                 Idt = et.Idt,
-                                 Date = et.Date,
-                                 Start = et.Start,
-                                 End = et.End,
-                                 PublishDate = et.PublishDate,
-                                 SlotId = et.SlotId,
-                                 Semester = et.Semester,
-                                 ExamSchedules = et.ExamSchedules
-                             });
+            var qr = _examTimes.Include(et => et.ExamSchedules)
+                               .Select(et => new ExamTime
+                               {
+                                   Idt = et.Idt,
+                                   Date = et.Date,
+                                   Start = et.Start,
+                                   End = et.End,
+                                   PublishDate = et.PublishDate,
+                                   SlotId = et.SlotId,
+                                   Semester = et.Semester,
+                                   ExamSchedules = et.ExamSchedules
+                               });
+
+            return qr;
         }
 
         public IQueryable<ExamTime> FilterSemester(IQueryable<ExamTime> qr, string semester)
@@ -86,8 +91,12 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
             var list = await qr.ToListAsync();
 
             var group = list
+                        //.OrderByDescending(e => e.Semester.Substring(e.Semester.Length - 2)
                         .GroupBy(e => e.Semester)
-                        .ToDictionary(group => group.Key,                        
+                        .ToList()
+                        .OrderBy(gr => gr.Key.Substring(gr.Key.Length - 2))
+                        .ThenBy(gr => gr.Key.Contains("FALL") ? 0 : gr.Key.Contains("SUMMER") ? 1 : 2)
+                        .ToDictionary(group => group.Key,
                                     group => group.Select(i => new
                                     {
                                         i.Idt,
@@ -97,6 +106,7 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
                                         PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
                                         Slot = i.SlotId,
                                         ExamSchedules = i.ExamSchedules
+                                                                .OrderBy(et => et.RoomNumber)                                                                
                                                                 .Select(es => new
                                                                 {
                                                                     Subject = es.SubjectId,
@@ -109,6 +119,26 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
                         );
 
             return group;
+        }
+
+        public async Task<List<string>> GetSemester()
+        {
+            var qr = (await _examTimes.Select(et => et.Semester)
+                               .Distinct()
+                               .ToListAsync())
+                               .OrderBy(s => s.Substring(s.Length - 2))
+                               .ThenBy(s => s.Contains("FALL") ? 0 : s.Contains("SUMMER") ? 1 : 2);
+            
+
+            return qr.ToList();
+        }
+
+        public async Task<List<string>> GetSubject()
+        {
+            var qr = _subjects.Select(s => s.Id)
+                              .OrderBy(s => s);                               
+
+            return await qr.ToListAsync();
         }
     }
 }

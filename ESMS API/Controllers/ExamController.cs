@@ -35,5 +35,23 @@ namespace ESMS_API.Controllers
             var res = await _examService.Get(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpGet]
+        [Route("semesters")]
+        public async Task<IActionResult> GetSemester()
+        {
+            var res = await _examService.GetSemester();
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpGet]
+        [Route("subjects")]
+        public async Task<IActionResult> GetSubject()
+        {
+            var res = await _examService.GetSubject();
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
     }
 }

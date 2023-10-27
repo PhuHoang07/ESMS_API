@@ -1,10 +1,6 @@
 ﻿using Business.Services.AuthService;
 using ESMS_Data.Entities;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace ESMS_API.Controllers
 {

@@ -129,8 +129,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                .Distinct()
                                .ToListAsync())
                                .OrderBy(s => s.Substring(s.Length - 2))
-                               .ThenBy(s => s.Contains("FALL") ? 0 : s.Contains("SUMMER") ? 1 : 2);
-            
+                               .ThenBy(s => s.Contains("FALL") ? 0 : s.Contains("SUMMER") ? 1 : 2);            
 
             return qr.ToList();
         }

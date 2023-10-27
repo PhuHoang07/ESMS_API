@@ -113,7 +113,7 @@ namespace Business.Services.ExamService
             }
 
             return resultModel;
-        }        
+        }       
 
         private void ValidateTime(TimeSpan start, TimeSpan end)
         {
@@ -225,6 +225,29 @@ namespace Business.Services.ExamService
             }
 
             return resultModel;
-        }        
+        }
+
+        public async Task<ResultModel> DeleteTime(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var currentExamTime = await _examRepository.GetExamTime(idt);
+                await _examRepository.Delete(currentExamTime);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Delete successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
     }
 }

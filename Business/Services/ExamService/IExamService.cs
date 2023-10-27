@@ -11,6 +11,7 @@ namespace Business.Services.ExamService
     {
         public Task<ResultModel> GetCurrent();
         public Task<ResultModel> Get(ExamFilterReqModel req);
-        public ResultModel GetSemester();
+        public Task<ResultModel> GetSemester();
+        public Task<ResultModel> GetSubject();
     }
 }

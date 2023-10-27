@@ -3,7 +3,7 @@ using Business.Services.ExamService;
 using Business.Services.SecretService;
 using Business.Services.UserService;
 using ESMS_Data.Models;
-using ESMS_Data.Repositories.ExamTimeRepository;
+using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.UserRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -98,7 +98,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-//Add CORS
+// Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowOrigin",
@@ -123,6 +123,8 @@ var app = builder.Build();
 //}
 
 app.UseHttpsRedirection();
+
+// Add CORS
 app.UseCors("AllowOrigin");
 
 // Add JWT authentication

@@ -10,18 +10,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Repositories.ExamTimeRepository
+namespace ESMS_Data.Repositories.ExamRepository
 {
     public class ExamRepository : RepositoryBase<ExamTime>, IExamRepository
     {
         private ESMSContext _context;
         private DbSet<ExamTime> _examTimes;
         private DbSet<ExamSchedule> _examSchedules;
+        private DbSet<Subject> _subjects;
+
         public ExamRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _examTimes = _context.Set<ExamTime>();
             _examSchedules = _context.Set<ExamSchedule>();
+            _subjects = _context.Set<Subject>();
         }
 
         public new IQueryable<ExamTime> GetAll()
@@ -118,16 +121,24 @@ namespace ESMS_Data.Repositories.ExamTimeRepository
             return group;
         }
 
-        public List<string> GetSemester()
+        public async Task<List<string>> GetSemester()
         {
-            var qr = _examTimes.Select(et => et.Semester)
+            var qr = (await _examTimes.Select(et => et.Semester)
                                .Distinct()
-                               .ToList()
+                               .ToListAsync())
                                .OrderBy(s => s.Substring(s.Length - 2))
                                .ThenBy(s => s.Contains("FALL") ? 0 : s.Contains("SUMMER") ? 1 : 2);
             
 
             return qr.ToList();
+        }
+
+        public async Task<List<string>> GetSubject()
+        {
+            var qr = _subjects.Select(s => s.Id)
+                              .OrderBy(s => s);                               
+
+            return await qr.ToListAsync();
         }
     }
 }

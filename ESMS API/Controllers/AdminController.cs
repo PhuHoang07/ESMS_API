@@ -46,7 +46,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut]
+        [HttpPost]
         [Route("users/update")]
         public async Task<IActionResult> Update([FromBody] UserSettingsReqModel req)
         {            

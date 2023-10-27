@@ -72,5 +72,14 @@ namespace ESMS_API.Controllers
             var res = await _examService.UpdateTime(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("delete-time")]
+        public async Task<IActionResult> DeleteTime([FromBody] ExamTimeDelModel req)
+        {
+            var res = await _examService.DeleteTime(req.Idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
     }
 }

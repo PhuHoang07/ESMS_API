@@ -233,7 +233,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var currentExamTime = await _examRepository.GetExamTime(idt);
+                var currentExamTime = await _examRepository.GetExamTime(idt);                
                 await _examRepository.Delete(currentExamTime);
 
                 resultModel.IsSuccess = true;

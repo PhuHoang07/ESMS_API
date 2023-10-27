@@ -99,25 +99,29 @@ namespace ESMS_Data.Repositories.ExamRepository
                         .OrderBy(gr => gr.Key.Substring(gr.Key.Length - 2))
                         .ThenBy(gr => gr.Key.Contains("FALL") ? 0 : gr.Key.Contains("SUMMER") ? 1 : 2)
                         .ToDictionary(group => group.Key,
-                                    group => group.Select(i => new
-                                    {
-                                        i.Idt,
-                                        Date = i.Date.ToString("dd/MM/yyyy"),
-                                        Start = i.Start.ToString(@"hh\:mm"),
-                                        End = i.End.ToString(@"hh\:mm"),
-                                        PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
-                                        Slot = i.SlotId,
-                                        ExamSchedules = i.ExamSchedules
-                                                                .OrderBy(et => et.RoomNumber)                                                                
-                                                                .Select(es => new
-                                                                {
-                                                                    Subject = es.SubjectId,
-                                                                    Room = es.RoomNumber,
-                                                                    es.Form,
-                                                                    es.Type
-                                                                })
-                                    })
-                                    .ToList<object>()
+                                    group => group
+                                        .OrderBy(i => i.Date)
+                                        .ThenBy(i => i.Start)
+                                        .ThenBy(i => i.End)
+                                        .Select(i => new
+                                        {
+                                            i.Idt,
+                                            Date = i.Date.ToString("dd/MM/yyyy"),
+                                            Start = i.Start.ToString(@"hh\:mm"),
+                                            End = i.End.ToString(@"hh\:mm"),
+                                            PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
+                                            Slot = i.SlotId,
+                                            ExamSchedules = i.ExamSchedules
+                                                                    .OrderBy(et => et.RoomNumber)                                                                
+                                                                    .Select(es => new
+                                                                    {
+                                                                        Subject = es.SubjectId,
+                                                                        Room = es.RoomNumber,
+                                                                        es.Form,
+                                                                        es.Type
+                                                                    })
+                                        })
+                                        .ToList<object>()
                         );
 
             return group;

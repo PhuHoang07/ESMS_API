@@ -51,11 +51,9 @@ namespace Business.Services.ExamService
 
                 var examList = await _examRepository.GroupBySemester(qr);
 
-                var currentSemester = utils.GetCurrentSemester();
-                // Inline equal care about sensitive case
-                if (!examList.ContainsKey(currentSemester) && (req.Semester ?? "").ToUpper().Equals(currentSemester))
+                if (!String.IsNullOrEmpty(req.Semester) && !examList.ContainsKey(req.Semester.ToUpper()))
                 {
-                    examList.Add(currentSemester, new List<object>());
+                    examList.Add(req.Semester.ToUpper(), new List<object>());
                 }
 
                 resultModel.IsSuccess = true;

@@ -1,24 +1,20 @@
-﻿using Business.Services.ExamService;
-using Business.Utils;
-using ESMS_Data.Entities.RequestModel;
+﻿using ESMS_Data.Entities.RequestModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ESMS_Data.Repositories.ExamScheduleRepository;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Services.ExamService
 {
     public class ExamService : IExamService
     {
         private readonly IExamRepository _examRepository;
+        private readonly IExamScheduleRepository _examScheduleRepository;
         private readonly Utils.Utils utils;
-        public ExamService(IExamRepository examRepository)
+        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository)
         {
             _examRepository = examRepository;
+            _examScheduleRepository = examScheduleRepository;
             utils = new Utils.Utils();
         }
 
@@ -113,7 +109,7 @@ namespace Business.Services.ExamService
             }
 
             return resultModel;
-        }       
+        }
 
         private void ValidateTime(TimeSpan start, TimeSpan end)
         {
@@ -233,7 +229,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var currentExamTime = await _examRepository.GetExamTime(idt);                
+                var currentExamTime = await _examRepository.GetExamTime(idt);
                 await _examRepository.Delete(currentExamTime);
 
                 resultModel.IsSuccess = true;
@@ -248,6 +244,52 @@ namespace Business.Services.ExamService
             }
 
             return resultModel;
+        }
+
+        public async Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var room = _examScheduleRepository.GetAvailableRoom(_examScheduleRepository.GetRoom(), req.Idt).First();
+
+                if(String.IsNullOrEmpty(req.RoomNumber))
+                {
+                    req.RoomNumber = room.Number;
+                }
+
+                var subjectIds = _examScheduleRepository.GetSubjectId();
+
+                if (!subjectIds.Contains(req.SubjectID))
+                {
+                    throw new Exception("Wrong subject id");
+                }
+
+
+                var examSchedule = new ExamSchedule
+                {
+                    Idt = req.Idt,
+                    SubjectId = req.SubjectID,
+                    RoomNumber = req.RoomNumber,
+                    Form = req.Form,
+                    Type = req.Type,
+                };
+
+                await _examScheduleRepository.Add(examSchedule);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ESMS_Data.Models
 
         public virtual ExamTime IdtNavigation { get; set; }
         public virtual Registration Registration { get; set; }
-        public virtual Room RoomNumberNavigation { get; set; }
+        //public virtual Room RoomNumberNavigation { get; set; }
         public virtual Subject Subject { get; set; }
         public virtual ICollection<Participation> Participations { get; set; }
     }

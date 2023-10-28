@@ -247,17 +247,41 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> GetAvailableRoom(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var room = await _examRepository.GetAvailableRoom(idt);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = room;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req)
         {
             ResultModel resultModel = new ResultModel();
 
             try
             {
-                var room = await _examRepository.GetAvailableRoom(req.Idt).FirstOrDefaultAsync();
+                var roomList = await _examRepository.GetAvailableRoom(req.Idt);
 
                 if(String.IsNullOrEmpty(req.RoomNumber))
                 {
-                    req.RoomNumber = room.Number;
+                    req.RoomNumber = roomList.FirstOrDefault();
+                } else if (!roomList.Contains(req.RoomNumber))
+                {
+                    throw new Exception("The enter room is not avalable");
+
                 }
 
                 var subjects = await _examRepository.GetSubject();
@@ -266,7 +290,6 @@ namespace Business.Services.ExamService
                 {
                     throw new Exception("Wrong subject id");
                 }
-
 
                 var examSchedule = new ExamSchedule
                 {

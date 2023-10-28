@@ -56,6 +56,15 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpGet]
+        [Route("get-available-room")]
+        public async Task<IActionResult> GetAvailableRoom(int idt)
+        {
+            var res = await _examService.GetAvailableRoom(idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("add-time")]
         public async Task<IActionResult> AddTime([FromBody] ExamTimeAddReqModel req)
@@ -90,5 +99,7 @@ namespace ESMS_API.Controllers
             var res = await _examService.AddExamSchedule(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        
     }
 }

@@ -161,7 +161,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             return await _examTimes.FindAsync(idt);
         }
 
-        public IQueryable<Room> GetAvailableRoom(int idt)
+        public async Task<List<String>> GetAvailableRoom(int idt)
         {
             var qr = _rooms;
 
@@ -195,7 +195,8 @@ namespace ESMS_Data.Repositories.ExamRepository
             var exceptRoomsByDay = qr.Where(room => roomExceptByDay.Contains(room.Number));
 
             //Get available room
-            return _rooms.Except(exceptRoomsByDay.Concat(exceptRoomsByIdt));
+            var availableRoom = _rooms.Except(exceptRoomsByDay.Concat(exceptRoomsByIdt));
+            return await availableRoom.Select(r => r.Number).ToListAsync();
         }
     }
 }

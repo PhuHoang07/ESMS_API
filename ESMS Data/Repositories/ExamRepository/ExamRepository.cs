@@ -19,6 +19,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         private DbSet<ExamSchedule> _examSchedules;
         private DbSet<Subject> _subjects;
         private DbSet<Slot> _slots;
+        private DbSet<Room> _rooms;
 
         public ExamRepository(ESMSContext context) : base(context)
         {
@@ -27,6 +28,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             _examSchedules = _context.Set<ExamSchedule>();
             _subjects = _context.Set<Subject>();
             _slots = _context.Set<Slot>();
+            _rooms = _context.Set<Room>();
         }
 
         public new IQueryable<ExamTime> GetAll()
@@ -157,6 +159,43 @@ namespace ESMS_Data.Repositories.ExamRepository
         public async Task<ExamTime> GetExamTime(int idt)
         {
             return await _examTimes.FindAsync(idt);
+        }
+
+        public IQueryable<Room> GetAvailableRoom(int idt)
+        {
+            var qr = _rooms;
+
+            //Find exception room in one idt
+            var filteredExamTimesByIdt = _examTimes
+                                    .Include(et => et.ExamSchedules)
+                                    .Where(et => et.Idt == idt);
+
+            var roomExceptByIdt = filteredExamTimesByIdt
+                        .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
+
+            var exceptRoomsByIdt = qr.Where(room => roomExceptByIdt.Contains(room.Number));
+
+            //Find exception room in one day
+            var date = _examTimes.Where(et => et.Idt == idt)
+                                .Select(et => et.Date).FirstOrDefault();
+
+            var start = _examTimes.Where(et => et.Date == date)
+                                .Select(et => et.Start).FirstOrDefault();
+
+            var filteredExamTimesByDate = _examTimes
+                                    .Include(et => et.ExamSchedules)
+                                    .Where(et => et.Date == date
+                                        && et.Idt != idt
+                                        && et.Start <= start
+                                        && et.End > start);
+
+            var roomExceptByDay = filteredExamTimesByDate
+                .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
+
+            var exceptRoomsByDay = qr.Where(room => roomExceptByDay.Contains(room.Number));
+
+            //Get available room
+            return _rooms.Except(exceptRoomsByDay.Concat(exceptRoomsByIdt));
         }
     }
 }

@@ -2,6 +2,7 @@
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.ExamScheduleRepository;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace Business.Services.ExamService
@@ -252,16 +253,16 @@ namespace Business.Services.ExamService
 
             try
             {
-                var room = _examScheduleRepository.GetAvailableRoom(_examScheduleRepository.GetRoom(), req.Idt).First();
+                var room = await _examRepository.GetAvailableRoom(req.Idt).FirstOrDefaultAsync();
 
                 if(String.IsNullOrEmpty(req.RoomNumber))
                 {
                     req.RoomNumber = room.Number;
                 }
 
-                var subjectIds = _examScheduleRepository.GetSubjectId();
+                var subjects = await _examRepository.GetSubject();
 
-                if (!subjectIds.Contains(req.SubjectID))
+                if (!subjects.Contains(req.SubjectID))
                 {
                     throw new Exception("Wrong subject id");
                 }

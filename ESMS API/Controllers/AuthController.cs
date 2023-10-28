@@ -1,6 +1,7 @@
 ﻿using Business.Services.AuthService;
 using ESMS_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ESMS_API.Controllers
 {
@@ -13,6 +14,20 @@ namespace ESMS_API.Controllers
         public AuthController(IAuthService authService, IConfiguration configuration)
         {
             _authService = authService;
+        }
+
+        [HttpGet]
+        [Route("validate")]
+        public IActionResult ValidateToken()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return Ok("Valid");
+            }
+            else
+            {
+                return Ok("Invalid");
+            }
         }
 
         [HttpPost]

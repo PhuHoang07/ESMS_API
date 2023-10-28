@@ -19,5 +19,6 @@ namespace ESMS_Data.Repositories.ExamRepository
         public Task<List<string>> GetSubject();
         public Task<int?> GetSlot(TimeSpan start);
         public Task<ExamTime> GetExamTime(int idt);
+        public IQueryable<Room> GetAvailableRoom(int idt);
     }
 }

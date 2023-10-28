@@ -16,5 +16,6 @@ namespace Business.Services.ExamService
         public Task<ResultModel> AddTime(ExamTimeAddReqModel req);
         public Task<ResultModel> UpdateTime(ExamTimeUpdReqModel req);
         public Task<ResultModel> DeleteTime(int idt);
+        public Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req);
     }
 }

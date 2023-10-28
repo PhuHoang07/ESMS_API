@@ -85,7 +85,10 @@ namespace Business.Services.AuthService
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
-                resultModel.Data = new JwtSecurityTokenHandler().WriteToken(token);
+                resultModel.Data = new { 
+                                           Token = new JwtSecurityTokenHandler().WriteToken(token),
+                                           Role = user.Role 
+                                       };
             }
             catch (Exception ex)
             {

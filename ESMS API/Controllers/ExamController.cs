@@ -81,5 +81,14 @@ namespace ESMS_API.Controllers
             var res = await _examService.DeleteTime(req.Idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("add-exam-schedule")]
+        public async Task<IActionResult> AddExamSchedule([FromBody] ExamScheduleAddReqModel req)
+        {
+            var res = await _examService.AddExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
     }
 }

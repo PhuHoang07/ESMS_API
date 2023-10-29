@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities.RequestModel
+namespace ESMS_Data.Entities.RequestModel.ExamScheduleReqModel
 {
     public class ExamScheduleUpdateReqModel
     {
@@ -20,7 +20,7 @@ namespace ESMS_Data.Entities.RequestModel
 
         public int? UpdIdt { get; set; }
 
-        public string? UpdSubjectID {  get; set; }
+        public string? UpdSubjectID { get; set; }
 
         public string? UpdRoomNumber { get; set; }
 
@@ -28,6 +28,6 @@ namespace ESMS_Data.Entities.RequestModel
 
         public string? UpdType { get; set; }
 
-        public string? UpdProctor {  get; set; }
+        public string? UpdProctor { get; set; }
     }
 }

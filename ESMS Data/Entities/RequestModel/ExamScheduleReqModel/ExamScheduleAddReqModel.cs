@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities.RequestModel
+namespace ESMS_Data.Entities.RequestModel.ExamScheduleReqModel
 {
     public class ExamScheduleAddReqModel
     {
@@ -14,9 +14,9 @@ namespace ESMS_Data.Entities.RequestModel
 
         public string? RoomNumber { get; set; }
 
-        public string Form {  get; set; }
+        public string Form { get; set; }
 
-        public string Type { get; set;}
+        public string Type { get; set; }
 
     }
 }

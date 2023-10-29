@@ -5,17 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities.RequestModel
+namespace ESMS_Data.Entities.RequestModel.ExamTimeReqModel
 {
-    public class ExamScheduleDeleteReqModel
+    public class ExamTimeDeleteModel
     {
         [Required]
         public int Idt { get; set; }
-
-        [Required]
-        public string SubjectID { get; set; }
-
-        [Required]
-        public string RoomNumber { get; set; }
     }
 }

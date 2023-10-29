@@ -1,7 +1,10 @@
 ﻿using ESMS_Data.Entities.RequestModel;
+using ESMS_Data.Entities.RequestModel.ExamScheduleReqModel;
+using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.ExamScheduleRepository;
+using ESMS_Data.Repositories.ParticipationRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -11,11 +14,13 @@ namespace Business.Services.ExamService
     {
         private readonly IExamRepository _examRepository;
         private readonly IExamScheduleRepository _examScheduleRepository;
+        private readonly IParticipationRepository _participationRepository;
         private readonly Utils.Utils utils;
-        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository)
+        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IParticipationRepository participationRepository)
         {
             _examRepository = examRepository;
             _examScheduleRepository = examScheduleRepository;
+            _participationRepository = participationRepository;
             utils = new Utils.Utils();
         }
 
@@ -68,7 +73,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> GetSemester()
+        public async Task<ResultModel> GetSemesters()
         {
             ResultModel resultModel = new ResultModel();
 
@@ -90,7 +95,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> GetSubject()
+        public async Task<ResultModel> GetSubjects()
         {
             ResultModel resultModel = new ResultModel();
 
@@ -247,7 +252,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> GetAvailableRoom(int idt)
+        public async Task<ResultModel> GetAvailableRooms(int idt)
         {
             ResultModel resultModel = new ResultModel();
             try
@@ -397,6 +402,60 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Delete successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetStudents(int idt, string subject, string room)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var studentList = await _participationRepository.GetStudents(idt, subject, room);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = studentList;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> AddStudent(ParticipationAddReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var participations = new List<Participation>();
+                foreach (var u in req.Students)
+                {
+                    participations.Add(new Participation
+                    {
+                        UserName = u,
+                        SubjectId = req.Subject,
+                        RoomNumber = req.Room,
+                        Idt = req.Idt
+                    });
+                }
+
+                await _participationRepository.AddRange(participations);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
             }
             catch (Exception ex)
             {

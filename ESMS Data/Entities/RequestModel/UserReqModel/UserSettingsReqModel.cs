@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities.RequestModel
+namespace ESMS_Data.Entities.RequestModel.UserReqModel
 {
     public class UserSettingsReqModel
     {

@@ -247,17 +247,42 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> GetAvailableRoom(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var room = await _examRepository.GetAvailableRoom(idt);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = room;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req)
         {
             ResultModel resultModel = new ResultModel();
 
             try
             {
-                var room = await _examRepository.GetAvailableRoom(req.Idt).FirstOrDefaultAsync();
+                var roomList = await _examRepository.GetAvailableRoom(req.Idt);
 
-                if(String.IsNullOrEmpty(req.RoomNumber))
+                if (String.IsNullOrEmpty(req.RoomNumber))
                 {
-                    req.RoomNumber = room.Number;
+                    req.RoomNumber = roomList.FirstOrDefault();
+                }
+                else if (!roomList.Contains(req.RoomNumber))
+                {
+                    throw new Exception("The enter room is not avalable");
+
                 }
 
                 var subjects = await _examRepository.GetSubject();
@@ -266,7 +291,6 @@ namespace Business.Services.ExamService
                 {
                     throw new Exception("Wrong subject id");
                 }
-
 
                 var examSchedule = new ExamSchedule
                 {
@@ -290,7 +314,69 @@ namespace Business.Services.ExamService
                 resultModel.Message = ex.Message;
             }
             return resultModel;
+        }
 
+        public async Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+
+                var currentExamSchedule = await _examRepository.GetUpdateExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+
+                if (currentExamSchedule == null)
+                {
+                    throw new Exception("There is no exam schedule with given information");
+                }
+
+                await _examScheduleRepository.Delete(currentExamSchedule);
+
+                var updIdt = req.UpdIdt.HasValue ? req.UpdIdt.Value : currentExamSchedule.Idt;
+                var updSubjectId = String.IsNullOrEmpty(req.UpdSubjectID) ? currentExamSchedule.SubjectId : req.UpdSubjectID;
+                var updRoomNumber = String.IsNullOrEmpty(req.UpdRoomNumber) ? currentExamSchedule.RoomNumber : req.UpdRoomNumber;
+                var updForm = String.IsNullOrEmpty(req.UpdForm) ? currentExamSchedule.Form : req.UpdForm;
+                var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
+                var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
+                
+                var roomList = await _examRepository.GetAvailableRoom(updIdt);
+
+                if (!roomList.Contains(updRoomNumber))
+                {
+                    throw new Exception("The enter room is not avalable");
+                }
+
+                var subjects = await _examRepository.GetSubject();
+                if (!subjects.Contains(req.SubjectID))
+                {
+                    throw new Exception("Wrong subject id");
+                }
+
+                var updExamSchedule = new ExamSchedule
+                {
+                    Idt = updIdt,
+                    SubjectId = updSubjectId,
+                    RoomNumber = updRoomNumber,
+                    Form = updForm,
+                    Type = updType,
+                    Proctor = updProctor,
+                };
+
+                await _examScheduleRepository.Add(updExamSchedule);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
+                resultModel.Data = updExamSchedule;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
         }
     }
 }

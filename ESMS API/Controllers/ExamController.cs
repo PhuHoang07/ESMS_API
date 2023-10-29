@@ -76,7 +76,7 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("update-time")]
-        public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdReqModel req)
+        public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdateReqModel req)
         {
             var res = await _examService.UpdateTime(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
@@ -85,7 +85,7 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("delete-time")]
-        public async Task<IActionResult> DeleteTime([FromBody] ExamTimeDelModel req)
+        public async Task<IActionResult> DeleteTime([FromBody] ExamTimeDeleteModel req)
         {
             var res = await _examService.DeleteTime(req.Idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
@@ -99,13 +99,22 @@ namespace ESMS_API.Controllers
             var res = await _examService.AddExamSchedule(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
-        
-        //[Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("update-exam-schedule")]
-        public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdReqModel req)
+        public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdateReqModel req)
         {
             var res = await _examService.UpdateExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("delete-exam-schedule")]
+        public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
+        {
+            var res = await _examService.DeleteExamSchedule(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

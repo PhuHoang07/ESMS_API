@@ -2,6 +2,7 @@
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Repositories.ExamRepository
 {
-    public class ExamRepository : RepositoryBase<ExamTime>,  IExamRepository
+    public class ExamRepository : RepositoryBase<ExamTime>, IExamRepository
     {
         private ESMSContext _context;
         private DbSet<ExamTime> _examTimes;
@@ -114,7 +115,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                             PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
                                             Slot = i.SlotId,
                                             ExamSchedules = i.ExamSchedules
-                                                                    .OrderBy(et => et.RoomNumber)                                                                
+                                                                    .OrderBy(et => et.RoomNumber)
                                                                     .Select(es => new
                                                                     {
                                                                         Subject = es.SubjectId,
@@ -135,7 +136,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                .Distinct()
                                .ToListAsync())
                                .OrderBy(s => s.Substring(s.Length - 2))
-                               .ThenBy(s => s.Contains("FALL") ? 0 : s.Contains("SUMMER") ? 1 : 2);            
+                               .ThenBy(s => s.Contains("FALL") ? 0 : s.Contains("SUMMER") ? 1 : 2);
 
             return qr.ToList();
         }
@@ -143,7 +144,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public async Task<List<string>> GetSubject()
         {
             var qr = _subjects.Select(s => s.Id)
-                              .OrderBy(s => s);                               
+                              .OrderBy(s => s);
 
             return await qr.ToListAsync();
         }
@@ -179,7 +180,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             var date = _examTimes.Where(et => et.Idt == idt)
                                 .Select(et => et.Date).FirstOrDefault();
 
-            var start = _examTimes.Where(et => et.Date == date)
+            var start = _examTimes.Where(et => et.Idt == idt)
                                 .Select(et => et.Start).FirstOrDefault();
 
             var filteredExamTimesByDate = _examTimes
@@ -187,7 +188,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                     .Where(et => et.Date == date
                                         && et.Idt != idt
                                         && et.Start <= start
-                                        && et.End > start);
+                                        && et.End >= start);
 
             var roomExceptByDay = filteredExamTimesByDate
                 .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
@@ -197,6 +198,13 @@ namespace ESMS_Data.Repositories.ExamRepository
             //Get available room
             var availableRoom = _rooms.Except(exceptRoomsByDay.Concat(exceptRoomsByIdt));
             return await availableRoom.Select(r => r.Number).ToListAsync();
+        }
+
+        public async Task<ExamSchedule> GetUpdateExamSchedule(int idt, string subjectID, string roomNumber)
+        {
+            return await _examSchedules.Where(es => es.Idt == idt
+                                                && es.SubjectId.Equals(subjectID)
+                                                && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
         }
     }
 }

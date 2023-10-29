@@ -7,7 +7,9 @@ namespace ESMS_Data.Repositories.ExamScheduleRepository
     public class ExamScheduleRepository : RepositoryBase<ExamSchedule>, IExamScheduleRepository
     {
         public ExamScheduleRepository(ESMSContext context) : base(context)
-        {            
+        {
         }
+
+
     }
 }

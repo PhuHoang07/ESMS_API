@@ -18,5 +18,6 @@ namespace Business.Services.ExamService
         public Task<ResultModel> DeleteTime(int idt);
         public Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req);
         public Task<ResultModel> GetAvailableRoom(int idt);
+        public Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdReqModel req);
     }
 }

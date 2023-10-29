@@ -99,6 +99,15 @@ namespace ESMS_API.Controllers
             var res = await _examService.AddExamSchedule(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+        
+        //[Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("update-exam-schedule")]
+        public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdReqModel req)
+        {
+            var res = await _examService.UpdateExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
 
         
     }

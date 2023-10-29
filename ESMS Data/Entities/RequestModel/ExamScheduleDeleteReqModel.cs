@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Entities.RequestModel
 {
-    public class ExamScheduleUpdReqModel
+    public class ExamScheduleDeleteReqModel
     {
         [Required]
         public int Idt { get; set; }
@@ -17,17 +17,5 @@ namespace ESMS_Data.Entities.RequestModel
 
         [Required]
         public string RoomNumber { get; set; }
-
-        public int? UpdIdt { get; set; }
-
-        public string? UpdSubjectID {  get; set; }
-
-        public string? UpdRoomNumber { get; set; }
-
-        public string? UpdForm { get; set; }
-
-        public string? UpdType { get; set; }
-
-        public string? UpdProctor {  get; set; }
     }
 }

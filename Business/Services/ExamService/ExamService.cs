@@ -177,7 +177,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> UpdateTime(ExamTimeUpdReqModel req)
+        public async Task<ResultModel> UpdateTime(ExamTimeUpdateReqModel req)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -316,7 +316,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdReqModel req)
+        public async Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdateReqModel req)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -338,7 +338,7 @@ namespace Business.Services.ExamService
                 var updForm = String.IsNullOrEmpty(req.UpdForm) ? currentExamSchedule.Form : req.UpdForm;
                 var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
                 var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
-                
+
                 var roomList = await _examRepository.GetAvailableRoom(updIdt);
 
                 if (!roomList.Contains(updRoomNumber))
@@ -366,7 +366,7 @@ namespace Business.Services.ExamService
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
-                resultModel.Message = "Add successfully";
+                resultModel.Message = "Update successfully";
                 resultModel.Data = updExamSchedule;
             }
             catch (Exception ex)
@@ -376,6 +376,34 @@ namespace Business.Services.ExamService
                 resultModel.Message = ex.Message;
             }
 
+            return resultModel;
+        }
+
+        public async Task<ResultModel> DeleteExamSchedule(ExamScheduleDeleteReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var delExamSchedule = await _examRepository.GetUpdateExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+
+                if (delExamSchedule == null)
+                {
+                    throw new Exception("There is no exam schedule with given information");
+                }
+
+                await _examScheduleRepository.Delete(delExamSchedule);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Delete successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
             return resultModel;
         }
     }

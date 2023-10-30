@@ -21,7 +21,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         private DbSet<Subject> _subjects;
         private DbSet<Slot> _slots;
         private DbSet<Room> _rooms;
-
+        private DbSet<User> _users;
         public ExamRepository(ESMSContext context) : base(context)
         {
             _context = context;
@@ -30,6 +30,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             _subjects = _context.Set<Subject>();
             _slots = _context.Set<Slot>();
             _rooms = _context.Set<Room>();
+            _users = _context.Set<User>();
         }
 
         public new IQueryable<ExamTime> GetAll()
@@ -162,7 +163,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             return await _examTimes.FindAsync(idt);
         }
 
-        public async Task<List<String>> GetAvailableRoom(int idt)
+        public async Task<List<string>> GetAvailableRoom(int idt)
         {
             var qr = _rooms;
 
@@ -200,11 +201,17 @@ namespace ESMS_Data.Repositories.ExamRepository
             return await availableRoom.Select(r => r.Number).ToListAsync();
         }
 
-        public async Task<ExamSchedule> GetUpdateExamSchedule(int idt, string subjectID, string roomNumber)
+        public async Task<ExamSchedule> GetExamSchedule(int idt, string subjectID, string roomNumber)
         {
             return await _examSchedules.Where(es => es.Idt == idt
                                                 && es.SubjectId.Equals(subjectID)
                                                 && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
         }
+
+        public async Task<List<int>> GetAllIdt()
+        {
+            return await _examTimes.Select(et => et.Idt).ToListAsync();
+        }
+
     }
 }

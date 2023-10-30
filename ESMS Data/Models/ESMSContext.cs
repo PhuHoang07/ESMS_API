@@ -81,11 +81,11 @@ namespace ESMS_Data.Models
                     .HasForeignKey(d => d.Idt)
                     .HasConstraintName("FK_ExamSchedule_ExamTime");
 
-                //entity.HasOne(d => d.RoomNumberNavigation)
-                //    .WithMany(p => p.ExamSchedules)
-                //    .HasForeignKey(d => d.RoomNumber)
-                //    .OnDelete(DeleteBehavior.ClientSetNull)
-                //    .HasConstraintName("FK_ExamSchedule_Room");
+                entity.HasOne(d => d.RoomNumberNavigation)
+                    .WithMany(p => p.ExamSchedules)
+                    .HasForeignKey(d => d.RoomNumber)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ExamSchedule_Room");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.ExamSchedules)

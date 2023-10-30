@@ -22,6 +22,7 @@ namespace Business.Services.ExamService
         public Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req);
         public Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdateReqModel req);
         public Task<ResultModel> DeleteExamSchedule(ExamScheduleDeleteReqModel req);
+        public Task<ResultModel> AddProctorToExamTime(RegistrationAddReqModel req);
         public Task<ResultModel> GetStudents(int idt, string subject, string room);
         public Task<ResultModel> AddStudent(ParticipationAddReqModel req);
     }

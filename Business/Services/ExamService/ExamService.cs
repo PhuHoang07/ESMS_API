@@ -169,7 +169,8 @@ namespace Business.Services.ExamService
                     End = req.End,
                     PublishDate = req.PublishDate,
                     SlotId = slot.Value,
-                    Semester = currentSemester
+                    Semester = currentSemester,
+                    IsPublic = false
                 };
 
                 await _examRepository.Add(examTime);

@@ -70,7 +70,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("add-time")]
+        [Route("time/add")]
         public async Task<IActionResult> AddTime([FromBody] ExamTimeAddReqModel req)
         {
             var res = await _examService.AddTime(req);
@@ -79,7 +79,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("update-time")]
+        [Route("time/update")]
         public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdateReqModel req)
         {
             var res = await _examService.UpdateTime(req);
@@ -88,7 +88,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("delete-time")]
+        [Route("time/delete")]
         public async Task<IActionResult> DeleteTime([FromBody] ExamTimeDeleteModel req)
         {
             var res = await _examService.DeleteTime(req.Idt);
@@ -97,7 +97,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("add-exam-schedule")]
+        [Route("schedule/add")]
         public async Task<IActionResult> AddExamSchedule([FromBody] ExamScheduleAddReqModel req)
         {
             var res = await _examService.AddExamSchedule(req);
@@ -106,7 +106,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("update-exam-schedule")]
+        [Route("schedule/update")]
         public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdateReqModel req)
         {
             var res = await _examService.UpdateExamSchedule(req);
@@ -115,7 +115,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("delete-exam-schedule")]
+        [Route("schedule/delete")]
         public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
         {
             var res = await _examService.DeleteExamSchedule(req);
@@ -124,7 +124,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("add-proctor-to-exam-time")]
+        [Route("time/proctors/add")]
         public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddRemoveReqModel req)
         {
             var res = await _examService.AddProctorToExamTime(req);
@@ -133,7 +133,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("remove-proctor-from-exam-time")]
+        [Route("time/proctors/remove")]
         public async Task<IActionResult> RemoveProctorFromExamTime([FromBody] RegistrationAddRemoveReqModel req)
         {
             var res = await _examService.RemoveProctorFromExamTime(req);
@@ -142,7 +142,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
-        [Route("students")]
+        [Route("schedule/students")]
         public async Task<IActionResult> GetStudents([FromQuery] int idt, [FromQuery] string subject, [FromQuery] string room)
         {
             var res = await _examService.GetStudents(idt, subject, room);
@@ -151,7 +151,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("add-student")]
+        [Route("schedule/students/add")]
         public async Task<IActionResult> AddStudents([FromBody] ParticipationAddRemoveReqModel req)
         {
             var res = await _examService.AddStudents(req);
@@ -160,7 +160,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
-        [Route("remove-student")]
+        [Route("schedule/students/remove")]
         public async Task<IActionResult> RemoveStudents([FromBody] ParticipationAddRemoveReqModel req)
         {
             var res = await _examService.RemoveStudents(req);

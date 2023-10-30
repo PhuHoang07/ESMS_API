@@ -419,10 +419,17 @@ namespace Business.Services.ExamService
             try
             {
                 var studentList = await _participationRepository.GetStudents(idt, subject, room);
+                var total = await _participationRepository.GetTotalStudentInRoom(idt, room);
+                var capacity = await _participationRepository.GetRoomCapacity(room);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
-                resultModel.Data = studentList;
+                resultModel.Data = new
+                {
+                    total,
+                    capacity = capacity.Value,
+                    studentList
+                };
             }
             catch (Exception ex)
             {

@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities.RequestModel
+namespace ESMS_Data.Entities.RequestModel.RegistrationReqModel
 {
-    public class RegistrationAddReqModel
+    public class RegistrationAddRemoveReqModel
     {
         [Required]
-        public int Idt {  get; set; }
+        public int Idt { get; set; }
 
         public List<string> ProctorList { get; set; }
 

@@ -1,6 +1,8 @@
 ﻿using ESMS_Data.Entities.RequestModel;
 using ESMS_Data.Entities.RequestModel.ExamScheduleReqModel;
 using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
+using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
+using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,8 @@ namespace Business.Services.ExamService
         public Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req);
         public Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdateReqModel req);
         public Task<ResultModel> DeleteExamSchedule(ExamScheduleDeleteReqModel req);
-        public Task<ResultModel> AddProctorToExamTime(RegistrationAddReqModel req);
+        public Task<ResultModel> AddProctorToExamTime(RegistrationAddRemoveReqModel req);
+        public Task<ResultModel> RemoveProctorFromExamTime(RegistrationAddRemoveReqModel req);
         public Task<ResultModel> GetStudents(int idt, string subject, string room);
         public Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req);
         public Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req);

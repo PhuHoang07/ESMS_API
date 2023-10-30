@@ -418,7 +418,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var studentList = await _participationRepository.GetStudents(idt, subject, room);
+                var studentList = await _participationRepository.GetStudentListInExam(idt, subject, room);
                 var total = await _participationRepository.GetTotalStudentInRoom(idt, room);
                 var capacity = await _participationRepository.GetRoomCapacity(room);
 
@@ -440,7 +440,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> AddStudent(ParticipationAddReqModel req)
+        public async Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -463,6 +463,29 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Add successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var participations = await _participationRepository.GetParticipationsOnList(req.Idt, req.Subject, req.Room, req.Students);
+
+                await _participationRepository.DeleteRange(participations);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Remove successfully";
             }
             catch (Exception ex)
             {

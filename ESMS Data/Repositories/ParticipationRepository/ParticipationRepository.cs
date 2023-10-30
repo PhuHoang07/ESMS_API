@@ -25,7 +25,7 @@ namespace ESMS_Data.Repositories.ParticipationRepository
             _rooms = _context.Set<Room>();
         }
 
-        public async Task<object> GetStudents(int idt, string subject, string room)
+        public async Task<object> GetStudentListInExam(int idt, string subject, string room)
         {
             var studentUserNames = await _participations.Where(p => p.Idt == idt
                                                      && p.SubjectId.Equals(subject)
@@ -56,6 +56,16 @@ namespace ESMS_Data.Repositories.ParticipationRepository
             var qr = _participations.Where(p => p.Idt == idt && p.RoomNumber.Equals(room));
 
             return await qr.CountAsync();
+        }
+
+        public async Task<List<Participation>> GetParticipationsOnList(int idt, string subject, string room, List<string> students)
+        {
+            return await _participations
+                                        .Where(p => p.Idt == idt
+                                                && p.SubjectId.Equals(subject)
+                                                && p.RoomNumber.Equals(room)
+                                                && students.Contains(p.UserName))
+                                        .ToListAsync();
         }
     }
 }

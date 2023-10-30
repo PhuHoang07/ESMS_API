@@ -132,9 +132,18 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("add-student")]
-        public async Task<IActionResult> AddStudent([FromBody] ParticipationAddReqModel req)
+        public async Task<IActionResult> AddStudents([FromBody] ParticipationAddRemoveReqModel req)
         {
-            var res = await _examService.AddStudent(req);
+            var res = await _examService.AddStudents(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("remove-student")]
+        public async Task<IActionResult> RemoveStudents([FromBody] ParticipationAddRemoveReqModel req)
+        {
+            var res = await _examService.RemoveStudents(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
     }

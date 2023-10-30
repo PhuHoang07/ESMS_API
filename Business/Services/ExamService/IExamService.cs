@@ -23,6 +23,7 @@ namespace Business.Services.ExamService
         public Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdateReqModel req);
         public Task<ResultModel> DeleteExamSchedule(ExamScheduleDeleteReqModel req);
         public Task<ResultModel> GetStudents(int idt, string subject, string room);
-        public Task<ResultModel> AddStudent(ParticipationAddReqModel req);
+        public Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req);
+        public Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ESMS_Data.Entities.RequestModel
 {
-    public class ParticipationAddReqModel
+    public class ParticipationAddRemoveReqModel
     {
         public int Idt {  get; set; }
         public string Subject { get; set; }

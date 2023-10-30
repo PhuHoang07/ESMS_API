@@ -11,8 +11,9 @@ namespace ESMS_Data.Repositories.ParticipationRepository
 {
     public interface IParticipationRepository : IRepositoryBase<Participation>
     {
-        public Task<object> GetStudents(int idt, string subject, string room);
+        public Task<object> GetStudentListInExam(int idt, string subject, string room);
         public Task<int?> GetRoomCapacity(string room);
         public Task<int> GetTotalStudentInRoom(int idt, string room);
+        public Task<List<Participation>> GetParticipationsOnList(int idt, string subject, string room, List<string> students);
     }
 }

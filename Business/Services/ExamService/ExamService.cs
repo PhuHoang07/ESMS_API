@@ -4,9 +4,11 @@ using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.ExamScheduleRepository;
+using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.ParticipationRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace Business.Services.ExamService
 {
@@ -14,14 +16,16 @@ namespace Business.Services.ExamService
     {
         private readonly IExamRepository _examRepository;
         private readonly IExamScheduleRepository _examScheduleRepository;
+        private readonly IRegistrationRepository _registrationRepository;
         private readonly IParticipationRepository _participationRepository;
         private readonly Utils.Utils utils;
-        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IParticipationRepository participationRepository)
+        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IRegistrationRepository registrationRepository, IParticipationRepository participationRepository)
         {
             _examRepository = examRepository;
             _examScheduleRepository = examScheduleRepository;
-            _participationRepository = participationRepository;
             utils = new Utils.Utils();
+            _registrationRepository = registrationRepository;
+            _participationRepository = participationRepository;
         }
 
         public async Task<ResultModel> GetCurrent()
@@ -252,12 +256,12 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> GetAvailableRooms(int idt)
+        public async Task<ResultModel> GetAvailableRooms(int idt, string subjectId)
         {
             ResultModel resultModel = new ResultModel();
             try
             {
-                var room = await _examRepository.GetAvailableRoom(idt);
+                var room = await _examRepository.GetAvailableRoom(idt, subjectId);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
@@ -278,7 +282,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var roomList = await _examRepository.GetAvailableRoom(req.Idt);
+                var roomList = await _examRepository.GetAvailableRoom(req.Idt, req.SubjectID);
 
                 if (String.IsNullOrEmpty(req.RoomNumber))
                 {
@@ -328,7 +332,7 @@ namespace Business.Services.ExamService
             try
             {
 
-                var currentExamSchedule = await _examRepository.GetUpdateExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var currentExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
 
                 if (currentExamSchedule == null)
                 {
@@ -344,7 +348,7 @@ namespace Business.Services.ExamService
                 var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
                 var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
 
-                var roomList = await _examRepository.GetAvailableRoom(updIdt);
+                var roomList = await _examRepository.GetAvailableRoom(updIdt, updSubjectId);
 
                 if (!roomList.Contains(updRoomNumber))
                 {
@@ -390,7 +394,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var delExamSchedule = await _examRepository.GetUpdateExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var delExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
 
                 if (delExamSchedule == null)
                 {
@@ -412,13 +416,51 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> AddProctorToExamTime(RegistrationAddReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var idtList = await _examRepository.GetAllIdt();
+                if (!idtList.Contains(req.Idt))
+                {
+                    throw new Exception("There is no existed idt");
+                }
+
+                var registrations = new List<Registration>();
+                foreach (var proctor in req.ProctorList)
+                {
+                    registrations.Add(new Registration
+                    {
+                        UserName = proctor,
+                        Idt = req.Idt
+                    });
+                }
+
+                await _registrationRepository.AddRange(registrations);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
+                resultModel.Data = registrations;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
+
         public async Task<ResultModel> GetStudents(int idt, string subject, string room)
         {
             ResultModel resultModel = new ResultModel();
 
             try
             {
-                var studentList = await _participationRepository.GetStudents(idt, subject, room);
+                var studentList = await _participationRepository.GetStudentListInExam(idt, subject, room);
                 var total = await _participationRepository.GetTotalStudentInRoom(idt, room);
                 var capacity = await _participationRepository.GetRoomCapacity(room);
 
@@ -440,7 +482,7 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> AddStudent(ParticipationAddReqModel req)
+        public async Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req)
         {
             ResultModel resultModel = new ResultModel();
 
@@ -463,6 +505,29 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Add successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var participations = await _participationRepository.GetParticipationsOnList(req.Idt, req.Subject, req.Room, req.Students);
+
+                await _participationRepository.DeleteRange(participations);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Remove successfully";
             }
             catch (Exception ex)
             {

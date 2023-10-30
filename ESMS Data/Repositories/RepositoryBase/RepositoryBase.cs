@@ -31,10 +31,15 @@ namespace ESMS_Data.Repositories.RepositoryBase
             _dbSet.AddRange(entities);
             await _context.SaveChangesAsync();
         }
-
         public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteRange(List<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
             await _context.SaveChangesAsync();
         }
 

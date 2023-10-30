@@ -15,14 +15,16 @@ namespace Business.Services.ExamService
         public Task<ResultModel> Get(ExamFilterReqModel req);
         public Task<ResultModel> GetSemesters();
         public Task<ResultModel> GetSubjects();
-        public Task<ResultModel> GetAvailableRooms(int idt);
+        public Task<ResultModel> GetAvailableRooms(int idt, string subjectId);
         public Task<ResultModel> AddTime(ExamTimeAddReqModel req);
         public Task<ResultModel> UpdateTime(ExamTimeUpdateReqModel req);
         public Task<ResultModel> DeleteTime(int idt);
         public Task<ResultModel> AddExamSchedule(ExamScheduleAddReqModel req);
         public Task<ResultModel> UpdateExamSchedule(ExamScheduleUpdateReqModel req);
         public Task<ResultModel> DeleteExamSchedule(ExamScheduleDeleteReqModel req);
+        public Task<ResultModel> AddProctorToExamTime(RegistrationAddReqModel req);
         public Task<ResultModel> GetStudents(int idt, string subject, string room);
-        public Task<ResultModel> AddStudent(ParticipationAddReqModel req);
+        public Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req);
+        public Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req);
     }
 }

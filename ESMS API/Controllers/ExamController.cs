@@ -60,9 +60,9 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("available-rooms")]
-        public async Task<IActionResult> GetAvailableRooms(int idt)
+        public async Task<IActionResult> GetAvailableRooms(int idt, string subjectId)
         {
-            var res = await _examService.GetAvailableRooms(idt);
+            var res = await _examService.GetAvailableRooms(idt, subjectId);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
@@ -121,6 +121,15 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("add-proctor-to-exam-time")]
+        public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddReqModel req)
+        {
+            var res = await _examService.AddProctorToExamTime(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("students")]
         public async Task<IActionResult> GetStudents([FromQuery] int idt, [FromQuery] string subject, [FromQuery] string room)
@@ -132,10 +141,20 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("add-student")]
-        public async Task<IActionResult> AddStudent([FromBody] ParticipationAddReqModel req)
+        public async Task<IActionResult> AddStudents([FromBody] ParticipationAddRemoveReqModel req)
         {
-            var res = await _examService.AddStudent(req);
+            var res = await _examService.AddStudents(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("remove-student")]
+        public async Task<IActionResult> RemoveStudents([FromBody] ParticipationAddRemoveReqModel req)
+        {
+            var res = await _examService.RemoveStudents(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
     }
 }

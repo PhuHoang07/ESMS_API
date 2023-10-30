@@ -36,6 +36,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public new IQueryable<ExamTime> GetAll()
         {
             var qr = _examTimes.Include(et => et.ExamSchedules)
+                               .ThenInclude(et => et.Registration)
                                .Select(et => new ExamTime
                                {
                                    Idt = et.Idt,
@@ -45,6 +46,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                    PublishDate = et.PublishDate,
                                    SlotId = et.SlotId,
                                    Semester = et.Semester,
+                                   Registrations = et.Registrations,
                                    ExamSchedules = et.ExamSchedules
                                });
 
@@ -70,6 +72,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                        PublishDate = et.PublishDate,
                        SlotId = et.SlotId,
                        Semester = et.Semester,
+                       Registrations = et.Registrations,
                        ExamSchedules = et.ExamSchedules
                                          .Where(es => subjects.Contains(es.SubjectId))
                                          .ToList()
@@ -115,6 +118,8 @@ namespace ESMS_Data.Repositories.ExamRepository
                                             End = i.End.ToString(@"hh\:mm"),
                                             PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
                                             Slot = i.SlotId,
+                                            TotalSupervisor = i.Registrations.Count(),
+                                            RequireSupervisor = GetRequireSupervisorAmount(i.Idt),
                                             ExamSchedules = i.ExamSchedules
                                                                     .OrderBy(et => et.RoomNumber)
                                                                     .Select(es => new
@@ -129,6 +134,17 @@ namespace ESMS_Data.Repositories.ExamRepository
                         );
 
             return group;
+        }
+
+        public int GetRequireSupervisorAmount(int idt)
+        {
+            var count = _examTimes.Include(et => et.ExamSchedules)
+                             .Where(et => et.Idt == idt)
+                             .SelectMany(et => et.ExamSchedules)
+                             .Count();
+
+            // 4 room = 1 addition proctor
+            return (int)Math.Round(5 / 4d * count, MidpointRounding.AwayFromZero);
         }
 
         public async Task<List<string>> GetSemester()

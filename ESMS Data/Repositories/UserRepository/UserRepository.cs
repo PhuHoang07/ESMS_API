@@ -72,5 +72,7 @@ namespace ESMS_Data.Repositories.UserRepository
                                .Include(u => u.Role)
                                .FirstOrDefaultAsync(u => u.UserName.Equals(userNameOrEmail) || u.Email.Equals(userNameOrEmail));
         }
+
+        
     }
 }

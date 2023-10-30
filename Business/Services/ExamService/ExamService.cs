@@ -4,9 +4,11 @@ using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.ExamScheduleRepository;
+using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.ParticipationRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace Business.Services.ExamService
 {
@@ -14,14 +16,16 @@ namespace Business.Services.ExamService
     {
         private readonly IExamRepository _examRepository;
         private readonly IExamScheduleRepository _examScheduleRepository;
+        private readonly IRegistrationRepository _registrationRepository;
         private readonly IParticipationRepository _participationRepository;
         private readonly Utils.Utils utils;
-        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IParticipationRepository participationRepository)
+        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IRegistrationRepository registrationRepository, IParticipationRepository participationRepository)
         {
             _examRepository = examRepository;
             _examScheduleRepository = examScheduleRepository;
-            _participationRepository = participationRepository;
             utils = new Utils.Utils();
+            _registrationRepository = registrationRepository;
+            _participationRepository = participationRepository;
         }
 
         public async Task<ResultModel> GetCurrent()
@@ -328,7 +332,7 @@ namespace Business.Services.ExamService
             try
             {
 
-                var currentExamSchedule = await _examRepository.GetUpdateExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var currentExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
 
                 if (currentExamSchedule == null)
                 {
@@ -390,7 +394,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var delExamSchedule = await _examRepository.GetUpdateExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var delExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
 
                 if (delExamSchedule == null)
                 {
@@ -409,6 +413,44 @@ namespace Business.Services.ExamService
                 resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
                 resultModel.Message = ex.Message;
             }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> AddProctorToExamTime(RegistrationAddReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var idtList = await _examRepository.GetAllIdt();
+                if (!idtList.Contains(req.Idt))
+                {
+                    throw new Exception("There is no existed idt");
+                }
+
+                var registrations = new List<Registration>();
+                foreach (var proctor in req.ProctorList)
+                {
+                    registrations.Add(new Registration
+                    {
+                        UserName = proctor,
+                        Idt = req.Idt
+                    });
+                }
+
+                await _registrationRepository.AddRange(registrations);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
+                resultModel.Data = registrations;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
             return resultModel;
         }
 

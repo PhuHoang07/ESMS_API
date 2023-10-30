@@ -341,14 +341,13 @@ namespace Business.Services.ExamService
 
                 await _examScheduleRepository.Delete(currentExamSchedule);
 
-                var updIdt = req.UpdIdt.HasValue ? req.UpdIdt.Value : currentExamSchedule.Idt;
                 var updSubjectId = String.IsNullOrEmpty(req.UpdSubjectID) ? currentExamSchedule.SubjectId : req.UpdSubjectID;
                 var updRoomNumber = String.IsNullOrEmpty(req.UpdRoomNumber) ? currentExamSchedule.RoomNumber : req.UpdRoomNumber;
                 var updForm = String.IsNullOrEmpty(req.UpdForm) ? currentExamSchedule.Form : req.UpdForm;
                 var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
                 var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
 
-                var roomList = await _examRepository.GetAvailableRoom(updIdt, updSubjectId);
+                var roomList = await _examRepository.GetAvailableRoom(req.Idt, updSubjectId);
 
                 if (!roomList.Contains(updRoomNumber))
                 {
@@ -363,7 +362,7 @@ namespace Business.Services.ExamService
 
                 var updExamSchedule = new ExamSchedule
                 {
-                    Idt = updIdt,
+                    Idt = req.Idt,
                     SubjectId = updSubjectId,
                     RoomNumber = updRoomNumber,
                     Form = updForm,

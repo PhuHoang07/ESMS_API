@@ -18,8 +18,6 @@ namespace ESMS_Data.Entities.RequestModel.ExamScheduleReqModel
         [Required]
         public string RoomNumber { get; set; }
 
-        public int? UpdIdt { get; set; }
-
         public string? UpdSubjectID { get; set; }
 
         public string? UpdRoomNumber { get; set; }

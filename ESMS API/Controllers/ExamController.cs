@@ -3,6 +3,8 @@ using Business.Services.ExamService;
 using ESMS_Data.Entities.RequestModel;
 using ESMS_Data.Entities.RequestModel.ExamScheduleReqModel;
 using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
+using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
+using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -123,9 +125,18 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("add-proctor-to-exam-time")]
-        public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddReqModel req)
+        public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddRemoveReqModel req)
         {
             var res = await _examService.AddProctorToExamTime(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("remove-proctor-from-exam-time")]
+        public async Task<IActionResult> RemoveProctorFromExamTime([FromBody] RegistrationAddRemoveReqModel req)
+        {
+            var res = await _examService.RemoveProctorFromExamTime(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

@@ -212,10 +212,5 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                  && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
         }
 
-        public async Task<List<int>> GetAllIdt()
-        {
-            return await _examTimes.Select(et => et.Idt).ToListAsync();
-        }
-
     }
 }

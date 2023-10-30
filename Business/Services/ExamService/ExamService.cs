@@ -9,6 +9,8 @@ using ESMS_Data.Repositories.ParticipationRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Headers;
+using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
+using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
 
 namespace Business.Services.ExamService
 {
@@ -415,17 +417,11 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> AddProctorToExamTime(RegistrationAddReqModel req)
+        public async Task<ResultModel> AddProctorToExamTime(RegistrationAddRemoveReqModel req)
         {
             ResultModel resultModel = new ResultModel();
             try
             {
-                var idtList = await _examRepository.GetAllIdt();
-                if (!idtList.Contains(req.Idt))
-                {
-                    throw new Exception("There is no existed idt");
-                }
-
                 var registrations = new List<Registration>();
                 foreach (var proctor in req.ProctorList)
                 {
@@ -441,6 +437,38 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Add successfully";
+                resultModel.Data = registrations;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
+
+        public async Task<ResultModel> RemoveProctorFromExamTime(RegistrationAddRemoveReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var registrations = new List<Registration>();
+                foreach (var proctor in req.ProctorList)
+                {
+                    registrations.Add(new Registration
+                    {
+                        UserName = proctor,
+                        Idt = req.Idt
+                    });
+                }
+
+                await _registrationRepository.DeleteRange(registrations);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Delete successfully";
                 resultModel.Data = registrations;
             }
             catch (Exception ex)

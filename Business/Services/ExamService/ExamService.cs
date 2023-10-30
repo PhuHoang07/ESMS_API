@@ -256,12 +256,12 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> GetAvailableRooms(int idt)
+        public async Task<ResultModel> GetAvailableRooms(int idt, string subjectId)
         {
             ResultModel resultModel = new ResultModel();
             try
             {
-                var room = await _examRepository.GetAvailableRoom(idt);
+                var room = await _examRepository.GetAvailableRoom(idt, subjectId);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
@@ -282,7 +282,7 @@ namespace Business.Services.ExamService
 
             try
             {
-                var roomList = await _examRepository.GetAvailableRoom(req.Idt);
+                var roomList = await _examRepository.GetAvailableRoom(req.Idt, req.SubjectID);
 
                 if (String.IsNullOrEmpty(req.RoomNumber))
                 {
@@ -348,7 +348,7 @@ namespace Business.Services.ExamService
                 var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
                 var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
 
-                var roomList = await _examRepository.GetAvailableRoom(updIdt);
+                var roomList = await _examRepository.GetAvailableRoom(updIdt, updSubjectId);
 
                 if (!roomList.Contains(updRoomNumber))
                 {

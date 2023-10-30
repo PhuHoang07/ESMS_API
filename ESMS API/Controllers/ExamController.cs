@@ -60,9 +60,9 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("available-rooms")]
-        public async Task<IActionResult> GetAvailableRooms(int idt)
+        public async Task<IActionResult> GetAvailableRooms(int idt, string subjectId)
         {
-            var res = await _examService.GetAvailableRooms(idt);
+            var res = await _examService.GetAvailableRooms(idt, subjectId);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
@@ -120,7 +120,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        //[Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("add-proctor-to-exam-time")]
         public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddReqModel req)

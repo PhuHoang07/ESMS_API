@@ -19,7 +19,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public Task<List<string>> GetSubject();
         public Task<int?> GetSlot(TimeSpan start);
         public Task<ExamTime> GetExamTime(int idt);
-        public Task<List<string>> GetAvailableRoom(int idt);
+        public Task<List<string>> GetAvailableRoom(int idt, string subjectId);
         public Task<ExamSchedule> GetExamSchedule(int idt, string subjectID, string roomNumber);
         public Task<List<int>> GetAllIdt();
 

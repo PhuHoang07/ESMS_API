@@ -163,33 +163,35 @@ namespace ESMS_Data.Repositories.ExamRepository
             return await _examTimes.FindAsync(idt);
         }
 
-        public async Task<List<string>> GetAvailableRoom(int idt)
+        public async Task<List<string>> GetAvailableRoom(int idt, string subjectId)
         {
             var qr = _rooms;
 
-            //Find exception room in one idt
+            //Find exception room with same idt and same subjectId
             var filteredExamTimesByIdt = _examTimes
                                     .Include(et => et.ExamSchedules)
                                     .Where(et => et.Idt == idt);
 
-            var roomExceptByIdt = filteredExamTimesByIdt
-                        .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
+            var roomExcept = filteredExamTimesByIdt
+                        .SelectMany(et => et.ExamSchedules
+                                            .Where(es => es.SubjectId.Equals(subjectId))
+                                            .Select(es => es.RoomNumber));
 
-            var exceptRoomsByIdt = qr.Where(room => roomExceptByIdt.Contains(room.Number));
+            var exceptRooms = qr.Where(room => roomExcept.Contains(room.Number));
 
             //Find exception room in one day
             var date = _examTimes.Where(et => et.Idt == idt)
-                                .Select(et => et.Date).FirstOrDefault();
+                                 .Select(et => et.Date).FirstOrDefault();
 
             var start = _examTimes.Where(et => et.Idt == idt)
-                                .Select(et => et.Start).FirstOrDefault();
+                                  .Select(et => et.Start).FirstOrDefault();
 
             var filteredExamTimesByDate = _examTimes
                                     .Include(et => et.ExamSchedules)
                                     .Where(et => et.Date == date
-                                        && et.Idt != idt
-                                        && et.Start <= start
-                                        && et.End >= start);
+                                              && et.Idt != idt
+                                              && et.Start <= start
+                                              && et.End >= start);
 
             var roomExceptByDay = filteredExamTimesByDate
                 .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
@@ -197,15 +199,17 @@ namespace ESMS_Data.Repositories.ExamRepository
             var exceptRoomsByDay = qr.Where(room => roomExceptByDay.Contains(room.Number));
 
             //Get available room
-            var availableRoom = _rooms.Except(exceptRoomsByDay.Concat(exceptRoomsByIdt));
-            return await availableRoom.Select(r => r.Number).ToListAsync();
+            var availableRoom = _rooms.Except(exceptRoomsByDay.Concat(exceptRooms))
+                                      .Select(r => r.Number);
+
+            return await availableRoom.ToListAsync();
         }
 
         public async Task<ExamSchedule> GetExamSchedule(int idt, string subjectID, string roomNumber)
         {
             return await _examSchedules.Where(es => es.Idt == idt
-                                                && es.SubjectId.Equals(subjectID)
-                                                && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
+                                                 && es.SubjectId.Equals(subjectID)
+                                                 && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
         }
 
         public async Task<List<int>> GetAllIdt()

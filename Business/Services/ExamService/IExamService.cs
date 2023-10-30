@@ -15,7 +15,7 @@ namespace Business.Services.ExamService
         public Task<ResultModel> Get(ExamFilterReqModel req);
         public Task<ResultModel> GetSemesters();
         public Task<ResultModel> GetSubjects();
-        public Task<ResultModel> GetAvailableRooms(int idt);
+        public Task<ResultModel> GetAvailableRooms(int idt, string subjectId);
         public Task<ResultModel> AddTime(ExamTimeAddReqModel req);
         public Task<ResultModel> UpdateTime(ExamTimeUpdateReqModel req);
         public Task<ResultModel> DeleteTime(int idt);

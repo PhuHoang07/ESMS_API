@@ -114,6 +114,11 @@ namespace ESMS_Data.Models
 
                 entity.Property(e => e.PublishDate).HasColumnType("date");
 
+                entity.Property(e => e.IsPublic)
+                    .HasColumnName("IsPublic")
+                    .HasColumnType("bit") 
+                    .HasDefaultValue(false);
+
                 entity.Property(e => e.Semester)
                     .HasMaxLength(20)
                     .IsUnicode(false);

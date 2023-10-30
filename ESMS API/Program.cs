@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using ESMS_Data.Repositories.ExamScheduleRepository;
+using ESMS_Data.Repositories.ParticipationRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IExamScheduleRepository, ExamScheduleRepository>();
+builder.Services.AddScoped<IParticipationRepository, ParticipationRepository>();
 
 
 builder.Services.AddSwaggerGen(option =>

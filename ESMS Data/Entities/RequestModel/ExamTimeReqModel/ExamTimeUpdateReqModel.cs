@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities.RequestModel
+namespace ESMS_Data.Entities.RequestModel.ExamTimeReqModel
 {
     public class ExamTimeUpdateReqModel
     {
         [Required]
-        public int Idt {  get; set; }
-        public DateTime Date {  get; set; }
-        public TimeSpan Start {  get; set; }
+        public int Idt { get; set; }
+        public DateTime Date { get; set; }
+        public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
         public DateTime PublishDate { get; set; }
     }

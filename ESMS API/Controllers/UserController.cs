@@ -1,6 +1,6 @@
 ﻿using Business.Services.UserService;
 using ESMS_Data.Entities;
-using ESMS_Data.Entities.RequestModel;
+using ESMS_Data.Entities.RequestModel.UserReqModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,8 @@
 ﻿using Business.Services;
 using Business.Services.ExamService;
 using ESMS_Data.Entities.RequestModel;
+using ESMS_Data.Entities.RequestModel.ExamScheduleReqModel;
+using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,27 +42,27 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("semesters")]
-        public async Task<IActionResult> GetSemester()
+        public async Task<IActionResult> GetSemesters()
         {
-            var res = await _examService.GetSemester();
+            var res = await _examService.GetSemesters();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("subjects")]
-        public async Task<IActionResult> GetSubject()
+        public async Task<IActionResult> GetSubjects()
         {
-            var res = await _examService.GetSubject();
+            var res = await _examService.GetSubjects();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
-        [Route("get-available-room")]
-        public async Task<IActionResult> GetAvailableRoom(int idt)
+        [Route("available-rooms")]
+        public async Task<IActionResult> GetAvailableRooms(int idt)
         {
-            var res = await _examService.GetAvailableRoom(idt);
+            var res = await _examService.GetAvailableRooms(idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
@@ -118,6 +120,22 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpGet]
+        [Route("students")]
+        public async Task<IActionResult> GetStudents([FromQuery] int idt, [FromQuery] string subject, [FromQuery] string room)
+        {
+            var res = await _examService.GetStudents(idt, subject, room);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("add-student")]
+        public async Task<IActionResult> AddStudent([FromBody] ParticipationAddReqModel req)
+        {
+            var res = await _examService.AddStudent(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
     }
 }

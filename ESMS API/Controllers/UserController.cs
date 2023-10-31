@@ -36,7 +36,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPatch]
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] UserProfileReqModel userProfileReqModel)
         {

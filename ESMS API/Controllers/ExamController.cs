@@ -78,7 +78,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpPost]
+        [HttpPatch]
         [Route("time/update")]
         public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdateReqModel req)
         {
@@ -87,7 +87,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpPost]
+        [HttpDelete]
         [Route("time/delete")]
         public async Task<IActionResult> DeleteTime([FromBody] ExamTimeDeleteModel req)
         {
@@ -105,7 +105,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpPost]
+        [HttpPatch]
         [Route("schedule/update")]
         public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdateReqModel req)
         {
@@ -114,7 +114,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpPost]
+        [HttpDelete]
         [Route("schedule/delete")]
         public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
         {
@@ -132,7 +132,7 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpPost]
+        [HttpDelete]
         [Route("time/proctors/remove")]
         public async Task<IActionResult> RemoveProctorFromExamTime([FromBody] RegistrationAddRemoveReqModel req)
         {
@@ -159,13 +159,12 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpPost]
+        [HttpDelete]
         [Route("schedule/students/remove")]
         public async Task<IActionResult> RemoveStudents([FromBody] ParticipationAddRemoveReqModel req)
         {
             var res = await _examService.RemoveStudents(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
-
     }
 }

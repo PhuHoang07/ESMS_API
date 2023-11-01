@@ -67,5 +67,7 @@ namespace ESMS_Data.Repositories.ParticipationRepository
                                                 && students.Contains(p.UserName))
                                         .ToListAsync();
         }
+
+
     }
 }

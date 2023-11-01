@@ -95,7 +95,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        //[Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("time/proctors")]
         public async Task<IActionResult> ViewProctorList(int idt)

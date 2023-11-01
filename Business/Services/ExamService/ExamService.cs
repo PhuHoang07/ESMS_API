@@ -25,9 +25,9 @@ namespace Business.Services.ExamService
         {
             _examRepository = examRepository;
             _examScheduleRepository = examScheduleRepository;
-            utils = new Utils.Utils();
             _registrationRepository = registrationRepository;
             _participationRepository = participationRepository;
+            utils = new Utils.Utils();
         }
 
         public async Task<ResultModel> GetCurrent()
@@ -556,6 +556,45 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Remove successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> UpdateProctorsToExamSchedule(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var assignedProctorList = await _examRepository.GetAssignedProctorList(idt);
+                var proctorList = await _registrationRepository.GetProctorList(idt, assignedProctorList);
+
+                var examSchedules = await _examRepository.GetExamScheduleHasNoProctor(idt);
+
+                if (examSchedules.Count == 0)
+                {
+                    throw new Exception("There is no idt / There is no room having none proctor");
+                }
+
+                int minCount = Math.Min(proctorList.Count, examSchedules.Count); 
+
+                for (int i = 0; i < minCount; i++)
+                {
+                    examSchedules[i].Proctor = proctorList[i];
+                }
+
+
+                await _examScheduleRepository.UpdateRange(examSchedules);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Add successfully";
             }
             catch (Exception ex)
             {

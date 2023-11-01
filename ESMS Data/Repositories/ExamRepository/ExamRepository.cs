@@ -228,5 +228,18 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                  && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
         }
 
+        public async Task<List<ExamSchedule>> GetExamScheduleHasNoProctor(int idt)
+        {
+            return await _examSchedules.Where(es => es.Idt == idt
+                                                 && es.Proctor == null).ToListAsync();
+        }
+
+        public async Task<List<string>> GetAssignedProctorList(int idt)
+        {
+            return await _examSchedules.Where(es => es.Idt == idt
+                                                 && es.Proctor != null)
+                                .Select(es => es.Proctor).ToListAsync();
+        }
+
     }
 }

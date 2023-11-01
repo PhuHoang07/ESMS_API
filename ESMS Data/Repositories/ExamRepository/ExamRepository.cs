@@ -47,7 +47,10 @@ namespace ESMS_Data.Repositories.ExamRepository
                                    SlotId = et.SlotId,
                                    Semester = et.Semester,
                                    Registrations = et.Registrations,
-                                   ExamSchedules = et.ExamSchedules
+                                   ExamSchedules = et.ExamSchedules.AsQueryable()
+                                                                   .Include(es => es.Participations)
+                                                                   .Include(es => es.RoomNumberNavigation)
+                                                                   .ToList()
                                });
 
             return qr;
@@ -127,7 +130,9 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                                         Subject = es.SubjectId,
                                                                         Room = es.RoomNumber,
                                                                         es.Form,
-                                                                        es.Type
+                                                                        es.Type,
+                                                                        TotalStudent = es.Participations.Count(),
+                                                                        Capacity = es.RoomNumberNavigation.Capacity
                                                                     })
                                         })
                                         .ToList<object>()

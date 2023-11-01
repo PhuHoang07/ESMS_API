@@ -95,33 +95,6 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin")]
-        [HttpPost]
-        [Route("schedule/add")]
-        public async Task<IActionResult> AddExamSchedule([FromBody] ExamScheduleAddReqModel req)
-        {
-            var res = await _examService.AddExamSchedule(req);
-            return res.IsSuccess ? Ok(res) : BadRequest(res);
-        }
-
-        [Authorize(Roles = "Admin, Testing Admin")]
-        [HttpPatch]
-        [Route("schedule/update")]
-        public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdateReqModel req)
-        {
-            var res = await _examService.UpdateExamSchedule(req);
-            return res.IsSuccess ? Ok(res) : BadRequest(res);
-        }
-
-        [Authorize(Roles = "Admin, Testing Admin")]
-        [HttpDelete]
-        [Route("schedule/delete")]
-        public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
-        {
-            var res = await _examService.DeleteExamSchedule(req);
-            return res.IsSuccess ? Ok(res) : BadRequest(res);
-        }
-
         //[Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("time/proctors")]
@@ -148,6 +121,33 @@ namespace ESMS_API.Controllers
             var res = await _examService.RemoveProctorFromExamTime(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        [Authorize(Roles = "Admin, Testing Admin")]
+        [HttpPost]
+        [Route("schedule/add")]
+        public async Task<IActionResult> AddExamSchedule([FromBody] ExamScheduleAddReqModel req)
+        {
+            var res = await _examService.AddExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin")]
+        [HttpPatch]
+        [Route("schedule/update")]
+        public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdateReqModel req)
+        {
+            var res = await _examService.UpdateExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin")]
+        [HttpDelete]
+        [Route("schedule/delete")]
+        public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
+        {
+            var res = await _examService.DeleteExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }      
 
         [Authorize(Roles = "Admin, Testing Admin")]
         [HttpGet]

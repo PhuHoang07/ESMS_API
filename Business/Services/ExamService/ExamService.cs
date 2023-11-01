@@ -418,6 +418,27 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> GetProctorListOfExamTime(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                // resultModel.Data = registrations;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
+        }
+
         public async Task<ResultModel> AddProctorToExamTime(RegistrationAddRemoveReqModel req)
         {
             ResultModel resultModel = new ResultModel();

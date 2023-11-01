@@ -123,6 +123,15 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpGet]
+        [Route("time/proctors")]
+        public async Task<IActionResult> GetProctorListOfExamTime([FromQuery] int idt)
+        {
+            var res = await _examService.GetProctorListOfExamTime(idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("time/proctors/add")]
         public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddRemoveReqModel req)

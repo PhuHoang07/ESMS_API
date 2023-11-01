@@ -167,7 +167,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin")]
+        //[Authorize(Roles = "Admin, Testing Admin")]
         [HttpPatch]
         [Route("schedule/proctors/update")]
         public async Task<IActionResult> UpdateProctorsToExamSchedule([FromBody] int idt)

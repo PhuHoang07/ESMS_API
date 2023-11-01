@@ -575,7 +575,7 @@ namespace Business.Services.ExamService
                 var assignedProctorList = await _examRepository.GetAssignedProctorList(idt);
                 var proctorList = await _registrationRepository.GetProctorList(idt, assignedProctorList);
 
-                var examSchedules = await _examRepository.GetExamScheduleHasNoProctor(idt);
+                var examSchedules = await _examRepository.GetExamScheduleWithDistinctRoom(idt);
 
                 if (examSchedules.Count == 0)
                 {
@@ -587,14 +587,30 @@ namespace Business.Services.ExamService
                 for (int i = 0; i < minCount; i++)
                 {
                     examSchedules[i].Proctor = proctorList[i];
+                    
+                }
+                await _examScheduleRepository.UpdateRange(examSchedules);
+                
+                var updatedExamSchedules = await _examRepository.GetExamScheduleHasProctor(idt);
+                var remainExamSchedules = await _examRepository.GetExamScheduleHasNoProctor(idt);
+                foreach (var exam in remainExamSchedules)
+                {
+                    var similarExam = updatedExamSchedules.FirstOrDefault(e =>
+                        e.RoomNumber == exam.RoomNumber &&
+                        e.SubjectId != exam.SubjectId 
+                    );
+
+                    if (similarExam != null)
+                    {
+                        exam.Proctor = similarExam.Proctor; // Update the Proctor value
+                    }
                 }
 
-
-                await _examScheduleRepository.UpdateRange(examSchedules);
+                await _examScheduleRepository.UpdateRange(remainExamSchedules);
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
-                resultModel.Message = "Add successfully";
+                resultModel.Message = "Update successfully";
             }
             catch (Exception ex)
             {

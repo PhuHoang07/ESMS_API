@@ -10,5 +10,7 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 {
     public interface IRegistrationRepository : IRepositoryBase<Registration>
     {
+        public Task<List<string>> GetProctorList(int idt, List<string> assignedProctorList);
+
     }
 }

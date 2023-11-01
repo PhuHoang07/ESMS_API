@@ -59,7 +59,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpGet]
         [Route("available-rooms")]
         public async Task<IActionResult> GetAvailableRooms(int idt, string subjectId)
@@ -68,7 +68,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPost]
         [Route("time/add")]
         public async Task<IActionResult> AddTime([FromBody] ExamTimeAddReqModel req)
@@ -77,7 +77,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPatch]
         [Route("time/update")]
         public async Task<IActionResult> UpdateTime([FromBody] ExamTimeUpdateReqModel req)
@@ -86,7 +86,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpDelete]
         [Route("time/delete")]
         public async Task<IActionResult> DeleteTime([FromBody] ExamTimeDeleteModel req)
@@ -95,7 +95,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPost]
         [Route("schedule/add")]
         public async Task<IActionResult> AddExamSchedule([FromBody] ExamScheduleAddReqModel req)
@@ -104,7 +104,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPatch]
         [Route("schedule/update")]
         public async Task<IActionResult> UpdateExamSchedule([FromBody] ExamScheduleUpdateReqModel req)
@@ -113,7 +113,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpDelete]
         [Route("schedule/delete")]
         public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
@@ -122,16 +122,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
-        [HttpGet]
-        [Route("time/proctors")]
-        public async Task<IActionResult> GetProctorListOfExamTime([FromQuery] int idt)
-        {
-            var res = await _examService.GetProctorListOfExamTime(idt);
-            return res.IsSuccess ? Ok(res) : BadRequest(res);
-        }
-
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPost]
         [Route("time/proctors/add")]
         public async Task<IActionResult> AddProctorToExamTime([FromBody] RegistrationAddRemoveReqModel req)
@@ -140,7 +131,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpDelete]
         [Route("time/proctors/remove")]
         public async Task<IActionResult> RemoveProctorFromExamTime([FromBody] RegistrationAddRemoveReqModel req)
@@ -149,7 +140,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpGet]
         [Route("schedule/students")]
         public async Task<IActionResult> GetStudents([FromQuery] int idt, [FromQuery] string subject, [FromQuery] string room)
@@ -158,7 +149,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPost]
         [Route("schedule/students/add")]
         public async Task<IActionResult> AddStudents([FromBody] ParticipationAddRemoveReqModel req)
@@ -167,7 +158,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpDelete]
         [Route("schedule/students/remove")]
         public async Task<IActionResult> RemoveStudents([FromBody] ParticipationAddRemoveReqModel req)
@@ -175,5 +166,16 @@ namespace ESMS_API.Controllers
             var res = await _examService.RemoveStudents(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        //[Authorize(Roles = "Admin, Testing Admin")]
+        [HttpPatch]
+        [Route("schedule/proctors/update")]
+        public async Task<IActionResult> UpdateProctorsToExamSchedule([FromBody] int idt)
+        {
+            var res = await _examService.UpdateProctorsToExamSchedule(idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+
     }
 }

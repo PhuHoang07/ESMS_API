@@ -12,14 +12,19 @@ namespace ESMS_Data.Repositories.RegistrationRepository
     public class RegistrationRepository : RepositoryBase<Registration>, IRegistrationRepository
     {
         private ESMSContext _context;
-        private DbSet<User> _users;
-        private DbSet<ExamTime> _examTimes;
+        private DbSet<Registration> _registrations;
         public RegistrationRepository(ESMSContext context) : base(context)
         {
             _context = context;
-            _users = _context.Set<User>();
-            _examTimes = _context.Set<ExamTime>();
+            _registrations = _context.Set<Registration>();
         }
 
+        public async Task<List<string>> GetProctorList(int idt, List<string> assignedProctorList)
+        {
+            var allProctor = await _registrations.Where(r => r.Idt == idt)
+                                       .Select(r => r.UserName)
+                                       .ToListAsync();
+            return allProctor.Except(assignedProctorList).ToList();
+        }
     }
 }

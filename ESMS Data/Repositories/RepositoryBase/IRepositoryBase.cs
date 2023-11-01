@@ -14,6 +14,7 @@ namespace ESMS_Data.Repositories.RepositoryBase
         public Task Delete(T entity);
         public Task DeleteRange(List<T> entities);
         public Task Update(T entity);
+        public Task UpdateRange(List<T> entities);
         public IQueryable<T> GetAll();
     }
 }

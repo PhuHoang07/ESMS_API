@@ -30,6 +30,7 @@ namespace Business.Services.ExamService
         public Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req);
         public Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req);
         public Task<ResultModel> UpdateProctorsToExamSchedule(int idt);
+        public Task<ResultModel> ViewProctorList(int idt);
 
     }
 }

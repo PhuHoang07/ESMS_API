@@ -566,6 +566,26 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> ViewProctorList(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var proctorList = await _registrationRepository.GetProctors(idt);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = proctorList;
+
+            } catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> UpdateProctorsToExamSchedule(int idt)
         {
             ResultModel resultModel = new ResultModel();
@@ -573,7 +593,7 @@ namespace Business.Services.ExamService
             try
             {
                 var assignedProctorList = await _examRepository.GetAssignedProctorList(idt);
-                var proctorList = await _registrationRepository.GetProctorList(idt, assignedProctorList);
+                var proctorList = await _registrationRepository.GetAvailableProctors(idt, assignedProctorList);
 
                 var examSchedules = await _examRepository.GetExamScheduleWithDistinctRoom(idt);
 

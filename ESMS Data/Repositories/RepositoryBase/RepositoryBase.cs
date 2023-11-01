@@ -49,7 +49,13 @@ namespace ESMS_Data.Repositories.RepositoryBase
             tracker.State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-
+        
+        public async Task UpdateRange(List<T> entities)
+        {
+            _dbSet.UpdateRange(entities);
+            await _context.SaveChangesAsync();
+        }
+        
         public IQueryable<T> GetAll()
         {
             return _dbSet;

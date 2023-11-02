@@ -521,18 +521,23 @@ namespace Business.Services.ExamService
 
                 var currentDate = await _examRepository.GetDate(examSchedule);
                 var currentStart = await _examRepository.GetStart(examSchedule);
+                var semester = utils.GetSemester(currentDate);
 
                 foreach (var student in req.Students)
                 {
                     var examCheckList = await _examRepository.GetExistedExamSchedules(student);
                     foreach (var examCheck in examCheckList)
                     {
-                        if (examSchedule.SubjectId.Equals(examCheck.SubjectId) && examSchedule.Form.Equals(examCheck.Form))
+                        var checkDate = await _examRepository.GetDate(examCheck);
+                        var semesterCheck = utils.GetSemester(checkDate);
+
+                        if ( semester.Equals(semesterCheck)
+                            && examSchedule.SubjectId.Equals(examCheck.SubjectId) 
+                            && examSchedule.Form.Equals(examCheck.Form))
                         {
-                            throw new Exception($"Failed! Student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
+                            throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
                         }
 
-                        var checkDate = await _examRepository.GetDate(examCheck);
                         var checkStart = await _examRepository.GetStart(examCheck);
                         var checkEnd = await _examRepository.GetEnd(examCheck);
 

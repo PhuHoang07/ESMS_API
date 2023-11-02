@@ -134,7 +134,8 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                                         es.Form,
                                                                         es.Type,
                                                                         TotalStudent = es.Participations.Count(),
-                                                                        Capacity = es.RoomNumberNavigation.Capacity
+                                                                        Capacity = es.RoomNumberNavigation.Capacity,
+                                                                        Proctor = es.Proctor
                                                                     })
                                         })
                                         .ToList<object>()

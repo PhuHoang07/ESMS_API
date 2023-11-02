@@ -421,6 +421,7 @@ namespace Business.Services.ExamService
         public async Task<ResultModel> AddProctorToExamTime(RegistrationAddRemoveReqModel req)
         {
             ResultModel resultModel = new ResultModel();
+
             try
             {
                 var registrations = new List<Registration>();

@@ -39,6 +39,17 @@ namespace ESMS_API.Controllers
             var res = await _lecturerService.GetAvailableExamTimes(currentUser.Email);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+        
+        [Authorize(Roles = "Lecturer")]
+        [HttpPost]
+        [Route("exams/register")]
+        public async Task<IActionResult> RegisterExamTime([FromBody] int idt)
+        {
+            var currentUser = GetCurrentUser();
+
+            var res = await _lecturerService.RegisterExamTime(currentUser.Email, idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
 
         private UserModel GetCurrentUser()
         {

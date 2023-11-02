@@ -1,5 +1,6 @@
 ﻿using Business.Services.UserService;
 using ESMS_Data.Models;
+using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.UserRepository;
 using System;
@@ -16,12 +17,14 @@ namespace Business.Services.LecturerService
     {
         private readonly IUserRepository _userRepository;
         private readonly IRegistrationRepository _registrationRepository;
+        private readonly IExamRepository _examRepository;
         private readonly Utils.Utils utils;
 
-        public LecturerService(IUserRepository userRepository, IRegistrationRepository registrationRepository)
+        public LecturerService(IUserRepository userRepository, IRegistrationRepository registrationRepository, IExamRepository examRepository)
         {
             _userRepository = userRepository;
             _registrationRepository = registrationRepository;
+            _examRepository = examRepository;
             utils = new Utils.Utils();
 
         }
@@ -34,7 +37,7 @@ namespace Business.Services.LecturerService
             {
                 var currentUser = await _userRepository.GetUser(email);
                 var registeredExamTimes = await _registrationRepository.GetRegisteredExamTimes(currentUser.UserName, utils.GetCurrentSemester());
-                
+
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = registeredExamTimes;
@@ -52,7 +55,7 @@ namespace Business.Services.LecturerService
         public async Task<ResultModel> GetAvailableExamTimes(string email)
         {
             ResultModel resultModel = new ResultModel();
-            
+
             try
             {
                 var currentUser = await _userRepository.GetUser(email);
@@ -73,6 +76,36 @@ namespace Business.Services.LecturerService
 
             return resultModel;
 
+        }
+
+        public async Task<ResultModel> RegisterExamTime(string email, int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+
+            try
+            {
+                var currentUser = await _userRepository.GetUser(email);
+
+                var username = currentUser.UserName;
+                var registration = new Registration
+                {
+                    Idt = idt,
+                    UserName = username
+                };
+                await _registrationRepository.Add(registration);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Register successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+
+            return resultModel;
         }
     }
 }

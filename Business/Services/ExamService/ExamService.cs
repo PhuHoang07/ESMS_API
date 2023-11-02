@@ -455,22 +455,35 @@ namespace Business.Services.ExamService
             ResultModel resultModel = new ResultModel();
             try
             {
-                var registrations = new List<Registration>();
+                var removingRegistrations = new List<Registration>();
                 foreach (var proctor in req.ProctorList)
                 {
-                    registrations.Add(new Registration
+                    removingRegistrations.Add(new Registration
                     {
                         UserName = proctor,
                         Idt = req.Idt
                     });
                 }
 
-                await _registrationRepository.DeleteRange(registrations);
+                var schedulesOfProctorsRemoving = _examScheduleRepository.GetAll()
+                                                                 .Where(es => es.Idt == req.Idt
+                                                                           && req.ProctorList.Contains(es.Proctor))
+                                                                 .ToList<ExamSchedule>();
+
+                foreach (var schedule in schedulesOfProctorsRemoving)
+                {
+                    schedule.Proctor = null;
+                }
+
+                // set proctor of schedule to null first, else error conflicting foreign key
+                await _examScheduleRepository.UpdateRange(schedulesOfProctorsRemoving);
+                await _registrationRepository.DeleteRange(removingRegistrations);
+
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Delete successfully";
-                resultModel.Data = registrations;
+                resultModel.Data = removingRegistrations;
             }
             catch (Exception ex)
             {

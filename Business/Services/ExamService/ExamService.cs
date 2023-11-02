@@ -348,7 +348,6 @@ namespace Business.Services.ExamService
                 var updRoomNumber = String.IsNullOrEmpty(req.UpdRoomNumber) ? currentExamSchedule.RoomNumber : req.UpdRoomNumber;
                 var updForm = String.IsNullOrEmpty(req.UpdForm) ? currentExamSchedule.Form : req.UpdForm;
                 var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
-                var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
 
                 var roomList = await _examRepository.GetAvailableRoom(req.Idt, updSubjectId);
 
@@ -370,7 +369,7 @@ namespace Business.Services.ExamService
                     RoomNumber = updRoomNumber,
                     Form = updForm,
                     Type = updType,
-                    Proctor = updProctor,
+                    Proctor = currentExamSchedule.Proctor,
                 };
 
                 await _examScheduleRepository.Add(updExamSchedule);
@@ -421,6 +420,7 @@ namespace Business.Services.ExamService
         public async Task<ResultModel> AddProctorToExamTime(RegistrationAddRemoveReqModel req)
         {
             ResultModel resultModel = new ResultModel();
+
             try
             {
                 var registrations = new List<Registration>();
@@ -516,6 +516,44 @@ namespace Business.Services.ExamService
 
             try
             {
+                var examSchedule = await _examRepository.GetExamSchedule(req.Idt, req.Subject, req.Room);
+
+                var currentDate = await _examRepository.GetDate(examSchedule);
+                var currentStart = await _examRepository.GetStart(examSchedule);
+                var currentEnd = await _examRepository.GetEnd(examSchedule);
+                var semester = utils.GetSemester(currentDate);
+
+                foreach (var student in req.Students)
+                {
+                    var examCheckList = await _examRepository.GetExistedExamSchedules(student);
+                    foreach (var examCheck in examCheckList)
+                    {
+                        var checkDate = await _examRepository.GetDate(examCheck);
+                        var semesterCheck = utils.GetSemester(checkDate);
+
+                        if ( semester.Equals(semesterCheck)
+                            && examSchedule.SubjectId.Equals(examCheck.SubjectId) 
+                            && examSchedule.Form.Equals(examCheck.Form))
+                        {
+                            throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
+                        }
+
+                        var checkStart = await _examRepository.GetStart(examCheck);
+                        var checkEnd = await _examRepository.GetEnd(examCheck);
+
+                        if ((currentDate == checkDate
+                            && currentStart >= checkStart
+                            && currentStart <= checkEnd)
+                            ||
+                            (currentDate == checkDate
+                            && currentEnd >= checkStart
+                            && currentEnd <= checkEnd))
+                        {
+                            throw new Exception($"Failed! In date {checkDate}, student {student} has already participation in exam schedule ( {checkStart} - {checkEnd} )");
+                        }
+                    }
+                }
+
                 var participations = new List<Participation>();
                 foreach (var u in req.Students)
                 {
@@ -576,8 +614,8 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = proctorList;
-
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 resultModel.IsSuccess = false;
                 resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -602,22 +640,21 @@ namespace Business.Services.ExamService
                     throw new Exception("There is no idt / There is no room having none proctor");
                 }
 
-                int minCount = Math.Min(proctorList.Count, examSchedules.Count); 
+                int minCount = Math.Min(proctorList.Count, examSchedules.Count);
 
                 for (int i = 0; i < minCount; i++)
                 {
                     examSchedules[i].Proctor = proctorList[i];
-                    
                 }
                 await _examScheduleRepository.UpdateRange(examSchedules);
-                
+
                 var updatedExamSchedules = await _examRepository.GetExamScheduleHasProctor(idt);
                 var remainExamSchedules = await _examRepository.GetExamScheduleHasNoProctor(idt);
                 foreach (var exam in remainExamSchedules)
                 {
                     var similarExam = updatedExamSchedules.FirstOrDefault(e =>
                         e.RoomNumber == exam.RoomNumber &&
-                        e.SubjectId != exam.SubjectId 
+                        e.SubjectId != exam.SubjectId
                     );
 
                     if (similarExam != null)

@@ -25,6 +25,10 @@ namespace ESMS_Data.Repositories.ExamRepository
         public Task<List<string>> GetAssignedProctorList(int idt);
         public Task<List<ExamSchedule>> GetExamScheduleHasNoProctor(int idt);
         public Task<List<ExamSchedule>> GetExamScheduleHasProctor(int idt);
+        public Task<List<ExamSchedule>> GetExistedExamSchedules(string username);
+        public Task<DateTime> GetDate(ExamSchedule examSchedule);
+        public Task<TimeSpan> GetStart(ExamSchedule examSchedule);
+        public Task<TimeSpan> GetEnd(ExamSchedule examSchedule);
 
     }
 }

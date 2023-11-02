@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using ESMS_Data.Repositories.ExamScheduleRepository;
 using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.ParticipationRepository;
+using Business.Services.LecturerService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILecturerService, LecturerService>();
 
 
 // Add Repository

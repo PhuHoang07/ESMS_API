@@ -12,12 +12,14 @@ namespace ESMS_Data.Repositories.RegistrationRepository
     public class RegistrationRepository : RepositoryBase<Registration>, IRegistrationRepository
     {
         private ESMSContext _context;
-
         private DbSet<Registration> _registrations;
+        private DbSet<ExamTime> _examTimes;
+
         public RegistrationRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _registrations = _context.Set<Registration>();
+            _examTimes = _context.Set<ExamTime>();
         }
 
         public async Task<List<string>> GetAvailableProctors(int idt, List<string> assignedProctorList)
@@ -37,9 +39,44 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                                            Username = r.UserName,
                                            Name = r.UserNameNavigation.Name,
                                            Email = r.UserNameNavigation.Email
-                                       }
-                                                )
+                                       })
                                        .ToListAsync<object>();
+        }
+
+        public async Task<List<ExamTime>> GetRegisteredExamTimes(string username, string semester)
+        {
+            return await _registrations.Include(r => r.IdtNavigation)
+                                       .Where(r => r.UserName.Equals(username)
+                                                && r.IdtNavigation.Semester.Equals(semester))
+                                       .Select(r => r.IdtNavigation).ToListAsync();
+        }
+
+        public async Task<List<ExamTime>> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
+        {
+            var currentExamTimes = await _examTimes.Where(et => et.Semester.Equals(semester)).ToListAsync();
+
+            var availableExamTimes = currentExamTimes.Except(registeredExamTimes).ToList();
+
+            foreach (var examTimes in registeredExamTimes)
+            {
+                for (int i = availableExamTimes.Count - 1; i >= 0; i--)
+                {
+                    var check = availableExamTimes[i];
+                    if ((examTimes.Date == check.Date &&
+                        examTimes.Start >= check.Start &&
+                        examTimes.Start <= check.End)
+                        ||
+                        (examTimes.Date == check.Date &&
+                        examTimes.End >= check.Start &&
+                        examTimes.End <= check.End)
+                        )
+                    {
+                        availableExamTimes.RemoveAt(i);
+                    }
+                }
+            }
+
+            return availableExamTimes.ToList();
         }
     }
 }

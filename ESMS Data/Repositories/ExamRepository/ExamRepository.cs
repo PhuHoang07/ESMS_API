@@ -22,6 +22,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         private DbSet<Slot> _slots;
         private DbSet<Room> _rooms;
         private DbSet<User> _users;
+        private DbSet<Participation> _participations;
         public ExamRepository(ESMSContext context) : base(context)
         {
             _context = context;
@@ -31,6 +32,7 @@ namespace ESMS_Data.Repositories.ExamRepository
             _slots = _context.Set<Slot>();
             _rooms = _context.Set<Room>();
             _users = _context.Set<User>();
+            _participations = _context.Set<Participation>();
         }
 
         public new IQueryable<ExamTime> GetAll()
@@ -132,7 +134,8 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                                         es.Form,
                                                                         es.Type,
                                                                         TotalStudent = es.Participations.Count(),
-                                                                        Capacity = es.RoomNumberNavigation.Capacity
+                                                                        Capacity = es.RoomNumberNavigation.Capacity,
+                                                                        Proctor = es.Proctor
                                                                     })
                                         })
                                         .ToList<object>()
@@ -207,12 +210,20 @@ namespace ESMS_Data.Repositories.ExamRepository
             var start = _examTimes.Where(et => et.Idt == idt)
                                   .Select(et => et.Start).FirstOrDefault();
 
+            var end = _examTimes.Where(et => et.Idt == idt)
+                                  .Select(et => et.End).FirstOrDefault();
+
             var filteredExamTimesByDate = _examTimes
                                     .Include(et => et.ExamSchedules)
-                                    .Where(et => et.Date == date
+                                    .Where(et => (et.Date == date
                                               && et.Idt != idt
                                               && et.Start <= start
-                                              && et.End >= start);
+                                              && et.End >= start)
+                                              ||
+                                              (et.Date == date
+                                              && et.Idt != idt
+                                              && et.Start <= end
+                                              && et.End >= end));
 
             var roomExceptByDay = filteredExamTimesByDate
                 .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
@@ -257,7 +268,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                        .Select(es => es.Proctor).ToListAsync();
         }
 
-        public async Task<List<ExamSchedule>> GetExamScheduleHasNoProctor (int idt)
+        public async Task<List<ExamSchedule>> GetExamScheduleHasNoProctor(int idt)
         {
             return await _examSchedules.Where(es => es.Idt == idt
                                                  && es.Proctor == null).ToListAsync();
@@ -267,7 +278,33 @@ namespace ESMS_Data.Repositories.ExamRepository
         {
             return await _examSchedules.Where(es => es.Idt == idt
                                                  && es.Proctor != null).ToListAsync();
-                                                
+
+        }
+
+        public async Task<List<ExamSchedule>> GetExistedExamSchedules(string username)
+        {
+            return await _participations.Where(p => p.UserName == username)
+                                        .Include(p => p.ExamSchedule)
+                                        .Select(p => p.ExamSchedule)
+                                        .ToListAsync();
+        }
+
+        public async Task<DateTime> GetDate(ExamSchedule examSchedule)
+        {
+            return await _examTimes.Where(et => et.Idt == examSchedule.Idt)
+                                   .Select(et => et.Date).FirstOrDefaultAsync();
+        }
+
+        public async Task<TimeSpan> GetStart(ExamSchedule examSchedule)
+        {
+            return await _examTimes.Where(et => et.Idt == examSchedule.Idt)
+                                   .Select(et => et.Start).FirstOrDefaultAsync();
+        }
+
+        public async Task<TimeSpan> GetEnd(ExamSchedule examSchedule)
+        {
+            return await _examTimes.Where(et => et.Idt == examSchedule.Idt)
+                                   .Select(et => et.End).FirstOrDefaultAsync();
         }
 
     }

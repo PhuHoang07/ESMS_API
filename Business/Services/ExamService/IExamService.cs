@@ -29,6 +29,8 @@ namespace Business.Services.ExamService
         public Task<ResultModel> GetStudents(int idt, string subject, string room);
         public Task<ResultModel> AddStudents(ParticipationAddRemoveReqModel req);
         public Task<ResultModel> RemoveStudents(ParticipationAddRemoveReqModel req);
+        public Task<ResultModel> UpdateProctorInExamSchedule(ExamScheduleUpdateProctorReqModel req);
+        public Task<ResultModel> GetUnassignedProctorOfExamTime(int idt);
         public Task<ResultModel> UpdateProctorsToExamSchedule(int idt);
         public Task<ResultModel> ViewProctorList(int idt);
 

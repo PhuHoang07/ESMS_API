@@ -78,5 +78,10 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
             return availableExamTimes.ToList();
         }
+
+        public int GetRegisteredAmount(int idt)
+        {
+            return _registrations.Where(r => r.Idt == idt).Count();
+        }
     }
 }

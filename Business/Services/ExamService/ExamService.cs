@@ -423,6 +423,14 @@ namespace Business.Services.ExamService
 
             try
             {
+                var requireSupervisor = _examRepository.GetRequireSupervisorAmount(req.Idt);
+                var registeredAmount = _registrationRepository.GetRegisteredAmount(req.Idt);
+
+                if (registeredAmount + req.ProctorList.Count() > requireSupervisor)
+                {
+                    throw new Exception("Proctor amount exceed the limit");
+                }
+
                 var registrations = new List<Registration>();
                 foreach (var proctor in req.ProctorList)
                 {
@@ -455,22 +463,35 @@ namespace Business.Services.ExamService
             ResultModel resultModel = new ResultModel();
             try
             {
-                var registrations = new List<Registration>();
+                var removingRegistrations = new List<Registration>();
                 foreach (var proctor in req.ProctorList)
                 {
-                    registrations.Add(new Registration
+                    removingRegistrations.Add(new Registration
                     {
                         UserName = proctor,
                         Idt = req.Idt
                     });
                 }
 
-                await _registrationRepository.DeleteRange(registrations);
+                var schedulesOfProctorsRemoving = _examScheduleRepository.GetAll()
+                                                                 .Where(es => es.Idt == req.Idt
+                                                                           && req.ProctorList.Contains(es.Proctor))
+                                                                 .ToList<ExamSchedule>();
+
+                foreach (var schedule in schedulesOfProctorsRemoving)
+                {
+                    schedule.Proctor = null;
+                }
+
+                // set proctor of schedule to null first, else error conflicting foreign key
+                await _examScheduleRepository.UpdateRange(schedulesOfProctorsRemoving);
+                await _registrationRepository.DeleteRange(removingRegistrations);
+
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Delete successfully";
-                resultModel.Data = registrations;
+                resultModel.Data = removingRegistrations;
             }
             catch (Exception ex)
             {
@@ -531,8 +552,8 @@ namespace Business.Services.ExamService
                         var checkDate = await _examRepository.GetDate(examCheck);
                         var semesterCheck = utils.GetSemester(checkDate);
 
-                        if ( semester.Equals(semesterCheck)
-                            && examSchedule.SubjectId.Equals(examCheck.SubjectId) 
+                        if (semester.Equals(semesterCheck)
+                            && examSchedule.SubjectId.Equals(examCheck.SubjectId)
                             && examSchedule.Form.Equals(examCheck.Form))
                         {
                             throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
@@ -624,6 +645,34 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> UpdateProctorInExamSchedule(ExamScheduleUpdateProctorReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var examSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var examScheduleList = await _examRepository.GetExamScheduleWithSameDateAndRoom(examSchedule);
+
+                foreach (var exam in examScheduleList)
+                {
+                    exam.Proctor = req.UpdProctor;
+                }
+
+                await _examScheduleRepository.UpdateRange(examScheduleList);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Update successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> UpdateProctorsToExamSchedule(int idt)
         {
             ResultModel resultModel = new ResultModel();
@@ -646,10 +695,12 @@ namespace Business.Services.ExamService
                 {
                     examSchedules[i].Proctor = proctorList[i];
                 }
+
                 await _examScheduleRepository.UpdateRange(examSchedules);
 
                 var updatedExamSchedules = await _examRepository.GetExamScheduleHasProctor(idt);
                 var remainExamSchedules = await _examRepository.GetExamScheduleHasNoProctor(idt);
+
                 foreach (var exam in remainExamSchedules)
                 {
                     var similarExam = updatedExamSchedules.FirstOrDefault(e =>
@@ -659,7 +710,7 @@ namespace Business.Services.ExamService
 
                     if (similarExam != null)
                     {
-                        exam.Proctor = similarExam.Proctor; // Update the Proctor value
+                        exam.Proctor = similarExam.Proctor; 
                     }
                 }
 
@@ -668,6 +719,27 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Update successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetUnassignedProctorOfExamTime(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var assignedProctorList = await _examRepository.GetAssignedProctorList(idt);
+                var proctorList = await _registrationRepository.GetAvailableProctors(idt, assignedProctorList);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = proctorList;
             }
             catch (Exception ex)
             {

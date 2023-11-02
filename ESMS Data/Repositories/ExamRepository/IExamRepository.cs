@@ -15,6 +15,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public IQueryable<ExamTime> FilterDate(IQueryable<ExamTime> qr, DateTime from, DateTime to);
         public IQueryable<ExamTime> FilterTime(IQueryable<ExamTime> qr, TimeSpan start, TimeSpan end);
         public Task<Dictionary<string, List<object>>> GroupBySemester(IQueryable<ExamTime> qr);
+        public int GetRequireSupervisorAmount(int idt);
         public Task<List<string>> GetSemester();
         public Task<List<string>> GetSubject();
         public Task<int?> GetSlot(TimeSpan start);
@@ -29,6 +30,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public Task<DateTime> GetDate(ExamSchedule examSchedule);
         public Task<TimeSpan> GetStart(ExamSchedule examSchedule);
         public Task<TimeSpan> GetEnd(ExamSchedule examSchedule);
+        public Task<List<ExamSchedule>> GetExamScheduleWithSameDateAndRoom(ExamSchedule examSchedule);
 
     }
 }

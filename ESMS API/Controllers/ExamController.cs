@@ -141,6 +141,15 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin")]
+        [HttpPatch]
+        [Route("schedule/update-proctor")]
+        public async Task<IActionResult> UpdateProctorInExamSchedule([FromBody] ExamScheduleUpdateProctorReqModel req)
+        {
+            var res = await _examService.UpdateProctorInExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpDelete]
         [Route("schedule/delete")]
         public async Task<IActionResult> DeleteExamSchedule([FromBody] ExamScheduleDeleteReqModel req)
@@ -177,14 +186,21 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin")]
+        [HttpGet]
+        [Route("schedule/proctors/unassigned")]
+        public async Task<IActionResult> GetUnassignedProctorOfExamTime([FromQuery] int idt)
+        {
+            var res = await _examService.GetUnassignedProctorOfExamTime(idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPatch]
-        [Route("schedule/proctors/update")]
+        [Route("schedule/proctors/random")]
         public async Task<IActionResult> UpdateProctorsToExamSchedule([FromBody] int idt)
         {
             var res = await _examService.UpdateProctorsToExamSchedule(idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
-
-
     }
 }

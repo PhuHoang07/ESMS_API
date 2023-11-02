@@ -14,6 +14,6 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         public Task<List<object>> GetProctors(int idt);
         public Task<List<ExamTime>> GetRegisteredExamTimes(string username, string semester);
         public Task<List<ExamTime>> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester);
-
+        public int GetRegisteredAmount(int idt);
     }
 }

@@ -265,7 +265,9 @@ namespace ESMS_Data.Repositories.ExamRepository
         {
             return await _examSchedules.Where(es => es.Idt == idt
                                                  && es.Proctor != null)
-                                       .Select(es => es.Proctor).ToListAsync();
+                                       .Select(es => es.Proctor)
+                                       .Distinct()
+                                       .ToListAsync();
         }
 
         public async Task<List<ExamSchedule>> GetExamScheduleHasNoProctor(int idt)

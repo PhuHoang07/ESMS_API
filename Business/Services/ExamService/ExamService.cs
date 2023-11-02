@@ -423,6 +423,14 @@ namespace Business.Services.ExamService
 
             try
             {
+                var requireSupervisor = _examRepository.GetRequireSupervisorAmount(req.Idt);
+                var registeredAmount = _registrationRepository.GetRegisteredAmount(req.Idt);
+
+                if (registeredAmount + req.ProctorList.Count() > requireSupervisor)
+                {
+                    throw new Exception("Proctor amount exceed the limit");
+                }
+
                 var registrations = new List<Registration>();
                 foreach (var proctor in req.ProctorList)
                 {
@@ -659,10 +667,12 @@ namespace Business.Services.ExamService
                 {
                     examSchedules[i].Proctor = proctorList[i];
                 }
+
                 await _examScheduleRepository.UpdateRange(examSchedules);
 
                 var updatedExamSchedules = await _examRepository.GetExamScheduleHasProctor(idt);
                 var remainExamSchedules = await _examRepository.GetExamScheduleHasNoProctor(idt);
+
                 foreach (var exam in remainExamSchedules)
                 {
                     var similarExam = updatedExamSchedules.FirstOrDefault(e =>
@@ -681,6 +691,27 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Update successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetUnassignedProctorOfExamTime(int idt)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var assignedProctorList = await _examRepository.GetAssignedProctorList(idt);
+                var proctorList = await _registrationRepository.GetAvailableProctors(idt, assignedProctorList);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = proctorList;
             }
             catch (Exception ex)
             {

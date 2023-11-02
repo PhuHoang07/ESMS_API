@@ -177,14 +177,21 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin")]
+        [HttpGet]
+        [Route("schedule/proctors/unassigned")]
+        public async Task<IActionResult> GetUnassignedProctorOfExamTime([FromQuery] int idt)
+        {
+            var res = await _examService.GetUnassignedProctorOfExamTime(idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPatch]
-        [Route("schedule/proctors/update")]
+        [Route("schedule/proctors/random")]
         public async Task<IActionResult> UpdateProctorsToExamSchedule([FromBody] int idt)
         {
             var res = await _examService.UpdateProctorsToExamSchedule(idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
-
-
     }
 }

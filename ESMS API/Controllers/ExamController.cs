@@ -139,6 +139,15 @@ namespace ESMS_API.Controllers
             var res = await _examService.UpdateExamSchedule(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+        
+        //[Authorize(Roles = "Admin, Testing Admin")]
+        [HttpPatch]
+        [Route("schedule/update-proctor")]
+        public async Task<IActionResult> UpdateProctorInExamSchedule([FromBody] ExamScheduleUpdateProctorReqModel req)
+        {
+            var res = await _examService.UpdateProctorInExamSchedule(req);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
 
         [Authorize(Roles = "Admin, Testing Admin")]
         [HttpDelete]

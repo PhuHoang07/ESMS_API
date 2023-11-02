@@ -309,5 +309,17 @@ namespace ESMS_Data.Repositories.ExamRepository
                                    .Select(et => et.End).FirstOrDefaultAsync();
         }
 
+        public async Task<List<ExamSchedule>> GetExamScheduleWithSameDateAndRoom(ExamSchedule examSchedule)
+        {
+            var date = await _examTimes.Where(et => et.Idt == examSchedule.Idt)
+                                       .Select(et => et.Date)
+                                       .FirstOrDefaultAsync();
+            
+            return await _examSchedules.Include(es => es.IdtNavigation)
+                                       .Where(es => es.IdtNavigation.Date == date
+                                                 && es.RoomNumber.Equals(examSchedule.RoomNumber))
+                                       .ToListAsync();
+        }
+
     }
 }

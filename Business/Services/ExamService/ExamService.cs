@@ -552,8 +552,8 @@ namespace Business.Services.ExamService
                         var checkDate = await _examRepository.GetDate(examCheck);
                         var semesterCheck = utils.GetSemester(checkDate);
 
-                        if ( semester.Equals(semesterCheck)
-                            && examSchedule.SubjectId.Equals(examCheck.SubjectId) 
+                        if (semester.Equals(semesterCheck)
+                            && examSchedule.SubjectId.Equals(examCheck.SubjectId)
                             && examSchedule.Form.Equals(examCheck.Form))
                         {
                             throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
@@ -645,6 +645,34 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
+        public async Task<ResultModel> UpdateProctorInExamSchedule(ExamScheduleUpdateProctorReqModel req)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var examSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var examScheduleList = await _examRepository.GetExamScheduleWithSameDateAndRoom(examSchedule);
+
+                foreach (var exam in examScheduleList)
+                {
+                    exam.Proctor = req.UpdProctor;
+                }
+
+                await _examScheduleRepository.UpdateRange(examScheduleList);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = "Update successfully";
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
         public async Task<ResultModel> UpdateProctorsToExamSchedule(int idt)
         {
             ResultModel resultModel = new ResultModel();
@@ -682,7 +710,7 @@ namespace Business.Services.ExamService
 
                     if (similarExam != null)
                     {
-                        exam.Proctor = similarExam.Proctor; // Update the Proctor value
+                        exam.Proctor = similarExam.Proctor; 
                     }
                 }
 

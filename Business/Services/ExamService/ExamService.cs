@@ -348,7 +348,6 @@ namespace Business.Services.ExamService
                 var updRoomNumber = String.IsNullOrEmpty(req.UpdRoomNumber) ? currentExamSchedule.RoomNumber : req.UpdRoomNumber;
                 var updForm = String.IsNullOrEmpty(req.UpdForm) ? currentExamSchedule.Form : req.UpdForm;
                 var updType = String.IsNullOrEmpty(req.UpdType) ? currentExamSchedule.Type : req.UpdType;
-                var updProctor = String.IsNullOrEmpty(req.UpdProctor) ? currentExamSchedule.Proctor : req.UpdProctor;
 
                 var roomList = await _examRepository.GetAvailableRoom(req.Idt, updSubjectId);
 
@@ -370,7 +369,7 @@ namespace Business.Services.ExamService
                     RoomNumber = updRoomNumber,
                     Form = updForm,
                     Type = updType,
-                    Proctor = updProctor,
+                    Proctor = currentExamSchedule.Proctor,
                 };
 
                 await _examScheduleRepository.Add(updExamSchedule);
@@ -521,6 +520,7 @@ namespace Business.Services.ExamService
 
                 var currentDate = await _examRepository.GetDate(examSchedule);
                 var currentStart = await _examRepository.GetStart(examSchedule);
+                var currentEnd = await _examRepository.GetEnd(examSchedule);
                 var semester = utils.GetSemester(currentDate);
 
                 foreach (var student in req.Students)
@@ -541,9 +541,13 @@ namespace Business.Services.ExamService
                         var checkStart = await _examRepository.GetStart(examCheck);
                         var checkEnd = await _examRepository.GetEnd(examCheck);
 
-                        if (currentDate == checkDate
+                        if ((currentDate == checkDate
                             && currentStart >= checkStart
                             && currentStart <= checkEnd)
+                            ||
+                            (currentDate == checkDate
+                            && currentEnd >= checkStart
+                            && currentEnd <= checkEnd))
                         {
                             throw new Exception($"Failed! In date {checkDate}, student {student} has already participation in exam schedule ( {checkStart} - {checkEnd} )");
                         }

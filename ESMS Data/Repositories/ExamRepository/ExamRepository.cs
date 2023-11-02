@@ -210,12 +210,20 @@ namespace ESMS_Data.Repositories.ExamRepository
             var start = _examTimes.Where(et => et.Idt == idt)
                                   .Select(et => et.Start).FirstOrDefault();
 
+            var end = _examTimes.Where(et => et.Idt == idt)
+                                  .Select(et => et.End).FirstOrDefault();
+
             var filteredExamTimesByDate = _examTimes
                                     .Include(et => et.ExamSchedules)
-                                    .Where(et => et.Date == date
+                                    .Where(et => (et.Date == date
                                               && et.Idt != idt
                                               && et.Start <= start
-                                              && et.End >= start);
+                                              && et.End >= start)
+                                              ||
+                                              (et.Date == date
+                                              && et.Idt != idt
+                                              && et.Start <= end
+                                              && et.End >= end));
 
             var roomExceptByDay = filteredExamTimesByDate
                 .SelectMany(et => et.ExamSchedules.Select(es => es.RoomNumber));
@@ -298,5 +306,6 @@ namespace ESMS_Data.Repositories.ExamRepository
             return await _examTimes.Where(et => et.Idt == examSchedule.Idt)
                                    .Select(et => et.End).FirstOrDefaultAsync();
         }
+
     }
 }

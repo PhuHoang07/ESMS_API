@@ -26,6 +26,5 @@ namespace ESMS_Data.Entities.RequestModel.ExamScheduleReqModel
 
         public string? UpdType { get; set; }
 
-        public string? UpdProctor { get; set; }
     }
 }

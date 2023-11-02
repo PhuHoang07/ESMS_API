@@ -8,6 +8,8 @@ namespace Business.Services.LecturerService
 {
     public interface ILecturerService
     {
-        public Task<ResultModel> GetExamTimeForLecturer(string email);
+        public Task<ResultModel> GetRegisteredExamTimes(string email);
+        public Task<ResultModel> GetAvailableExamTimes(string email);
+
     }
 }

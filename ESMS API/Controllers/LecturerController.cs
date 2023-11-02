@@ -20,12 +20,23 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Lecturer")]
         [HttpGet]
-        [Route("exams")]
-        public Task<IActionResult> GetExamTime()
+        [Route("exams/registered")]
+        public async Task<IActionResult> GetRegisteredExamTimes()
         {
             var currentUser = GetCurrentUser();
 
-            var res = await _examService.GetExamTimeForLecturer(currentUser.Email);
+            var res = await _lecturerService.GetRegisteredExamTimes(currentUser.Email);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Lecturer")]
+        [HttpGet]
+        [Route("exams/available")]
+        public async Task<IActionResult> GetAvailableExamTimes()
+        {
+            var currentUser = GetCurrentUser();
+
+            var res = await _lecturerService.GetAvailableExamTimes(currentUser.Email);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

@@ -17,5 +17,7 @@ namespace ESMS_Data.Repositories.ParticipationRepository
         public Task<int?> GetRoomCapacity(string room);
         public Task<int> GetTotalStudentInRoom(int idt, string room);
         public Task<List<Participation>> GetParticipationsOnList(int idt, string subject, string room, List<string> students);
+        public Task<object> GetOwnExamSchedule(string username, string semester);
+
     }
 }

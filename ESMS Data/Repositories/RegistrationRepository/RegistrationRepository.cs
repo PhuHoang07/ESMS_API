@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ESMS_Data.Repositories.RegistrationRepository
 {
@@ -43,15 +44,36 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                                        .ToListAsync<object>();
         }
 
+        public async Task<object> FormatRegisteredExamTimes(string username, string semester)
+        {
+            var registeredExamTimes = await _registrations.Include(r => r.IdtNavigation)
+                                       .Where(r => r.UserName.Equals(username)
+                                                && r.IdtNavigation.Semester.Equals(semester))
+                                       .Select(r => r.IdtNavigation).ToListAsync();
+
+            var formattedExamTimes = registeredExamTimes.Select(aet => new
+            {
+                Date = aet.Date.ToString("dd/MM/yyyy"),
+                Start = aet.Start.ToString(@"hh\:mm"),
+                End = aet.End.ToString(@"hh\:mm"),
+            })
+            .OrderBy(aet => aet.Date)
+            .ToList();
+
+            return formattedExamTimes;
+        }
+        
         public async Task<List<ExamTime>> GetRegisteredExamTimes(string username, string semester)
         {
             return await _registrations.Include(r => r.IdtNavigation)
                                        .Where(r => r.UserName.Equals(username)
                                                 && r.IdtNavigation.Semester.Equals(semester))
                                        .Select(r => r.IdtNavigation).ToListAsync();
+
+            
         }
 
-        public async Task<List<ExamTime>> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
+        public async Task<object> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
         {
             var currentExamTimes = await _examTimes.Where(et => et.Semester.Equals(semester)).ToListAsync();
 
@@ -76,7 +98,16 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                 }
             }
 
-            return availableExamTimes.ToList();
+            var formattedExamTimes = availableExamTimes.Select(aet => new
+            {
+                Date = aet.Date.ToString("dd/MM/yyyy"),
+                Start = aet.Start.ToString(@"hh\:mm"),
+                End = aet.End.ToString(@"hh\:mm"),
+            })
+            .OrderBy(aet => aet.Date)
+            .ToList();
+
+            return formattedExamTimes;
         }
 
         public int GetRegisteredAmount(int idt)

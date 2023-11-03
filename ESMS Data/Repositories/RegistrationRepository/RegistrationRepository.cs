@@ -53,9 +53,10 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
             var formattedExamTimes = registeredExamTimes.Select(aet => new
             {
+                Idt = aet.Idt,
                 Date = aet.Date.ToString("dd/MM/yyyy"),
                 Start = aet.Start.ToString(@"hh\:mm"),
-                End = aet.End.ToString(@"hh\:mm"),
+                End = aet.End.ToString(@"hh\:mm")
             })
             .OrderBy(aet => aet.Date)
             .ToList();
@@ -100,9 +101,10 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
             var formattedExamTimes = availableExamTimes.Select(aet => new
             {
+                Idt = aet.Idt,
                 Date = aet.Date.ToString("dd/MM/yyyy"),
                 Start = aet.Start.ToString(@"hh\:mm"),
-                End = aet.End.ToString(@"hh\:mm"),
+                End = aet.End.ToString(@"hh\:mm")
             })
             .OrderBy(aet => aet.Date)
             .ToList();

@@ -36,7 +36,7 @@ namespace Business.Services.LecturerService
             try
             {
                 var currentUser = await _userRepository.GetUser(email);
-                var registeredExamTimes = await _registrationRepository.GetRegisteredExamTimes(currentUser.UserName, utils.GetCurrentSemester());
+                var registeredExamTimes = await _registrationRepository.FormatRegisteredExamTimes(currentUser.UserName, utils.GetCurrentSemester());
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;

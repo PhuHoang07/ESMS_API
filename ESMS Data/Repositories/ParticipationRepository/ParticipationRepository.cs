@@ -122,5 +122,42 @@ namespace ESMS_Data.Repositories.ParticipationRepository
             return formattedSchedules.ToList();
         }
 
+        public async Task<object> GetPreviewExamScheduleList(string semester)
+        {
+            var schedules = await _participations
+                .Where(p => p.ExamSchedule.IdtNavigation.Semester.Equals(semester))
+                .Include(p => p.ExamSchedule)
+                .Include(p => p.ExamSchedule.IdtNavigation)
+                .Include(p => p.ExamSchedule.Subject)
+                .Select(p => new
+                {
+                    SubjectId = p.SubjectId,
+                    SubjectName = p.ExamSchedule.Subject.Name,
+                    Date = p.ExamSchedule.IdtNavigation.Date,
+                    Room = p.RoomNumber,
+                    Time = $"{p.ExamSchedule.IdtNavigation.Start.ToString(@"hh\:mm")} - {p.ExamSchedule.IdtNavigation.End.ToString(@"hh\:mm")}",
+                    Form = p.ExamSchedule.Form,
+                    Type = p.ExamSchedule.Type,
+                    PublishDate = p.ExamSchedule.IdtNavigation.PublishDate
+                })
+                .ToListAsync();
+
+            // Formatting Date after fetching the data
+            var formattedSchedules = schedules.Select(p => new
+            {
+                p.SubjectId,
+                p.SubjectName,
+                Date = p.Date.ToString("dd/MM/yyyy"),
+                p.Room,
+                p.Time,
+                p.Form,
+                p.Type,
+                PublishDate = p.PublishDate != null ? p.PublishDate.Value.ToString("dd/MM/yyyy") : "N/A"
+            })
+            .OrderBy(p => p.Date);
+
+            return formattedSchedules.ToList();
+        }
+
     }
 }

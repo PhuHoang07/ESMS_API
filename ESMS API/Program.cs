@@ -15,6 +15,7 @@ using ESMS_Data.Repositories.ExamScheduleRepository;
 using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.ParticipationRepository;
 using Business.Services.LecturerService;
+using Business.Services.StudentService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +59,7 @@ builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILecturerService, LecturerService>();
-
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 // Add Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -121,7 +122,6 @@ builder.Services.AddCors(options =>
 
 // Allow reading TimeSpan in Json request
 builder.Services.AddMvc().AddNewtonsoftJson();
-
 
 var app = builder.Build();
 

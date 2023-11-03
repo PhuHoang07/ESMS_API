@@ -382,10 +382,10 @@ namespace Business.Services.ExamService
 
                 if (participationList.Count > 0)
                 {
-                    var newParicipations = new List<Participation>();
+                    var newParticipations = new List<Participation>();
                     foreach (var student in studentList)
                     {
-                        newParicipations.Add(new Participation
+                        newParticipations.Add(new Participation
                         {
                             UserName = student,
                             Idt = req.Idt,
@@ -394,7 +394,7 @@ namespace Business.Services.ExamService
                         });
                     }
 
-                    await _participationRepository.AddRange(newParicipations);
+                    await _participationRepository.AddRange(newParticipations);
                 }
 
                 resultModel.IsSuccess = true;

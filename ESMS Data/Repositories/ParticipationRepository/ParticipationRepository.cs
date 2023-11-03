@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Entities;
+using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -46,8 +47,8 @@ namespace ESMS_Data.Repositories.ParticipationRepository
 
         public async Task<List<Participation>> GetParticipationList(int idt, string subject, string room)
         {
-            return await _participations.Where(p => p.Idt == idt && 
-                                              p.SubjectId.Equals(subject) && 
+            return await _participations.Where(p => p.Idt == idt &&
+                                              p.SubjectId.Equals(subject) &&
                                               p.RoomNumber.Equals(room))
                                         .ToListAsync();
         }
@@ -77,14 +78,49 @@ namespace ESMS_Data.Repositories.ParticipationRepository
 
         public async Task<List<Participation>> GetParticipationsOnList(int idt, string subject, string room, List<string> students)
         {
-            return await _participations
-                                        .Where(p => p.Idt == idt
-                                                && p.SubjectId.Equals(subject)
-                                                && p.RoomNumber.Equals(room)
-                                                && students.Contains(p.UserName))
+            return await _participations.Where(p => p.Idt == idt
+                                                 && p.SubjectId.Equals(subject)
+                                                 && p.RoomNumber.Equals(room)
+                                                 && students.Contains(p.UserName))
                                         .ToListAsync();
         }
 
+        public async Task<object> GetOwnExamSchedule(string username, string semester)
+        {
+            var schedules = await _participations
+                .Where(p => p.UserName.Equals(username) && p.ExamSchedule.IdtNavigation.Semester.Equals(semester))
+                .Include(p => p.ExamSchedule)
+                .Include(p => p.ExamSchedule.IdtNavigation)
+                .Include(p => p.ExamSchedule.Subject)
+                .Select(p => new
+                {
+                    SubjectId = p.SubjectId,
+                    SubjectName = p.ExamSchedule.Subject.Name,
+                    Date = p.ExamSchedule.IdtNavigation.Date,
+                    Room = p.RoomNumber,
+                    Time = $"{p.ExamSchedule.IdtNavigation.Start.ToString(@"hh\:mm")} - {p.ExamSchedule.IdtNavigation.End.ToString(@"hh\:mm")}",
+                    Form = p.ExamSchedule.Form,
+                    Type = p.ExamSchedule.Type,
+                    PublishDate = p.ExamSchedule.IdtNavigation.PublishDate
+                })
+                .ToListAsync();
+
+            // Formatting Date after fetching the data
+            var formattedSchedules = schedules.Select(p => new
+            {
+                p.SubjectId,
+                p.SubjectName,
+                Date = p.Date.ToString("dd/MM/yyyy"),
+                p.Room,
+                p.Time,
+                p.Form,
+                p.Type,
+                PublishDate = p.PublishDate != null ? p.PublishDate.Value.ToString("dd/MM/yyyy") : "N/A"
+            })
+            .OrderBy(p => p.Date);
+
+            return formattedSchedules.ToList();
+        }
 
     }
 }

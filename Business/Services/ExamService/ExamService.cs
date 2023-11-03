@@ -342,6 +342,12 @@ namespace Business.Services.ExamService
                     throw new Exception("There is no exam schedule with given information");
                 }
 
+                var studentList = await _participationRepository.GetStudentListInParticipation(req.Idt, req.SubjectID, req.RoomNumber);
+                var participationList = await _participationRepository.GetParticipationList(req.Idt, req.SubjectID, req.RoomNumber);
+                if (participationList.Count > 0)
+                {
+                    await _participationRepository.DeleteRange(participationList);
+                }
                 await _examScheduleRepository.Delete(currentExamSchedule);
 
                 var updSubjectId = String.IsNullOrEmpty(req.UpdSubjectID) ? currentExamSchedule.SubjectId : req.UpdSubjectID;
@@ -374,10 +380,26 @@ namespace Business.Services.ExamService
 
                 await _examScheduleRepository.Add(updExamSchedule);
 
+                if (participationList.Count > 0)
+                {
+                    var newParicipations = new List<Participation>();
+                    foreach (var student in studentList)
+                    {
+                        newParicipations.Add(new Participation
+                        {
+                            UserName = student,
+                            Idt = req.Idt,
+                            RoomNumber = updRoomNumber,
+                            SubjectId = updSubjectId
+                        });
+                    }
+
+                    await _participationRepository.AddRange(newParicipations);
+                }
+
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Update successfully";
-                resultModel.Data = updExamSchedule;
             }
             catch (Exception ex)
             {
@@ -710,7 +732,7 @@ namespace Business.Services.ExamService
 
                     if (similarExam != null)
                     {
-                        exam.Proctor = similarExam.Proctor; 
+                        exam.Proctor = similarExam.Proctor;
                     }
                 }
 

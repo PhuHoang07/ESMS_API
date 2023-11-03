@@ -44,11 +44,28 @@ namespace ESMS_Data.Repositories.ParticipationRepository
             return await students.ToListAsync();
         }
 
+        public async Task<List<Participation>> GetParticipationList(int idt, string subject, string room)
+        {
+            return await _participations.Where(p => p.Idt == idt && 
+                                              p.SubjectId.Equals(subject) && 
+                                              p.RoomNumber.Equals(room))
+                                        .ToListAsync();
+        }
+
+        public async Task<List<string>> GetStudentListInParticipation(int idt, string subject, string room)
+        {
+            return await _participations.Where(p => p.Idt == idt &&
+                                              p.SubjectId.Equals(subject) &&
+                                              p.RoomNumber.Equals(room))
+                                        .Select(p => p.UserName)
+                                        .ToListAsync();
+        }
+
         public async Task<int?> GetRoomCapacity(string room)
         {
             return await _rooms.Where(r => r.Number.Equals(room))
-                                .Select(r => r.Capacity)
-                                .FirstAsync();
+                               .Select(r => r.Capacity)
+                               .FirstAsync();
         }
 
         public async Task<int> GetTotalStudentInRoom(int idt, string room)

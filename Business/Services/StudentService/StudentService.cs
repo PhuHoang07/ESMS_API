@@ -44,5 +44,25 @@ namespace Business.Services.StudentService
             return resultModel;
         }
 
+        public async Task<ResultModel> GetPreviewExamSchedule()
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var examScheduleList = await _participationRepository.GetPreviewExamScheduleList(utils.GetCurrentSemester());
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = examScheduleList;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
     }
 }

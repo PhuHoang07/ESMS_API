@@ -2,6 +2,7 @@
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,14 @@ namespace ESMS_Data.Repositories.ParticipationRepository
         private DbSet<Participation> _participations;
         private DbSet<User> _users;
         private DbSet<Room> _rooms;
-
+        private DbSet<ExamSchedule> _examSchedules;
         public ParticipationRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _participations = _context.Set<Participation>();
             _users = _context.Set<User>();
             _rooms = _context.Set<Room>();
+            _examSchedules = _context.Set<ExamSchedule>();
         }
 
         public async Task<object> GetStudentListInExam(int idt, string subject, string room)
@@ -105,7 +107,6 @@ namespace ESMS_Data.Repositories.ParticipationRepository
                 })
                 .ToListAsync();
 
-            // Formatting Date after fetching the data
             var formattedSchedules = schedules.Select(p => new
             {
                 p.SubjectId,
@@ -124,39 +125,40 @@ namespace ESMS_Data.Repositories.ParticipationRepository
 
         public async Task<object> GetPreviewExamScheduleList(string semester)
         {
-            var schedules = await _participations
-                .Where(p => p.ExamSchedule.IdtNavigation.Semester.Equals(semester))
-                .Include(p => p.ExamSchedule)
-                .Include(p => p.ExamSchedule.IdtNavigation)
-                .Include(p => p.ExamSchedule.Subject)
-                .Select(p => new
-                {
-                    SubjectId = p.SubjectId,
-                    SubjectName = p.ExamSchedule.Subject.Name,
-                    Date = p.ExamSchedule.IdtNavigation.Date,
-                    Room = p.RoomNumber,
-                    Time = $"{p.ExamSchedule.IdtNavigation.Start.ToString(@"hh\:mm")} - {p.ExamSchedule.IdtNavigation.End.ToString(@"hh\:mm")}",
-                    Form = p.ExamSchedule.Form,
-                    Type = p.ExamSchedule.Type,
-                    PublishDate = p.ExamSchedule.IdtNavigation.PublishDate
-                })
-                .ToListAsync();
+            var selectedSchedules = _examSchedules.Where(es => es.IdtNavigation.Semester.Equals(semester))
+                                                  .Include(p => p.IdtNavigation)
+                                                  .AsEnumerable()
+                                                  .GroupBy(es => new
+                                                  {
+                                                      es.Idt,
+                                                      es.SubjectId
+                                                  })
+                                                  .Select(es => es.OrderBy(es => es.RoomNumber).First())
+                                                  .Select(es => new
+                                                  {
+                                                      SubjectId = es.SubjectId,
+                                                      Date = es.IdtNavigation.Date,
+                                                      Time = $"{es.IdtNavigation.Start.ToString(@"hh\:mm")} - {es.IdtNavigation.End.ToString(@"hh\:mm")}",
+                                                      Form = es.Form,
+                                                      Type = es.Type,
+                                                      PublishDate = es.IdtNavigation.PublishDate
+                                                  })
+                                                  .OrderBy(es => es.SubjectId)
+                                                  .ToList();
 
-            // Formatting Date after fetching the data
-            var formattedSchedules = schedules.Select(p => new
+
+
+            var formattedSchedules = selectedSchedules.Select(p => new
             {
                 p.SubjectId,
-                p.SubjectName,
                 Date = p.Date.ToString("dd/MM/yyyy"),
-                p.Room,
                 p.Time,
                 p.Form,
                 p.Type,
                 PublishDate = p.PublishDate != null ? p.PublishDate.Value.ToString("dd/MM/yyyy") : "N/A"
-            })
-            .OrderBy(p => p.Date);
+            });
 
-            return formattedSchedules.ToList();
+            return await Task.FromResult(formattedSchedules.ToList());
         }
 
     }

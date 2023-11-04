@@ -18,14 +18,25 @@ namespace ESMS_API.Controllers
             _studentService = studentService;
         }
 
-        //[Authorize(Roles = "Student")]
+        [Authorize(Roles = "Student")]
         [HttpGet]
         [Route("exams/schedule/own")]
-        public async Task<IActionResult> GetRegisteredExamTimes()
+        public async Task<IActionResult> GetAssignedExamSchedules()
         {
             var currentUser = GetCurrentUser();
 
             var res = await _studentService.GetAssignedExamSchedules(currentUser.Email);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+        
+        //[Authorize(Roles = "Student")]
+        [HttpGet]
+        [Route("exams/schedule/preview")]
+        public async Task<IActionResult> GetPreviewExamSchedule()
+        {
+            var currentUser = GetCurrentUser();
+
+            var res = await _studentService.GetPreviewExamSchedule();
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

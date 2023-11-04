@@ -9,6 +9,7 @@ namespace Business.Services.StudentService
     public interface IStudentService
     {
         public Task<ResultModel> GetAssignedExamSchedules(string email);
+        public Task<ResultModel> GetPreviewExamSchedule();
 
     }
 }

@@ -243,6 +243,26 @@ namespace Business.Services.ExamService
             try
             {
                 var currentExamTime = await _examRepository.GetExamTime(idt);
+
+                var participations = await _participationRepository.GetParticipationListWithIdt(idt);
+                var examSchedules = await _examRepository.GetExamScheduleListWithIdt(idt);
+                var registrations = await _registrationRepository.GetRegistration(idt);
+
+                if(participations.Count > 0)
+                {
+                    await _participationRepository.DeleteRange(participations);
+                }
+
+                if(examSchedules.Count > 0)
+                {
+                    await _examScheduleRepository.DeleteRange(examSchedules);
+                }
+
+                if (registrations.Count > 0)
+                {
+                    await _registrationRepository.DeleteRange(registrations);
+                }
+
                 await _examRepository.Delete(currentExamTime);
 
                 resultModel.IsSuccess = true;
@@ -762,6 +782,29 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Data = proctorList;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
+
+        public async Task<ResultModel> PublicExamTime()
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var examTimeList = _examRepository.GetAll().ToList();
+
+                foreach (var examTime in examTimeList)
+                {
+                    examTime.IsPublic = true;
+                }
+
+                await _examRepository.UpdateRange(examTimeList);
             }
             catch (Exception ex)
             {

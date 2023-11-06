@@ -47,6 +47,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                    End = et.End,
                                    PublishDate = et.PublishDate,
                                    SlotId = et.SlotId,
+                                   IsPublic = et.IsPublic,
                                    Semester = et.Semester,
                                    Registrations = et.Registrations,
                                    ExamSchedules = et.ExamSchedules.AsQueryable()
@@ -76,6 +77,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                        End = et.End,
                        PublishDate = et.PublishDate,
                        SlotId = et.SlotId,
+                       IsPublic = et.IsPublic,
                        Semester = et.Semester,
                        Registrations = et.Registrations,
                        ExamSchedules = et.ExamSchedules
@@ -123,6 +125,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                                             End = i.End.ToString(@"hh\:mm"),
                                             PublishDate = i.PublishDate?.ToString("dd/MM/yyyy"),
                                             Slot = i.SlotId,
+                                            IsPublic = i.IsPublic,
                                             TotalSupervisor = i.Registrations.Count(),
                                             RequireSupervisor = GetRequireSupervisorAmount(i.Idt),
                                             ExamSchedules = i.ExamSchedules
@@ -244,6 +247,12 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                  && es.RoomNumber.Equals(roomNumber)).FirstOrDefaultAsync();
         }
 
+        public async Task<List<ExamSchedule>> GetExamScheduleListWithIdt(int idt)
+        {
+            return await _examSchedules.Where(es => es.Idt == idt)
+                                       .ToListAsync();
+        }
+
         public async Task<List<ExamSchedule>> GetExamScheduleWithDistinctRoom(int idt)
         {
             var examSchedules = await _examSchedules
@@ -317,6 +326,5 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                  && es.RoomNumber.Equals(examSchedule.RoomNumber))
                                        .ToListAsync();
         }
-
     }
 }

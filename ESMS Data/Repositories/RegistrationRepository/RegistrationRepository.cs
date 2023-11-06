@@ -23,6 +23,11 @@ namespace ESMS_Data.Repositories.RegistrationRepository
             _examTimes = _context.Set<ExamTime>();
         }
 
+        public async Task<List<Registration>> GetRegistration(int idt)
+        {
+            return await _registrations.Where(r => r.Idt == idt).ToListAsync();
+        }
+
         public async Task<List<string>> GetAvailableProctors(int idt, List<string> assignedProctorList)
         {
             var allProctor = await _registrations.Where(r => r.Idt == idt)
@@ -47,9 +52,10 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         public async Task<object> FormatRegisteredExamTimes(string username, string semester)
         {
             var registeredExamTimes = await _registrations.Include(r => r.IdtNavigation)
-                                       .Where(r => r.UserName.Equals(username)
-                                                && r.IdtNavigation.Semester.Equals(semester))
-                                       .Select(r => r.IdtNavigation).ToListAsync();
+                                                           .Where(r => r.UserName.Equals(username) &&
+                                                                       r.IdtNavigation.Semester.Equals(semester) &&
+                                                                       r.IdtNavigation.IsPublic == true)
+                                                           .Select(r => r.IdtNavigation).ToListAsync();
 
             var formattedExamTimes = registeredExamTimes.Select(aet => new
             {
@@ -63,15 +69,13 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
             return formattedExamTimes;
         }
-        
+
         public async Task<List<ExamTime>> GetRegisteredExamTimes(string username, string semester)
         {
             return await _registrations.Include(r => r.IdtNavigation)
                                        .Where(r => r.UserName.Equals(username)
                                                 && r.IdtNavigation.Semester.Equals(semester))
                                        .Select(r => r.IdtNavigation).ToListAsync();
-
-            
         }
 
         public async Task<object> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
@@ -99,15 +103,16 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                 }
             }
 
-            var formattedExamTimes = availableExamTimes.Select(aet => new
-            {
-                Idt = aet.Idt,
-                Date = aet.Date.ToString("dd/MM/yyyy"),
-                Start = aet.Start.ToString(@"hh\:mm"),
-                End = aet.End.ToString(@"hh\:mm")
-            })
-            .OrderBy(aet => aet.Date)
-            .ToList();
+            var formattedExamTimes = availableExamTimes.Where(ae => ae.IsPublic == true)
+                                                       .Select(aet => new
+                                                       {
+                                                           Idt = aet.Idt,
+                                                           Date = aet.Date.ToString("dd/MM/yyyy"),
+                                                           Start = aet.Start.ToString(@"hh\:mm"),
+                                                           End = aet.End.ToString(@"hh\:mm")
+                                                       })
+                                                      .OrderBy(aet => aet.Date)
+                                                      .ToList();
 
             return formattedExamTimes;
         }

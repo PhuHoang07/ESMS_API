@@ -13,6 +13,7 @@ namespace ESMS_Data.Repositories.ParticipationRepository
     {
         public Task<object> GetStudentListInExam(int idt, string subject, string room);
         public Task<List<Participation>> GetParticipationList(int idt, string subject, string room);
+        public Task<List<Participation>> GetParticipationListWithIdt(int idt);
         public Task<List<string>> GetStudentListInParticipation(int idt, string subject, string room);
         public Task<int?> GetRoomCapacity(string room);
         public Task<int> GetTotalStudentInRoom(int idt, string room);

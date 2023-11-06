@@ -54,6 +54,12 @@ namespace ESMS_Data.Repositories.ParticipationRepository
                                               p.RoomNumber.Equals(room))
                                         .ToListAsync();
         }
+        
+        public async Task<List<Participation>> GetParticipationListWithIdt(int idt)
+        {
+            return await _participations.Where(p => p.Idt == idt)
+                                        .ToListAsync();
+        }
 
         public async Task<List<string>> GetStudentListInParticipation(int idt, string subject, string room)
         {

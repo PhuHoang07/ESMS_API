@@ -51,7 +51,7 @@ namespace ESMS_Data.Repositories.UserRepository
                                u.UserName,
                                u.Image,
                                u.Name,
-                               u.DateOfBirth,
+                               DateOfBirth = u.DateOfBirth != null ? u.DateOfBirth.Value.ToString("dd/MM/yyyy") : "N/A",
                                u.Gender,
                                u.Idcard,
                                u.Address,

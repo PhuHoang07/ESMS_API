@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Entities;
+using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         public Task<List<object>> GetProctors(int idt);
         public Task<object> FormatRegisteredExamTimes(string username, string semester);
         public Task<List<ExamTime>> GetRegisteredExamTimes(string username, string semester);
-        public Task<object> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester);
+        public Task<List<ExamTimeInfoModel>> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester);
         public int GetRegisteredAmount(int idt);
     }
 }

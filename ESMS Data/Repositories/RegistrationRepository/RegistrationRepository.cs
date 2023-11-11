@@ -1,4 +1,5 @@
-﻿using ESMS_Data.Models;
+﻿using ESMS_Data.Entities;
+using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -78,7 +79,7 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                                        .Select(r => r.IdtNavigation).ToListAsync();
         }
 
-        public async Task<object> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
+        public async Task<List<ExamTimeInfoModel>> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
         {
             var currentExamTimes = await _examTimes.Where(et => et.Semester.Equals(semester)).ToListAsync();
 
@@ -104,12 +105,15 @@ namespace ESMS_Data.Repositories.RegistrationRepository
             }
 
             var formattedExamTimes = availableExamTimes.Where(ae => ae.IsPublic == true)
-                                                       .Select(aet => new
+                                                       .Select(aet => new ExamTimeInfoModel
                                                        {
                                                            Idt = aet.Idt,
                                                            Date = aet.Date.ToString("dd/MM/yyyy"),
                                                            Start = aet.Start.ToString(@"hh\:mm"),
-                                                           End = aet.End.ToString(@"hh\:mm")
+                                                           End = aet.End.ToString(@"hh\:mm"),
+                                                           Required = GetRequireSupervisorAmount(aet.Idt),
+                                                           Registered = GetRegisteredAmount(aet.Idt),
+                                                           Amount = $"{GetRegisteredAmount(aet.Idt)}/{GetRequireSupervisorAmount(aet.Idt)}"
                                                        })
                                                       .OrderBy(aet => aet.Date)
                                                       .ToList();
@@ -120,6 +124,17 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         public int GetRegisteredAmount(int idt)
         {
             return _registrations.Where(r => r.Idt == idt).Count();
+        }
+
+        public int GetRequireSupervisorAmount(int idt)
+        {
+            var count = _examTimes.Include(et => et.ExamSchedules)
+                             .Where(et => et.Idt == idt)
+                             .SelectMany(et => et.ExamSchedules)
+                             .Count();
+
+            // 4 room = 1 addition proctor
+            return (int)Math.Round(5 / 4d * count, MidpointRounding.AwayFromZero);
         }
     }
 }

@@ -62,9 +62,9 @@ namespace ESMS_API.Controllers
         [Authorize(Roles = "Admin, Testing Admin")]
         [HttpGet]
         [Route("available-rooms")]
-        public async Task<IActionResult> GetAvailableRooms(int idt, string subjectId)
+        public async Task<IActionResult> GetAvailableRooms(int idt)
         {
-            var res = await _examService.GetAvailableRooms(idt, subjectId);
+            var res = await _examService.GetAvailableRooms(idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

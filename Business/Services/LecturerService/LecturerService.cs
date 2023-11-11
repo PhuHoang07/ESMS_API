@@ -1,4 +1,5 @@
 ﻿using Business.Services.UserService;
+using ESMS_Data.Entities;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.RegistrationRepository;
@@ -62,6 +63,17 @@ namespace Business.Services.LecturerService
 
                 var registeredExamTimes = await _registrationRepository.GetRegisteredExamTimes(currentUser.UserName, utils.GetCurrentSemester());
                 var availableExamTimes = await _registrationRepository.GetAvailableExamTimes(registeredExamTimes, utils.GetCurrentSemester());
+
+                var removeList = new List<ExamTimeInfoModel>();
+                foreach (var examTimes in availableExamTimes)
+                {
+                    if (examTimes.Registered >= examTimes.Required)
+                    {
+                        removeList.Add(examTimes);
+                    }
+                }
+
+                availableExamTimes = availableExamTimes.Except(removeList).ToList();
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;

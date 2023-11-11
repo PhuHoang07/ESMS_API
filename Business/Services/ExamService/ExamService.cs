@@ -248,12 +248,12 @@ namespace Business.Services.ExamService
                 var examSchedules = await _examRepository.GetExamScheduleListWithIdt(idt);
                 var registrations = await _registrationRepository.GetRegistration(idt);
 
-                if(participations.Count > 0)
+                if (participations.Count > 0)
                 {
                     await _participationRepository.DeleteRange(participations);
                 }
 
-                if(examSchedules.Count > 0)
+                if (examSchedules.Count > 0)
                 {
                     await _examScheduleRepository.DeleteRange(examSchedules);
                 }
@@ -438,6 +438,12 @@ namespace Business.Services.ExamService
             try
             {
                 var delExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
+                var participations = await _participationRepository.GetParticipationList(req.Idt, req.SubjectID, req.RoomNumber);
+
+                if (participations.Count > 0)
+                {
+                    await _participationRepository.DeleteRange(participations);
+                }
 
                 if (delExamSchedule == null)
                 {
@@ -585,6 +591,14 @@ namespace Business.Services.ExamService
                 var currentStart = await _examRepository.GetStart(examSchedule);
                 var currentEnd = await _examRepository.GetEnd(examSchedule);
                 var semester = utils.GetSemester(currentDate);
+
+                var roomCapacity = await _participationRepository.GetRoomCapacity(req.Room);
+                var currentAmount = await _participationRepository.GetTotalStudentInRoom(req.Idt, req.Room);
+
+                if (currentAmount + req.Students.Count > roomCapacity)
+                {
+                    throw new Exception("Student list exceed the room's capacity");
+                }
 
                 foreach (var student in req.Students)
                 {

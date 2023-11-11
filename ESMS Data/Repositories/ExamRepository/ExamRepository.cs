@@ -190,18 +190,17 @@ namespace ESMS_Data.Repositories.ExamRepository
             return await _examTimes.FindAsync(idt);
         }
 
-        public async Task<List<string>> GetAvailableRoom(int idt, string subjectId)
+        public async Task<List<string>> GetAvailableRoom(int idt)
         {
             var qr = _rooms;
 
-            //Find exception room with same idt and same subjectId
+            //Find exception room with same idt
             var filteredExamTimesByIdt = _examTimes
                                     .Include(et => et.ExamSchedules)
                                     .Where(et => et.Idt == idt);
 
             var roomExcept = filteredExamTimesByIdt
                         .SelectMany(et => et.ExamSchedules
-                                            .Where(es => es.SubjectId.Equals(subjectId))
                                             .Select(es => es.RoomNumber));
 
             var exceptRooms = qr.Where(room => roomExcept.Contains(room.Number));

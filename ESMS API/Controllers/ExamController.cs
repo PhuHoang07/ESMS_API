@@ -1,13 +1,16 @@
 ﻿using Business.Services;
 using Business.Services.ExamService;
+using ClosedXML.Excel;
 using ESMS_Data.Entities.RequestModel;
 using ESMS_Data.Entities.RequestModel.ExamScheduleReqModel;
 using ESMS_Data.Entities.RequestModel.ExamTimeReqModel;
 using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
 using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
+using ESMS_Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.Xml;
 using System.Text.Json;
 
 namespace ESMS_API.Controllers
@@ -97,6 +100,89 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
+        [Route("time/export-excel")]
+        public async Task<IActionResult> ExportToExcel(int idt)
+        {
+            try
+            {
+                var dataTableList = await _examService.ExportToExcel(idt);
+                var examTime = await _examService.GetExamTimeInfo(idt);
+                var proctorList = await _examService.GetProctorList(idt);
+                var count = 0;
+
+                if (proctorList.Count < dataTableList.Count)
+                {
+                    var difference = dataTableList.Count - proctorList.Count;
+                    if (difference == 1)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "There is 1 exam schedule that is not assigned to any proctors."
+                        });
+                    }
+                    else
+                    {
+                        return BadRequest(new
+                        {
+                            message = $"There is {difference} exam schedules that are not assigned to any proctors."
+                        });
+                    }
+
+                }
+
+                using (XLWorkbook wb = new XLWorkbook())
+                {
+                    foreach (var examSchedule in dataTableList)
+                    {
+                        var sheet = wb.AddWorksheet(examSchedule, examSchedule.TableName);
+                        sheet.Row(1).InsertRowsAbove(4);
+                        sheet.Cell(1, 1).Value = $"Date: {examTime.Date.ToString("dd/MM/yyyy")}";
+                        sheet.Cell(2, 1).Value = $"Time: {examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}";
+                        sheet.Cell(3, 1).Value = $"Proctor: {proctorList[count]}";
+                        count++;
+
+                        sheet.Columns().AdjustToContents();
+                        sheet.Style.Fill.BackgroundColor = XLColor.White;
+                        sheet.Style.Font.FontColor = XLColor.FromTheme(XLThemeColor.Text1);
+
+                        for (int rowNumber = 5; rowNumber <= sheet.Rows().Count(); rowNumber++)
+                        {
+                            for (int colNumber = 1; colNumber <= Math.Min(5, sheet.Columns().Count()); colNumber++)
+                            {
+                                var cell = sheet.Cell(rowNumber, colNumber);
+                                cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+                                cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                                cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+                                cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+
+                                // Optionally, set a specific color for the borders
+                                cell.Style.Border.TopBorderColor = XLColor.FromTheme(XLThemeColor.Text1);
+                                cell.Style.Border.BottomBorderColor = XLColor.FromTheme(XLThemeColor.Text1);
+                                cell.Style.Border.LeftBorderColor = XLColor.FromTheme(XLThemeColor.Text1);
+                                cell.Style.Border.RightBorderColor = XLColor.FromTheme(XLThemeColor.Text1);
+                            }
+                        }
+                    }
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        wb.SaveAs(ms);
+                        return File(ms.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                            $"{examTime.Date.ToString("dd-MM-yyyy")} ({examTime.Start.ToString(@"hh\-mm")}_{examTime.End.ToString(@"hh\-mm")})");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = "An error occurred during Excel export."
+                });
+            }
+
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpGet]
         [Route("time/proctors")]
         public async Task<IActionResult> ViewProctorList(int idt)
         {
@@ -121,6 +207,8 @@ namespace ESMS_API.Controllers
             var res = await _examService.RemoveProctorFromExamTime(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+        
 
         [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPost]
@@ -156,7 +244,7 @@ namespace ESMS_API.Controllers
         {
             var res = await _examService.DeleteExamSchedule(req);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
-        }      
+        }
 
         [Authorize(Roles = "Admin, Testing Admin")]
         [HttpGet]
@@ -202,5 +290,9 @@ namespace ESMS_API.Controllers
             var res = await _examService.UpdateProctorsToExamSchedule(idt);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
+
+
+
+
     }
 }

@@ -270,8 +270,8 @@ namespace ESMS_Data.Repositories.ExamRepository
         {
             return await _examSchedules.Where(es => es.Idt == idt
                                                  && es.Proctor != null)
+                                       .OrderBy(es => es.RoomNumber)
                                        .Select(es => es.Proctor)
-                                       .Distinct()
                                        .ToListAsync();
         }
 

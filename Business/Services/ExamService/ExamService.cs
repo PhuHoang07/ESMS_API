@@ -6,11 +6,11 @@ using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.ExamScheduleRepository;
 using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.ParticipationRepository;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
-using System.Net.Http.Headers;
 using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
 using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
+using System.Data;
+using ClosedXML.Excel;
 
 namespace Business.Services.ExamService
 {
@@ -828,5 +828,37 @@ namespace Business.Services.ExamService
             }
             return resultModel;
         }
+
+        public async Task<List<DataTable>> ExportToExcel(int idt)
+        {
+            try
+            {
+
+                var examSchedules = await _examRepository.GetExamScheduleListWithIdt(idt);
+
+                if (examSchedules.Count <= 0)
+                {
+                    throw new Exception("There is no exam schedule to export");
+                }
+
+                return await _participationRepository.GetExamScheduleInfoToExport(idt);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There is no exam schedule to export.");
+            }
+
+        }
+
+        public async Task<ExamTime> GetExamTimeInfo(int idt)
+        {
+            return await _examRepository.GetExamTime(idt);
+        }
+
+        public async Task<List<string>> GetProctorList(int idt)
+        {
+            return await _examRepository.GetAssignedProctorList(idt);
+        }
+
     }
 }

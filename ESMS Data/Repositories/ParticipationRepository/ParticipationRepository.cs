@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,7 +55,17 @@ namespace ESMS_Data.Repositories.ParticipationRepository
                                               p.RoomNumber.Equals(room))
                                         .ToListAsync();
         }
-        
+
+        public async Task<List<User>> GetListToExportExcel(int idt, string subject, string room)
+        {
+            return await _participations.Include(p => p.UserNameNavigation)
+                                        .Where(p => p.Idt == idt &&
+                                              p.SubjectId.Equals(subject) &&
+                                              p.RoomNumber.Equals(room))
+                                        .Select(p => p.UserNameNavigation)
+                                        .ToListAsync();
+        }
+
         public async Task<List<Participation>> GetParticipationListWithIdt(int idt)
         {
             return await _participations.Where(p => p.Idt == idt)
@@ -165,6 +176,44 @@ namespace ESMS_Data.Repositories.ParticipationRepository
             });
 
             return await Task.FromResult(formattedSchedules.ToList());
+        }
+
+        private async Task<DataTable> GetExamScheduleInfo(int idt, string subjectId, string room)
+        {
+            DataTable dt = new DataTable();
+
+            dt.TableName = $"{room}";
+            dt.Columns.Add("Student code", typeof(string));
+            dt.Columns.Add("Full Name", typeof(string));
+            dt.Columns.Add("Check Attendance", typeof(string));
+            dt.Columns.Add("Finished Time", typeof(string));
+            dt.Columns.Add("Signature", typeof(string));
+
+            var studentList = await GetListToExportExcel(idt, subjectId, room);
+            if (studentList.Count > 0)
+            {
+                studentList.ForEach(sl =>
+                {
+                    dt.Rows.Add(sl.UserName, sl.Name, "", "", "");
+                });
+            }
+            return dt;
+        }
+
+        public async Task<List<DataTable>> GetExamScheduleInfoToExport(int idt)
+        {
+            var examSchedules = await _examSchedules.Where(es => es.Idt == idt)
+                                                    .OrderBy(es => es.RoomNumber)
+                                                    .ToListAsync();
+
+            var dataTableList = new List<DataTable>();
+
+            foreach (var examSchedule in examSchedules)
+            {
+                dataTableList.Add(await GetExamScheduleInfo(examSchedule.Idt, examSchedule.SubjectId, examSchedule.RoomNumber));
+            }
+
+            return dataTableList;
         }
 
     }

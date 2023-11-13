@@ -16,12 +16,14 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         private ESMSContext _context;
         private DbSet<Registration> _registrations;
         private DbSet<ExamTime> _examTimes;
+        private DbSet<User> _users;
 
         public RegistrationRepository(ESMSContext context) : base(context)
         {
             _context = context;
             _registrations = _context.Set<Registration>();
             _examTimes = _context.Set<ExamTime>();
+            _users = _context.Set<User>();
         }
 
         public async Task<List<Registration>> GetRegistration(int idt)
@@ -35,6 +37,17 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                                        .Select(r => r.UserName)
                                        .ToListAsync();
             return allProctor.Except(assignedProctorList).ToList();
+
+        }
+        
+        public async Task<List<User>> GetAvailable(int idt, List<string> assignedProctorList)
+        {
+            var allProctor = await _registrations.Where(r => r.Idt == idt)
+                                       .Select(r => r.UserName)
+                                       .ToListAsync();
+            allProctor = allProctor.Except(assignedProctorList).ToList();
+
+            return await _users.Where(u => allProctor.Contains(u.UserName)).ToListAsync();
         }
 
         public async Task<List<object>> GetProctors(int idt)

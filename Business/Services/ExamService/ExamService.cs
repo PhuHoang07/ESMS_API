@@ -11,6 +11,7 @@ using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
 using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
 using System.Data;
 using ClosedXML.Excel;
+using Azure.Identity;
 
 namespace Business.Services.ExamService
 {
@@ -796,11 +797,14 @@ namespace Business.Services.ExamService
             try
             {
                 var assignedProctorList = await _examRepository.GetAssignedProctorList(idt);
-                var proctorList = await _registrationRepository.GetAvailableProctors(idt, assignedProctorList);
+                var proctorList = await _registrationRepository.GetAvailable(idt, assignedProctorList);
+
+                var getInfo = proctorList.Select(proctor => new { proctor.UserName, proctor.Name }).ToList();
+
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
-                resultModel.Data = proctorList;
+                resultModel.Data = getInfo;
             }
             catch (Exception ex)
             {

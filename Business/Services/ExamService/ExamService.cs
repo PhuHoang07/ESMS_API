@@ -137,6 +137,11 @@ namespace Business.Services.ExamService
             {
                 throw new Exception("Invalid date: Date > Publish date");
             }
+
+            if (date <= DateTime.Now.Date)
+            {
+                throw new Exception("Invalid date: Date <= current date");
+            }
         }
 
         public async Task<ResultModel> AddTime(ExamTimeAddReqModel req)

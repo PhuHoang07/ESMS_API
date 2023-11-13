@@ -1,6 +1,7 @@
 ﻿using Business.Services.AuthService;
 using ESMS_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace ESMS_API.Controllers
@@ -26,6 +27,15 @@ namespace ESMS_API.Controllers
             }
             else
             {
+                var jwtToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var handler = new JwtSecurityTokenHandler();
+                var token = handler.ReadToken(jwtToken) as JwtSecurityToken;
+
+                if (token.ValidTo < DateTime.UtcNow)
+                {
+                    return Ok("Token has expired, please log in again");
+                }
+
                 return Ok("Invalid");
             }
         }

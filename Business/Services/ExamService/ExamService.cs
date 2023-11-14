@@ -201,6 +201,13 @@ namespace Business.Services.ExamService
 
             try
             {
+                var registrations = await _registrationRepository.GetRegistration(req.Idt);
+
+                if (registrations.Count > 0)
+                {
+                    await _registrationRepository.DeleteRange(registrations);
+                }
+
                 ValidateTime(req.Start, req.End);
                 ValidateDate(req.Date, req.PublishDate);
 
@@ -446,6 +453,7 @@ namespace Business.Services.ExamService
                 var delExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
                 var participations = await _participationRepository.GetParticipationList(req.Idt, req.SubjectID, req.RoomNumber);
 
+
                 if (participations.Count > 0)
                 {
                     await _participationRepository.DeleteRange(participations);
@@ -457,6 +465,11 @@ namespace Business.Services.ExamService
                 }
 
                 await _examScheduleRepository.Delete(delExamSchedule);
+                if (delExamSchedule.Proctor != null)
+                {
+                    var registration = await _registrationRepository.GetRegistrationOfProctor(req.Idt, delExamSchedule.Proctor);
+                    await _registrationRepository.Delete(registration);
+                }
 
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;

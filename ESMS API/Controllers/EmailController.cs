@@ -18,6 +18,7 @@ namespace ESMS_API.Controllers
 
         [Authorize(Roles = "Testing Admin")]
         [HttpPost]
+        [Route("send/delete/schedule")]
         public async Task<IActionResult> SendMailToLecturerWhenDeleteSchedule(int idt, string subjectId, string room)
         {
             try
@@ -29,6 +30,28 @@ namespace ESMS_API.Controllers
                 mailRequest.Body = $"Your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}) is cancelled. Please view the web again for newest information";
                     
                 await _emailService.SendEmailToProctorWhenDeleteSchedule(mailRequest, idt, subjectId, room);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [Authorize(Roles = "Testing Admin")]
+        [HttpPost]
+        [Route("send/delete-update/time")]
+        public async Task<IActionResult> SendEmailToProctorWhenDeleteAndUpdateTime(int idt)
+        {
+            try
+            {
+                var examTime = await _emailService.GetExamTimeToInform(idt);
+
+                MailRequest mailRequest = new MailRequest();
+                mailRequest.Subject = "Changing in the exam schedule";
+                mailRequest.Body = $"Your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}) is cancelled. Please view the web again for newest information";
+
+                await _emailService.SendEmailToProctorWhenDeleteAndUpdateTime(mailRequest, idt);
                 return Ok();
             }
             catch (Exception ex)

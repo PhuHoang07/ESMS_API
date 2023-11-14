@@ -31,6 +31,13 @@ namespace ESMS_Data.Repositories.RegistrationRepository
             return await _registrations.Where(r => r.Idt == idt).ToListAsync();
         }
 
+        public async Task<List<string>> GetProctorUsername(int idt)
+        {
+            return await _registrations.Where(r => r.Idt == idt)
+                                       .Select(r => r.UserName)
+                                       .ToListAsync();
+        }
+
         public async Task<Registration> GetRegistrationOfProctor(int idt, string proctor)
         {
             return await _registrations.Where(r => r.Idt == idt &&
@@ -56,7 +63,7 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                                       .Select(username => username.Trim())
                                       .ToList();
 
-            var users = await _users.ToListAsync();  
+            var users = await _users.ToListAsync();
 
             return users.Where(u => available.Contains(u.UserName.Trim(), StringComparer.OrdinalIgnoreCase))
                         .ToList();

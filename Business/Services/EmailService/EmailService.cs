@@ -48,9 +48,11 @@ namespace Business.Services.EmailService
             builder.HtmlBody = mailRequest.Body;
             email.Body = builder.ToMessageBody();
 
+            var password = SecretService.SecretService.EmailPassword;
+
             using var smtp = new SmtpClient();
             smtp.Connect(_emailSettings.Host, _emailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_emailSettings.Email, _emailSettings.Password);
+            smtp.Authenticate(_emailSettings.Email, password);
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }

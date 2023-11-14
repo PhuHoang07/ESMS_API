@@ -11,21 +11,26 @@ namespace Business.Services.SecretService
 {
     public static class SecretService
     {
-        private const string KeyVaultURI = "https://swp-key.vault.azure.net/";
         public static readonly string ConnectionString;
         public static readonly string JwtKey;
+        public static readonly string EmailPassword;
+
+        private const string KeyVaultURI = "https://swp-key.vault.azure.net/";
+        private static readonly Uri keyVaultEndPoint;
+        private static readonly SecretClient secretClient;
 
         static SecretService()
         {
+            keyVaultEndPoint = new Uri(KeyVaultURI);
+            secretClient = new SecretClient(keyVaultEndPoint, new DefaultAzureCredential());
+
             ConnectionString = getConnectionString();
             JwtKey = getJwtKey();
+            EmailPassword = getEmailPassword();
         }
 
         private static string getConnectionString()
         {
-            var keyVaultEndPoint = new Uri(KeyVaultURI);
-            var secretClient = new SecretClient(keyVaultEndPoint, new DefaultAzureCredential());
-
             KeyVaultSecret keyVaultSecret = secretClient.GetSecret("ESMS-AzureSQL");
 
             return keyVaultSecret.Value;
@@ -33,10 +38,14 @@ namespace Business.Services.SecretService
 
         private static string getJwtKey()
         {
-            var keyVaultEndPoint = new Uri(KeyVaultURI);
-            var secretClient = new SecretClient(keyVaultEndPoint, new DefaultAzureCredential());
-
             KeyVaultSecret keyVaultSecret = secretClient.GetSecret("JwtKey");
+
+            return keyVaultSecret.Value;
+        }
+
+        private static string getEmailPassword()
+        {
+            KeyVaultSecret keyVaultSecret = secretClient.GetSecret("EmailPassword");
 
             return keyVaultSecret.Value;
         }

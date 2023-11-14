@@ -16,6 +16,8 @@ using ESMS_Data.Repositories.RegistrationRepository;
 using ESMS_Data.Repositories.ParticipationRepository;
 using Business.Services.LecturerService;
 using Business.Services.StudentService;
+using ESMS_Data.Entities.EmailModel;
+using Business.Services.EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+//Email
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 // Add Service
 builder.Services.AddScoped<IExamService, ExamService>();
@@ -60,6 +64,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILecturerService, LecturerService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 
 // Add Repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -107,6 +113,8 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
+
 
 // Add CORS
 builder.Services.AddCors(options =>

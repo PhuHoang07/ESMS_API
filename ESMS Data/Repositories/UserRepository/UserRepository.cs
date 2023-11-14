@@ -73,6 +73,9 @@ namespace ESMS_Data.Repositories.UserRepository
                                .FirstOrDefaultAsync(u => u.UserName.Equals(userNameOrEmail) || u.Email.Equals(userNameOrEmail));
         }
 
-        
+        public async Task<string> GetUserMail(string userName)
+        {
+            return await _users.Where(u => u.UserName.Equals(userName)).Select(u => u.Email.ToLower()).FirstOrDefaultAsync();
+        }
     }
 }

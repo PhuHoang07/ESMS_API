@@ -176,7 +176,7 @@ namespace Business.Services.ExamService
                     PublishDate = req.PublishDate,
                     SlotId = slot.Value,
                     Semester = currentSemester,
-                    IsPublic = false
+                    IsPublic = true
                 };
 
                 await _examRepository.Add(examTime);

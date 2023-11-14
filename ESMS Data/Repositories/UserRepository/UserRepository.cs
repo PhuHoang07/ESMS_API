@@ -77,5 +77,10 @@ namespace ESMS_Data.Repositories.UserRepository
         {
             return await _users.Where(u => u.UserName.Equals(userName)).Select(u => u.Email.ToLower()).FirstOrDefaultAsync();
         }
+
+        public async Task<List<User>> GetUserList(List<string> username)
+        {
+            return await _users.Where(u => username.Contains(u.UserName)).ToListAsync();
+        }
     }
 }

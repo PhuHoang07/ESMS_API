@@ -49,11 +49,17 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         public async Task<List<User>> GetAvailable(int idt, List<string> assignedProctorList)
         {
             var allProctor = await _registrations.Where(r => r.Idt == idt)
-                                       .Select(r => r.UserName)
-                                       .ToListAsync();
-            allProctor = allProctor.Except(assignedProctorList).ToList();
+                                                 .Select(r => r.UserName)
+                                                 .ToListAsync();
 
-            return await _users.Where(u => allProctor.Contains(u.UserName)).ToListAsync();
+            var available = allProctor.Except(assignedProctorList, StringComparer.OrdinalIgnoreCase)
+                                      .Select(username => username.Trim())
+                                      .ToList();
+
+            var users = await _users.ToListAsync();  
+
+            return users.Where(u => available.Contains(u.UserName.Trim(), StringComparer.OrdinalIgnoreCase))
+                        .ToList();
         }
 
         public async Task<List<object>> GetProctors(int idt)

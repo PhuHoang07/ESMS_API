@@ -12,6 +12,7 @@ using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
 using System.Data;
 using ClosedXML.Excel;
 using Azure.Identity;
+using System.Threading;
 
 namespace Business.Services.ExamService
 {
@@ -139,7 +140,7 @@ namespace Business.Services.ExamService
                 throw new Exception("Invalid date: Date > Publish date");
             }
 
-            if (date <= DateTime.Now.Date)
+            if (date <= DateTime.UtcNow.ToLocalTime().Date)
             {
                 throw new Exception("Invalid date: Date <= current date");
             }

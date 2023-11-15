@@ -69,8 +69,7 @@ namespace Business.Services.LecturerService
                 foreach (var examTimes in availableExamTimes)
                 {
                     var date = DateTime.ParseExact(examTimes.Date, "dd/MM/yyyy", null);
-                    var difference = date - currentDate;
-                    if ((examTimes.Registered >= examTimes.Required) || (difference.TotalDays < 1))
+                    if ((examTimes.Registered >= examTimes.Required) || (date <= currentDate))
                     {
                         removeList.Add(examTimes);
                     }

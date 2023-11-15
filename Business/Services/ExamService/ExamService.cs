@@ -140,7 +140,7 @@ namespace Business.Services.ExamService
                 throw new Exception("Invalid date: Date > Publish date");
             }
 
-            if (date <= DateTime.UtcNow.ToLocalTime().Date)
+            if (date <= DateTime.Now.Date)
             {
                 throw new Exception("Invalid date: Date <= current date");
             }

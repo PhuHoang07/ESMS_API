@@ -65,12 +65,11 @@ namespace Business.Services.LecturerService
                 var availableExamTimes = await _registrationRepository.GetAvailableExamTimes(registeredExamTimes, utils.GetCurrentSemester());
 
                 var removeList = new List<ExamTimeInfoModel>();
-                var currentDate = DateTime.Now;
+                var currentDate = DateTime.Now.Date;
                 foreach (var examTimes in availableExamTimes)
                 {
                     var date = DateTime.ParseExact(examTimes.Date, "dd/MM/yyyy", null);
-                    var difference = date - currentDate;
-                    if ((examTimes.Registered >= examTimes.Required) || (difference.TotalDays <= 1))
+                    if ((examTimes.Registered >= examTimes.Required) || (date <= currentDate))
                     {
                         removeList.Add(examTimes);
                     }

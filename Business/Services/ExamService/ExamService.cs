@@ -177,7 +177,7 @@ namespace Business.Services.ExamService
                     PublishDate = req.PublishDate,
                     SlotId = slot.Value,
                     Semester = currentSemester,
-                    IsPublic = true
+                    IsPublic = false
                 };
 
                 await _examRepository.Add(examTime);
@@ -829,29 +829,6 @@ namespace Business.Services.ExamService
             return resultModel;
         }
 
-        public async Task<ResultModel> PublicExamTime()
-        {
-            ResultModel resultModel = new ResultModel();
-            try
-            {
-                var examTimeList = _examRepository.GetAll().ToList();
-
-                foreach (var examTime in examTimeList)
-                {
-                    examTime.IsPublic = true;
-                }
-
-                await _examRepository.UpdateRange(examTimeList);
-            }
-            catch (Exception ex)
-            {
-                resultModel.IsSuccess = false;
-                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
-                resultModel.Message = ex.Message;
-            }
-            return resultModel;
-        }
-
         public async Task<List<DataTable>> ExportToExcel(int idt)
         {
             try
@@ -883,5 +860,35 @@ namespace Business.Services.ExamService
             return await _examRepository.GetAssignedProctorList(idt);
         }
 
+        public async Task<ResultModel> SetIsPublicExamTime(List<int> idt, bool isPublic, string message)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                if(idt.Count == 0)
+                {
+                    throw new Exception("Please choose any exam time to public");
+                }
+
+                var examTimes = await _examRepository.GetExamTimeList(idt);
+                foreach (var examTime in examTimes)
+                {
+                    examTime.IsPublic = isPublic;
+                }
+
+                await _examRepository.UpdateRange(examTimes);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Message = message;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
+            return resultModel;
+        }
     }
 }

@@ -113,7 +113,8 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
         public async Task<List<ExamTimeInfoModel>> GetAvailableExamTimes(List<ExamTime> registeredExamTimes, string semester)
         {
-            var currentExamTimes = await _examTimes.Where(et => et.Semester.Equals(semester)).ToListAsync();
+            var currentExamTimes = await _examTimes.Where(et => et.Semester.Equals(semester) &&
+                                                                et.IsPublic == true).ToListAsync();
 
             var availableExamTimes = currentExamTimes.Except(registeredExamTimes).ToList();
 

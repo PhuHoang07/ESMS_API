@@ -319,11 +319,18 @@ namespace ESMS_Data.Repositories.ExamRepository
             var date = await _examTimes.Where(et => et.Idt == examSchedule.Idt)
                                        .Select(et => et.Date)
                                        .FirstOrDefaultAsync();
-            
+
             return await _examSchedules.Include(es => es.IdtNavigation)
                                        .Where(es => es.IdtNavigation.Date == date
                                                  && es.RoomNumber.Equals(examSchedule.RoomNumber))
                                        .ToListAsync();
         }
+
+        public async Task<List<ExamTime>> GetExamTimeList(List<int> idt)
+        {
+            return await _examTimes.Where(et => idt.Contains(et.Idt))
+                                   .ToListAsync();
+        }
+
     }
 }

@@ -38,6 +38,7 @@ namespace Business.Services.ExamService
         public Task<List<DataTable>> ExportToExcel(int idt);
         public Task<ExamTime> GetExamTimeInfo(int idt);
         public Task<List<string>> GetProctorList(int idt);
+        public Task<ResultModel> SetIsPublicExamTime(List<int> idt, bool isPublic, string message);
 
     }
 }

@@ -17,7 +17,7 @@ namespace ESMS_API.Controllers
             _emailService = emailService;
         }
 
-        [Authorize(Roles = "Testing Admin")]
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("send/delete/schedule")]
         public async Task<IActionResult> SendMailToLecturerWhenDeleteSchedule([FromBody] ExamScheduleDeleteReqModel req)
@@ -39,7 +39,7 @@ namespace ESMS_API.Controllers
             }
         }
 
-        [Authorize(Roles = "Testing Admin")]
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("send/delete-update/time")]
         public async Task<IActionResult> SendEmailToProctorWhenDeleteAndUpdateTime([FromBody] int idt)

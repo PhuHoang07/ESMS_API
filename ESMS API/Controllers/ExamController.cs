@@ -182,6 +182,24 @@ namespace ESMS_API.Controllers
         }
 
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPatch]
+        [Route("time/public")]
+        public async Task<IActionResult> PublicizeExamTime([FromBody] List<int> idt)
+        {
+            var res = await _examService.SetIsPublicExamTime(idt, true, "Publicize successfully!");
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPatch]
+        [Route("time/private")]
+        public async Task<IActionResult> PrivatizeExamTime([FromBody] List<int> idt)
+        {
+            var res = await _examService.SetIsPublicExamTime(idt, false, "Privatize successfully!");
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpGet]
         [Route("time/proctors")]
         public async Task<IActionResult> ViewProctorList(int idt)
@@ -208,7 +226,7 @@ namespace ESMS_API.Controllers
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 
-        
+
 
         [Authorize(Roles = "Admin, Testing Admin")]
         [HttpPost]

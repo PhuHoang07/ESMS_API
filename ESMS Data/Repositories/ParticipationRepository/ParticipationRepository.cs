@@ -107,10 +107,12 @@ namespace ESMS_Data.Repositories.ParticipationRepository
         public async Task<object> GetOwnExamSchedule(string username, string semester)
         {
             var schedules = await _participations
-                .Where(p => p.UserName.Equals(username) && p.ExamSchedule.IdtNavigation.Semester.Equals(semester))
                 .Include(p => p.ExamSchedule)
                 .Include(p => p.ExamSchedule.IdtNavigation)
                 .Include(p => p.ExamSchedule.Subject)
+                .Where(p => p.UserName.Equals(username) &&
+                            p.ExamSchedule.IdtNavigation.Semester.Equals(semester) &&
+                            p.ExamSchedule.IdtNavigation.IsPublic == true)
                 .Select(p => new
                 {
                     SubjectId = p.SubjectId,
@@ -142,8 +144,10 @@ namespace ESMS_Data.Repositories.ParticipationRepository
 
         public async Task<object> GetPreviewExamScheduleList(string semester)
         {
-            var selectedSchedules = _examSchedules.Where(es => es.IdtNavigation.Semester.Equals(semester))
+            var selectedSchedules = _examSchedules
                                                   .Include(p => p.IdtNavigation)
+                                                  .Where(es => es.IdtNavigation.Semester.Equals(semester) &&
+                                                               es.IdtNavigation.IsPublic == true)
                                                   .AsEnumerable()
                                                   .GroupBy(es => new
                                                   {

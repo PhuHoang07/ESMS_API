@@ -32,6 +32,7 @@ namespace ESMS_Data.Repositories.ExamRepository
         public Task<TimeSpan> GetStart(ExamSchedule examSchedule);
         public Task<TimeSpan> GetEnd(ExamSchedule examSchedule);
         public Task<List<ExamSchedule>> GetExamScheduleWithSameDateAndRoom(ExamSchedule examSchedule);
+        public Task<List<ExamTime>> GetExamTimeList(List<int> idt);
 
     }
 }

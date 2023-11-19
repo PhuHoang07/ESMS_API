@@ -368,13 +368,13 @@ namespace Business.Services.ExamService
 
             try
             {
-
                 var currentExamSchedule = await _examRepository.GetExamSchedule(req.Idt, req.SubjectID, req.RoomNumber);
 
                 if (currentExamSchedule == null)
                 {
                     throw new Exception("There is no exam schedule with given information");
                 }
+                await _examScheduleRepository.Delete(currentExamSchedule);
 
                 var studentList = await _participationRepository.GetStudentListInParticipation(req.Idt, req.SubjectID, req.RoomNumber);
                 var participationList = await _participationRepository.GetParticipationList(req.Idt, req.SubjectID, req.RoomNumber);
@@ -411,7 +411,6 @@ namespace Business.Services.ExamService
                     Proctor = currentExamSchedule.Proctor,
                 };
 
-                await _examScheduleRepository.Delete(currentExamSchedule);
                 await _examScheduleRepository.Add(updExamSchedule);
 
                 if (participationList.Count > 0)

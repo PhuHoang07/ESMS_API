@@ -1,4 +1,5 @@
 ﻿using ESMS_Data.Entities;
+using ESMS_Data.Entities.AllowanceModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,46 @@ namespace ESMS_Data.Repositories.RegistrationRepository
         {
             return await _registrations.Where(r => r.Idt == idt &&
                                                    r.UserName.Equals(proctor)).FirstOrDefaultAsync();
+        }
+
+        private async Task<List<AllowanceModel>> GetAllExamTimeOfProctorsBySemester(List<string> usernames, string semester)
+        {
+            return await _registrations.Where(r => usernames.Contains(r.UserName) &&
+                                            r.IdtNavigation.Semester.Equals(semester))
+                                .Include(r => r.IdtNavigation)
+                                .Include(r => r.UserNameNavigation)
+                                .Select(r => new AllowanceModel
+                                {
+                                    Username = r.UserName,
+                                    Fullname = r.UserNameNavigation.Name,
+                                    TotalTime = Math.Round(((r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours), 2) , 
+                                    Allowance = string.Format("{0:N0}VND", (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours * 100000).Replace(",",".")
+                                })
+                                .ToListAsync();
+
+        }
+
+        public async Task<List<AllowanceStatistic>> GetAllowanceStatistic(List<string> username, List<string> semesterList)
+        {
+            var allowanceStatistic = new List<AllowanceStatistic>();
+            foreach (var semester in semesterList)
+            {
+                allowanceStatistic.Add(new AllowanceStatistic
+                {
+                    Semester = semester,
+                    allowances = await GetAllExamTimeOfProctorsBySemester(username, semester)
+                });
+            }
+
+            return allowanceStatistic;
+        }
+
+        public async Task<List<string>> GetSupervisorList()
+        {
+            var teachers = await _users.Where(u => u.RoleId == 4)
+                                       .Select(u => u.UserName).ToListAsync();
+            var registrations = await _registrations.Select(u => u.UserName).ToListAsync();
+            return teachers.Union(registrations).ToList();
         }
 
         public async Task<List<string>> GetAvailableProctors(int idt, List<string> assignedProctorList)

@@ -18,6 +18,7 @@ using Business.Services.LecturerService;
 using Business.Services.StudentService;
 using ESMS_Data.Entities.EmailModel;
 using Business.Services.EmailService;
+using Business.Services.StaffService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILecturerService, LecturerService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 

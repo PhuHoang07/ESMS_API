@@ -382,7 +382,6 @@ namespace Business.Services.ExamService
                 {
                     await _participationRepository.DeleteRange(participationList);
                 }
-                await _examScheduleRepository.Delete(currentExamSchedule);
 
                 var updSubjectId = String.IsNullOrEmpty(req.UpdSubjectID) ? currentExamSchedule.SubjectId : req.UpdSubjectID;
                 var updRoomNumber = String.IsNullOrEmpty(req.UpdRoomNumber) ? currentExamSchedule.RoomNumber : req.UpdRoomNumber;
@@ -412,6 +411,7 @@ namespace Business.Services.ExamService
                     Proctor = currentExamSchedule.Proctor,
                 };
 
+                await _examScheduleRepository.Delete(currentExamSchedule);
                 await _examScheduleRepository.Add(updExamSchedule);
 
                 if (participationList.Count > 0)

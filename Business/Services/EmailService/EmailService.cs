@@ -36,11 +36,17 @@ namespace Business.Services.EmailService
             return await _examRepository.GetExamTime(idt);
 
         }
+
         public async Task SendEmailToProctorWhenDeleteSchedule(MailRequest mailRequest, int idt, string subjectId, string room)
         {
             var schedule = await _examRepository.GetExamSchedule(idt, subjectId, room);
 
             var proctorMail = await _userRepository.GetUserMail(schedule.Proctor);
+
+            if(String.IsNullOrEmpty(proctorMail))
+            {
+                return;
+            }
 
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_emailSettings.Email);
@@ -63,6 +69,11 @@ namespace Business.Services.EmailService
         public async Task SendEmailToProctorWhenDeleteAndUpdateTime(MailRequest mailRequest, int idt)
         {
             var usernames = await _registrationRepository.GetProctorUsername(idt);
+
+            if(usernames.Count == 0)
+            {
+                return;
+            }
 
             var proctors = await _userRepository.GetUserList(usernames);
 

@@ -21,6 +21,7 @@ namespace ESMS_Data.Models
         public int? SlotId { get; set; }
         public string Semester { get; set; }
         public bool? IsPublic { get; set; }
+
         public virtual Slot Slot { get; set; }
         public virtual ICollection<ExamSchedule> ExamSchedules { get; set; }
         public virtual ICollection<Registration> Registrations { get; set; }

@@ -64,7 +64,7 @@ namespace ESMS_Data.Models
 
                 entity.Property(e => e.Form)
                     .IsRequired()
-                    .HasMaxLength(10)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Proctor)

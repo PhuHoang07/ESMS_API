@@ -32,11 +32,11 @@ namespace ESMS_API.Controllers
                 mailRequest.Body = $"Your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}) is cancelled. Please view the web again for newest information";
 
                 await _emailService.SendEmailToProctorWhenDeleteSchedule(mailRequest, req.Idt, req.SubjectID, req.RoomNumber);
-                return Ok();
+                return Ok(new { Message = "Email sent successfully." });
             }
             catch (Exception ex)
             {
-                throw;
+                return StatusCode(500, new { Message = "An error occurred while sending the email." });
             }
         }
 
@@ -54,14 +54,14 @@ namespace ESMS_API.Controllers
                 mailRequest.Body = $"There is changing on your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}). Please view the web again for newest information";
 
                 await _emailService.SendEmailToProctorWhenDeleteAndUpdateTime(mailRequest, idt);
-                return Ok();
+                return Ok(new { Message = "Email sent successfully." });
             }
             catch (Exception ex)
             {
-                throw;
+                return StatusCode(500, new { Message = "An error occurred while sending the email." });
             }
         }
-        
+
         [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
         [HttpPost]
         [Route("send/all")]
@@ -72,16 +72,16 @@ namespace ESMS_API.Controllers
                 MailRequest mailRequest = new MailRequest();
                 mailRequest.Subject = req.Subject;
                 mailRequest.Body = req.Body;
-                if(string.IsNullOrEmpty(req.Subject) || string.IsNullOrEmpty(req.Body))
+                if (string.IsNullOrEmpty(req.Subject) || string.IsNullOrEmpty(req.Body))
                 {
                     throw new Exception("Please input all the information!");
                 }
                 await _emailService.SendEmailToAllStudentAndLecturer(mailRequest);
-                return Ok();
+                return Ok(new { Message = "Email sent successfully." });
             }
             catch (Exception ex)
             {
-                throw;
+                return StatusCode(500, new { Message = "An error occurred while sending the email." });
             }
         }
     }

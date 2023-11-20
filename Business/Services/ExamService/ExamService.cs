@@ -10,9 +10,8 @@ using System.Net;
 using ESMS_Data.Entities.RequestModel.ParticipationReqModel;
 using ESMS_Data.Entities.RequestModel.RegistrationReqModel;
 using System.Data;
-using ClosedXML.Excel;
-using Azure.Identity;
-using System.Threading;
+
+using ESMS_Data.Repositories.UserRepository;
 
 namespace Business.Services.ExamService
 {
@@ -22,13 +21,15 @@ namespace Business.Services.ExamService
         private readonly IExamScheduleRepository _examScheduleRepository;
         private readonly IRegistrationRepository _registrationRepository;
         private readonly IParticipationRepository _participationRepository;
+        private readonly IUserRepository _userRepository;
         private readonly Utils.Utils utils;
-        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IRegistrationRepository registrationRepository, IParticipationRepository participationRepository)
+        public ExamService(IExamRepository examRepository, IExamScheduleRepository examScheduleRepository, IRegistrationRepository registrationRepository, IParticipationRepository participationRepository, IUserRepository userRepository)
         {
             _examRepository = examRepository;
             _examScheduleRepository = examScheduleRepository;
             _registrationRepository = registrationRepository;
             _participationRepository = participationRepository;
+            _userRepository = userRepository;
             utils = new Utils.Utils();
         }
 
@@ -202,15 +203,27 @@ namespace Business.Services.ExamService
 
             try
             {
-                var registrations = await _registrationRepository.GetRegistration(req.Idt);
+                var examTimesInDate = await _examRepository.GetExamTimeInOneDay(req.Date);
 
-                if (registrations.Count > 0)
-                {
-                    await _registrationRepository.DeleteRange(registrations);
-                }
-
-                ValidateTime(req.Start, req.End);
                 ValidateDate(req.Date, req.PublishDate);
+                ValidateTime(req.Start, req.End);
+
+                foreach (var examTime in examTimesInDate)
+                {
+                    if ((req.Start >= examTime.Start &&
+                        req.Start <= examTime.End)
+                        ||
+                       (req.End >= examTime.Start &&
+                        req.End <= examTime.End))
+                    {
+                        var registrations = await _registrationRepository.GetRegistration(req.Idt);
+
+                        if (registrations.Count > 0)
+                        {
+                            await _registrationRepository.DeleteRange(registrations);
+                        }
+                    }
+                }
 
                 var slot = await _examRepository.GetSlot(req.Start);
 
@@ -498,12 +511,29 @@ namespace Business.Services.ExamService
                     throw new Exception("Proctor amount exceed the limit");
                 }
 
+                var proctorList = await _userRepository.GetUserList(req.ProctorList);
+                var notInUserList = req.ProctorList.Except(proctorList.Select(p => p.UserName),
+                                                            StringComparer.OrdinalIgnoreCase).ToList();
+                if(notInUserList.Count > 0)
+                {
+                    string notInUserListAsString = string.Join(", ", notInUserList);
+                    throw new Exception($"The following lecturer are not in the user list: {notInUserListAsString}");
+                }
+
+                var existedProctorList = await _registrationRepository.GetProctorUsername(req.Idt);
+                var checkList = proctorList.Select(p => p.UserName).Intersect(existedProctorList).ToList();
+                if (checkList.Count > 0)
+                {
+                    string checkListAsString = string.Join(", ", checkList);
+                    throw new Exception($"The following lecturers are already registered the exam time: {checkListAsString}");
+                }
+
                 var registrations = new List<Registration>();
-                foreach (var proctor in req.ProctorList)
+                foreach (var proctor in proctorList)
                 {
                     registrations.Add(new Registration
                     {
-                        UserName = proctor,
+                        UserName = proctor.UserName,
                         Idt = req.Idt
                     });
                 }
@@ -513,7 +543,6 @@ namespace Business.Services.ExamService
                 resultModel.IsSuccess = true;
                 resultModel.StatusCode = (int)HttpStatusCode.OK;
                 resultModel.Message = "Add successfully";
-                resultModel.Data = registrations;
             }
             catch (Exception ex)
             {
@@ -619,43 +648,60 @@ namespace Business.Services.ExamService
                     throw new Exception("Student list exceed the room's capacity");
                 }
 
-                foreach (var student in req.Students)
+                var studentList = await _userRepository.GetUserList(req.Students);
+                var notInUserList = req.Students.Except(studentList.Select(p => p.UserName),
+                                                            StringComparer.OrdinalIgnoreCase).ToList();
+                if (notInUserList.Count > 0)
                 {
-                    var examCheckList = await _examRepository.GetExistedExamSchedules(student);
-                    foreach (var examCheck in examCheckList)
-                    {
-                        var checkDate = await _examRepository.GetDate(examCheck);
-                        var semesterCheck = utils.GetSemester(checkDate);
-
-                        if (semester.Equals(semesterCheck)
-                            && examSchedule.SubjectId.Equals(examCheck.SubjectId)
-                            && examSchedule.Form.Equals(examCheck.Form))
-                        {
-                            throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
-                        }
-
-                        var checkStart = await _examRepository.GetStart(examCheck);
-                        var checkEnd = await _examRepository.GetEnd(examCheck);
-
-                        if ((currentDate == checkDate
-                            && currentStart >= checkStart
-                            && currentStart <= checkEnd)
-                            ||
-                            (currentDate == checkDate
-                            && currentEnd >= checkStart
-                            && currentEnd <= checkEnd))
-                        {
-                            throw new Exception($"Failed! In date {checkDate}, student {student} has already participation in exam schedule ( {checkStart} - {checkEnd} )");
-                        }
-                    }
+                    string notInUserListAsString = string.Join(", ", notInUserList);
+                    throw new Exception($"The following students are not in the user list: {notInUserListAsString}");
                 }
 
+                var existedStudentList = await _participationRepository.GetStudentListInParticipation(req.Idt, req.Subject, req.Room);
+                var checkList = studentList.Select(p => p.UserName).Intersect(existedStudentList).ToList();
+                if (checkList.Count > 0)
+                {
+                    string checkListAsString = string.Join(", ", checkList);
+                    throw new Exception($"The following students are already added to the exam schedule: {checkListAsString}");
+                }
+
+                foreach (var student in req.Students)
+                    {
+                        var examCheckList = await _examRepository.GetExistedExamSchedules(student);
+                        foreach (var examCheck in examCheckList)
+                        {
+                            var checkDate = await _examRepository.GetDate(examCheck);
+                            var semesterCheck = utils.GetSemester(checkDate);
+
+                            if (semester.Equals(semesterCheck)
+                                && examSchedule.SubjectId.Equals(examCheck.SubjectId)
+                                && examSchedule.Form.Equals(examCheck.Form))
+                            {
+                                throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
+                            }
+
+                            var checkStart = await _examRepository.GetStart(examCheck);
+                            var checkEnd = await _examRepository.GetEnd(examCheck);
+
+                            if (currentDate == checkDate &&
+                                ((currentStart >= checkStart &&
+                                  currentStart <= checkEnd)
+                                  ||
+                                 (currentEnd >= checkStart &&
+                                  currentEnd <= checkEnd))
+                               )
+                            {
+                                throw new Exception($"Failed! In date {checkDate}, student {student} has already participation in exam schedule ( {checkStart} - {checkEnd} )");
+                            }
+                        }
+                    }
+
                 var participations = new List<Participation>();
-                foreach (var u in req.Students)
+                foreach (var student in studentList)
                 {
                     participations.Add(new Participation
                     {
-                        UserName = u,
+                        UserName = student.UserName,
                         SubjectId = req.Subject,
                         RoomNumber = req.Room,
                         Idt = req.Idt
@@ -864,7 +910,7 @@ namespace Business.Services.ExamService
             ResultModel resultModel = new ResultModel();
             try
             {
-                if(idt.Count == 0)
+                if (idt.Count == 0)
                 {
                     throw new Exception("Please choose any exam time to public");
                 }

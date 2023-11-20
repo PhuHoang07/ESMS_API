@@ -332,5 +332,9 @@ namespace ESMS_Data.Repositories.ExamRepository
                                    .ToListAsync();
         }
 
+        public async Task<List<ExamTime>> GetExamTimeInOneDay(DateTime date)
+        {
+            return await _examTimes.Where(et => et.Date == date).ToListAsync();
+        }
     }
 }

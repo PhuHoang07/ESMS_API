@@ -15,6 +15,7 @@ namespace ESMS_Data.Repositories.UserRepository
         public Task<User> GetUser(string userNameOrEmail);
         public Task<string> GetUserMail(string userName);
         public Task<List<User>> GetUserList(List<string> username);
+        public Task<List<string>> GetUserMailByRoleId(int roleId);
 
     }
 }

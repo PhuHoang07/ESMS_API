@@ -40,50 +40,51 @@ namespace Business.Services.EmailService
         public async Task SendEmailToProctorWhenDeleteSchedule(MailRequest mailRequest, int idt, string subjectId, string room)
         {
             var schedule = await _examRepository.GetExamSchedule(idt, subjectId, room);
-
             var proctorMail = await _userRepository.GetUserMail(schedule.Proctor);
 
-            if(String.IsNullOrEmpty(proctorMail))
+            if (String.IsNullOrEmpty(proctorMail))
             {
                 return;
             }
 
-            var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_emailSettings.Email);
-            email.To.Add(MailboxAddress.Parse(proctorMail));
-            email.Subject = mailRequest.Subject;
-
-            var builder = new BodyBuilder();
-            builder.HtmlBody = mailRequest.Body;
-            email.Body = builder.ToMessageBody();
-
-            var password = SecretService.SecretService.EmailPassword;
-
-            using var smtp = new SmtpClient();
-            smtp.Connect(_emailSettings.Host, _emailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_emailSettings.Email, password);
-            await smtp.SendAsync(email);
-            smtp.Disconnect(true);
+            await SendEmailAsync(mailRequest, new[] { proctorMail });
         }
 
         public async Task SendEmailToProctorWhenDeleteAndUpdateTime(MailRequest mailRequest, int idt)
         {
             var usernames = await _registrationRepository.GetProctorUsername(idt);
 
-            if(usernames.Count == 0)
+            if (usernames.Count == 0)
             {
                 return;
             }
 
             var proctors = await _userRepository.GetUserList(usernames);
+            var proctorEmails = proctors.Select(p => p.Email).ToList();
 
+            await SendEmailAsync(mailRequest, proctorEmails);
+        }
+
+        public async Task SendEmailToAllStudentAndLecturer(MailRequest mailRequest)
+        {
+            var studentMails = await _userRepository.GetUserMailByRoleId(5);
+            var lecturerMails = await _userRepository.GetUserMailByRoleId(4);
+
+            var allMails = studentMails.Concat(lecturerMails).ToList();
+
+            await SendEmailAsync(mailRequest, allMails);
+        }
+
+        private async Task SendEmailAsync(MailRequest mailRequest, IEnumerable<string> recipients)
+        {
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_emailSettings.Email);
 
-            foreach (var proctor in proctors)
+            foreach (var recipient in recipients)
             {
-                email.To.Add(MailboxAddress.Parse(proctor.Email.ToLower()));
+                email.To.Add(MailboxAddress.Parse(recipient.ToLower()));
             }
+
             email.Subject = mailRequest.Subject;
 
             var builder = new BodyBuilder();
@@ -98,5 +99,6 @@ namespace Business.Services.EmailService
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
+
     }
 }

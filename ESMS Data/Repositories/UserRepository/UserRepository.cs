@@ -82,5 +82,12 @@ namespace ESMS_Data.Repositories.UserRepository
         {
             return await _users.Where(u => username.Contains(u.UserName)).ToListAsync();
         }
+
+        public async Task<List<string>> GetUserMailByRoleId(int roleId)
+        {
+            return await _users.Where(u => u.RoleId == roleId)
+                               .Select(u => u.Email)
+                               .ToListAsync();
+        }
     }
 }

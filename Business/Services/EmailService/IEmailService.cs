@@ -13,6 +13,7 @@ namespace Business.Services.EmailService
         public Task<ExamTime> GetExamTimeToInform(int idt);
         public Task SendEmailToProctorWhenDeleteSchedule(MailRequest mailRequest, int idt, string subjectId, string room);
         public Task SendEmailToProctorWhenDeleteAndUpdateTime(MailRequest mailRequest, int idt);
+        public Task SendEmailToAllStudentAndLecturer(MailRequest mailRequest);
 
     }
 }

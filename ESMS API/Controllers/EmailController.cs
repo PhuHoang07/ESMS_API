@@ -1,5 +1,6 @@
 ﻿using Business.Services.EmailService;
 using ESMS_Data.Entities.EmailModel;
+using ESMS_Data.Entities.RequestModel.EmailReqModel;
 using ESMS_Data.Entities.RequestModel.ExamScheduleReqModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,29 @@ namespace ESMS_API.Controllers
                 mailRequest.Body = $"Your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}) is cancelled. Please view the web again for newest information";
 
                 await _emailService.SendEmailToProctorWhenDeleteAndUpdateTime(mailRequest, idt);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        
+        [Authorize(Roles = "Admin, Testing Admin, Testing Staff")]
+        [HttpPost]
+        [Route("send/all")]
+        public async Task<IActionResult> SendEmailToAllStudentAndLecturer([FromBody] SendingEmailReqModel req)
+        {
+            try
+            {
+                MailRequest mailRequest = new MailRequest();
+                mailRequest.Subject = req.Subject;
+                mailRequest.Body = req.Body;
+                if(string.IsNullOrEmpty(req.Subject) || string.IsNullOrEmpty(req.Body))
+                {
+                    throw new Exception("Please input all the information!");
+                }
+                await _emailService.SendEmailToAllStudentAndLecturer(mailRequest);
                 return Ok();
             }
             catch (Exception ex)

@@ -50,8 +50,8 @@ namespace ESMS_API.Controllers
                 var examTime = await _emailService.GetExamTimeToInform(idt);
 
                 MailRequest mailRequest = new MailRequest();
-                mailRequest.Subject = "Changing in the exam schedule";
-                mailRequest.Body = $"Your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}) is cancelled. Please view the web again for newest information";
+                mailRequest.Subject = "Changing in the exam time";
+                mailRequest.Body = $"There is changing on your registration in {examTime.Date.ToString("dd/MM/yyyy")} ({examTime.Start.ToString(@"hh\:mm")} - {examTime.End.ToString(@"hh\:mm")}). Please view the web again for newest information";
 
                 await _emailService.SendEmailToProctorWhenDeleteAndUpdateTime(mailRequest, idt);
                 return Ok();

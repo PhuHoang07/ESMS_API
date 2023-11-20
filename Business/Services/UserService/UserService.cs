@@ -69,12 +69,18 @@ namespace Business.Services.UserService
             return resultModel;
         }
 
-        public async Task<ResultModel> UpdateSettings(UserSettingsReqModel req)
+        public async Task<ResultModel> UpdateSettings(string currentEmail, UserSettingsReqModel req)
         {
             ResultModel resultModel = new ResultModel();
             try
             {
                 var user = await _userRepository.GetUser(req.UserName);
+                var currentUser = await _userRepository.GetUser(currentEmail);
+
+                if (currentUser.UserName.Equals(user.UserName))
+                {
+                    throw new Exception("Account is being used");
+                }
 
                 if (req.RoleId != null)
                 {

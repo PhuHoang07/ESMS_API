@@ -13,7 +13,7 @@ namespace Business.Services.UserService
         public Task<ResultModel> GetUserList();
         public Task<ResultModel> GetUserList(string userName);
         public Task<ResultModel> GetUserDetails(string userNameOrEmail);
-        public Task<ResultModel> UpdateSettings(UserSettingsReqModel req);
+        public Task<ResultModel> UpdateSettings(string currentEmail, UserSettingsReqModel req);
         public Task<ResultModel> UpdateUser(UserModel currentUser, UserProfileReqModel userProfileReqModel);
     }
 }

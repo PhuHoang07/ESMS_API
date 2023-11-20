@@ -203,11 +203,10 @@ namespace Business.Services.ExamService
 
             try
             {
-                var examTimesInDate = await _examRepository.GetExamTimeInOneDay(req.Date);
-
                 ValidateDate(req.Date, req.PublishDate);
                 ValidateTime(req.Start, req.End);
 
+                var examTimesInDate = await _examRepository.GetExamTimeInOneDay(req.Date);
                 foreach (var examTime in examTimesInDate)
                 {
                     if ((req.Start >= examTime.Start &&
@@ -217,7 +216,6 @@ namespace Business.Services.ExamService
                         req.End <= examTime.End))
                     {
                         var registrations = await _registrationRepository.GetRegistration(req.Idt);
-
                         if (registrations.Count > 0)
                         {
                             await _registrationRepository.DeleteRange(registrations);
@@ -226,27 +224,23 @@ namespace Business.Services.ExamService
                 }
 
                 var slot = await _examRepository.GetSlot(req.Start);
-
                 if (slot == 0)
                 {
                     throw new Exception("Invalid time: Start does not belong to any Slot");
                 }
 
                 var currentSemester = utils.GetCurrentSemester();
-
                 if (!currentSemester.Equals(utils.GetSemester(req.Date)))
                 {
                     throw new Exception("Invalid date: Date does not belong to current semester");
                 }
 
                 var currentExamTime = await _examRepository.GetExamTime(req.Idt);
-
                 currentExamTime.Date = req.Date;
                 currentExamTime.Start = req.Start;
                 currentExamTime.End = req.End;
                 currentExamTime.PublishDate = req.PublishDate;
                 currentExamTime.SlotId = slot;
-
                 await _examRepository.Update(currentExamTime);
 
                 resultModel.IsSuccess = true;
@@ -514,7 +508,7 @@ namespace Business.Services.ExamService
                 var proctorList = await _userRepository.GetUserList(req.ProctorList);
                 var notInUserList = req.ProctorList.Except(proctorList.Select(p => p.UserName),
                                                             StringComparer.OrdinalIgnoreCase).ToList();
-                if(notInUserList.Count > 0)
+                if (notInUserList.Count > 0)
                 {
                     string notInUserListAsString = string.Join(", ", notInUserList);
                     throw new Exception($"The following lecturer are not in the user list: {notInUserListAsString}");
@@ -666,35 +660,35 @@ namespace Business.Services.ExamService
                 }
 
                 foreach (var student in req.Students)
+                {
+                    var examCheckList = await _examRepository.GetExistedExamSchedules(student);
+                    foreach (var examCheck in examCheckList)
                     {
-                        var examCheckList = await _examRepository.GetExistedExamSchedules(student);
-                        foreach (var examCheck in examCheckList)
+                        var checkDate = await _examRepository.GetDate(examCheck);
+                        var semesterCheck = utils.GetSemester(checkDate);
+
+                        if (semester.Equals(semesterCheck)
+                            && examSchedule.SubjectId.Equals(examCheck.SubjectId)
+                            && examSchedule.Form.Equals(examCheck.Form))
                         {
-                            var checkDate = await _examRepository.GetDate(examCheck);
-                            var semesterCheck = utils.GetSemester(checkDate);
+                            throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
+                        }
 
-                            if (semester.Equals(semesterCheck)
-                                && examSchedule.SubjectId.Equals(examCheck.SubjectId)
-                                && examSchedule.Form.Equals(examCheck.Form))
-                            {
-                                throw new Exception($"Failed! In semester {semester}, student {student} has already participation in subject {examSchedule.SubjectId} - {examSchedule.Form}");
-                            }
+                        var checkStart = await _examRepository.GetStart(examCheck);
+                        var checkEnd = await _examRepository.GetEnd(examCheck);
 
-                            var checkStart = await _examRepository.GetStart(examCheck);
-                            var checkEnd = await _examRepository.GetEnd(examCheck);
-
-                            if (currentDate == checkDate &&
-                                ((currentStart >= checkStart &&
-                                  currentStart <= checkEnd)
-                                  ||
-                                 (currentEnd >= checkStart &&
-                                  currentEnd <= checkEnd))
-                               )
-                            {
-                                throw new Exception($"Failed! In date {checkDate}, student {student} has already participation in exam schedule ( {checkStart} - {checkEnd} )");
-                            }
+                        if (currentDate == checkDate &&
+                            ((currentStart >= checkStart &&
+                              currentStart <= checkEnd)
+                              ||
+                             (currentEnd >= checkStart &&
+                              currentEnd <= checkEnd))
+                           )
+                        {
+                            throw new Exception($"Failed! In date {checkDate}, student {student} has already participation in exam schedule ( {checkStart} - {checkEnd} )");
                         }
                     }
+                }
 
                 var participations = new List<Participation>();
                 foreach (var student in studentList)

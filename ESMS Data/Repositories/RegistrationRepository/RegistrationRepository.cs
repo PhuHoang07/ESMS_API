@@ -47,20 +47,28 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
         private async Task<List<AllowanceModel>> GetAllExamTimeOfProctorsBySemester(List<string> usernames, string semester)
         {
-            return await _registrations.Where(r => usernames.Contains(r.UserName) &&
-                                            r.IdtNavigation.Semester.Equals(semester))
-                                .Include(r => r.IdtNavigation)
-                                .Include(r => r.UserNameNavigation)
-                                .Select(r => new AllowanceModel
-                                {
-                                    Username = r.UserName,
-                                    Fullname = r.UserNameNavigation.Name,
-                                    TotalTime = Math.Round(((r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours), 2) , 
-                                    Allowance = string.Format("{0:N0}VND", (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours * 100000).Replace(",",".")
-                                })
-                                .ToListAsync();
+            var registrations = await _registrations
+                .Where(r => usernames.Contains(r.UserName) && r.IdtNavigation.Semester.Equals(semester))
+                .Include(r => r.IdtNavigation)
+                .Include(r => r.UserNameNavigation)
+                .ToListAsync();
 
+            var groupedRegistrations = registrations
+                .AsEnumerable()
+                .GroupBy(r => r.UserName)
+                .Select(group => new AllowanceModel
+                {
+                    Username = group.Key,  // Key is the grouped Username
+                    Fullname = group.First().UserNameNavigation.Name,  // Assuming Fullname is the same for each group
+                    TotalTime = Math.Round(group.Sum(r => (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours), 2),
+                    Allowance = string.Format("{0:N0}VND", group.Sum(r => (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours) * 100000).Replace(",", ".")
+                })
+                .ToList();
+
+            return groupedRegistrations;
         }
+
+
 
         public async Task<List<AllowanceStatistic>> GetAllowanceStatistic(List<string> username, List<string> semesterList)
         {

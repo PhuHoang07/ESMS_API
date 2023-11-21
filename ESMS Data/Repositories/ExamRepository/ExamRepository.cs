@@ -54,7 +54,8 @@ namespace ESMS_Data.Repositories.ExamRepository
                                                                    .Include(es => es.Participations)
                                                                    .Include(es => es.RoomNumberNavigation)
                                                                    .ToList()
-                               });
+                               })
+                               .OrderByDescending(et => et.Date);
 
             return qr;
         }
@@ -83,7 +84,8 @@ namespace ESMS_Data.Repositories.ExamRepository
                        ExamSchedules = et.ExamSchedules
                                          .Where(es => subjects.Contains(es.SubjectId))
                                          .ToList()
-                   });
+                   })
+                   .OrderByDescending(et => et.Date);
 
             return qr;
         }
@@ -114,7 +116,7 @@ namespace ESMS_Data.Repositories.ExamRepository
                         .ThenBy(gr => gr.Key.Contains("FALL") ? 0 : gr.Key.Contains("SUMMER") ? 1 : 2)
                         .ToDictionary(group => group.Key,
                                     group => group
-                                        .OrderBy(i => i.Date)
+                                        .OrderByDescending(i => i.Date)
                                         .ThenBy(i => i.Start)
                                         .ThenBy(i => i.End)
                                         .Select(i => new

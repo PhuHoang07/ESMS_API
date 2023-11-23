@@ -1,5 +1,5 @@
-﻿using ESMS_Data.Entities;
-using ESMS_Data.Entities.RequestModel.UserReqModel;
+﻿using ESMS_Data.Entities.RequestModel.UserReqModel;
+using ESMS_Data.Entities.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

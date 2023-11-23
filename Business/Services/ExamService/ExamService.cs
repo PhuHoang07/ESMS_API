@@ -474,7 +474,7 @@ namespace Business.Services.ExamService
                 await _examScheduleRepository.Delete(delExamSchedule);
                 if (delExamSchedule.Proctor != null)
                 {
-                    var registration = await _registrationRepository.GetRegistrationOfProctor(req.Idt, delExamSchedule.Proctor);
+                    var registration = await _registrationRepository.GetSpecificRegistrationOfProctor(req.Idt, delExamSchedule.Proctor);
                     await _registrationRepository.Delete(registration);
                 }
 

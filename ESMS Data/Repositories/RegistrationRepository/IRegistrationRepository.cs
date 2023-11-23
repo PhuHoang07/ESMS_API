@@ -1,5 +1,5 @@
-﻿using ESMS_Data.Entities;
-using ESMS_Data.Entities.AllowanceModel;
+﻿using ESMS_Data.Entities.AllowanceModel;
+using ESMS_Data.Entities.ExamTimeModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using System;
@@ -14,7 +14,8 @@ namespace ESMS_Data.Repositories.RegistrationRepository
     {
         public Task<List<Registration>> GetRegistration(int idt);
         public Task<List<string>> GetProctorUsername(int idt);
-        public Task<Registration> GetRegistrationOfProctor(int idt, string proctor);
+        public Task<Registration> GetSpecificRegistrationOfProctor(int idt, string proctor);
+        public Task<List<AllowanceModelOfLecturerView>> GetAllRegisteredAndAllowance(string username, List<string> semesterList);
         public Task<List<AllowanceStatistic>> GetAllowanceStatistic(List<string> proctor, List<string> semester);
         public Task<List<string>> GetSupervisorList();
         public Task<List<string>> GetAvailableProctors(int idt, List<string> assignedProctorList);

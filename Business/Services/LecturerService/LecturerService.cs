@@ -1,5 +1,5 @@
 ﻿using Business.Services.UserService;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.ExamTimeModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.ExamRepository;
 using ESMS_Data.Repositories.RegistrationRepository;
@@ -119,6 +119,29 @@ namespace Business.Services.LecturerService
                 resultModel.Message = ex.Message;
             }
 
+            return resultModel;
+        }
+
+        public async Task<ResultModel> GetAllRegisteredAndAllowance(string email)
+        {
+            ResultModel resultModel = new ResultModel();
+            try
+            {
+                var currentUser = await _userRepository.GetUser(email);
+                var semesterList = await _examRepository.GetSemester();
+
+                var allowances = await _registrationRepository.GetAllRegisteredAndAllowance(currentUser.UserName, semesterList);
+
+                resultModel.IsSuccess = true;
+                resultModel.StatusCode = (int)HttpStatusCode.OK;
+                resultModel.Data = allowances;
+            }
+            catch (Exception ex)
+            {
+                resultModel.IsSuccess = false;
+                resultModel.StatusCode = (int)HttpStatusCode.BadRequest;
+                resultModel.Message = ex.Message;
+            }
             return resultModel;
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Business.Services.AuthService;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.UserModel;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

@@ -1,5 +1,5 @@
 ﻿using Business.Services.StudentService;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.UserModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

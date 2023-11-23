@@ -11,6 +11,7 @@ namespace Business.Services.LecturerService
         public Task<ResultModel> GetRegisteredExamTimes(string email);
         public Task<ResultModel> GetAvailableExamTimes(string email);
         public Task<ResultModel> RegisterExamTime(string email, int idt);
+        public Task<ResultModel> GetAllRegisteredAndAllowance(string email);
 
     }
 }

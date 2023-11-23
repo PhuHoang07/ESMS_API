@@ -1,5 +1,5 @@
 ﻿using Business.Services.LecturerService;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.UserModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +48,17 @@ namespace ESMS_API.Controllers
             var currentUser = GetCurrentUser();
 
             var res = await _lecturerService.RegisterExamTime(currentUser.Email, idt);
+            return res.IsSuccess ? Ok(res) : BadRequest(res);
+        }
+        
+        [Authorize(Roles = "Lecturer")]
+        [HttpPost]
+        [Route("allowance")]
+        public async Task<IActionResult> GetAllRegisteredAndAllowance()
+        {
+            var currentUser = GetCurrentUser();
+
+            var res = await _lecturerService.GetAllRegisteredAndAllowance(currentUser.Email);
             return res.IsSuccess ? Ok(res) : BadRequest(res);
         }
 

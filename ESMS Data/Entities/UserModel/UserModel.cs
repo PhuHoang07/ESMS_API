@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ESMS_Data.Entities
+namespace ESMS_Data.Entities.UserModel
 {
     public class UserModel
     {

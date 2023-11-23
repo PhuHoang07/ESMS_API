@@ -1,11 +1,12 @@
-﻿using ESMS_Data.Entities;
-using ESMS_Data.Entities.AllowanceModel;
+﻿using ESMS_Data.Entities.AllowanceModel;
+using ESMS_Data.Entities.ExamTimeModel;
 using ESMS_Data.Models;
 using ESMS_Data.Repositories.RepositoryBase;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -39,10 +40,63 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                                        .ToListAsync();
         }
 
-        public async Task<Registration> GetRegistrationOfProctor(int idt, string proctor)
+        public async Task<Registration> GetSpecificRegistrationOfProctor(int idt, string proctor)
         {
             return await _registrations.Where(r => r.Idt == idt &&
                                                    r.UserName.Equals(proctor)).FirstOrDefaultAsync();
+        }
+
+        private async Task<List<ExamTimeBasicInfo>> GetRegisteredListInSemester(string username, string semester)
+        {
+            var examTimes = await _registrations.Where(r => r.UserName.Equals(username) &&
+                                                   r.IdtNavigation.Semester.Equals(semester))
+                                       .Include(r => r.IdtNavigation)
+                                       .Select(r => r.IdtNavigation).ToListAsync();
+
+            var basicInfo = examTimes.Select(et => new ExamTimeBasicInfo
+            {
+                Date = et.Date.ToString("dd/MM/yyyy"),
+                Start = et.Start.ToString(@"hh\:mm"),
+                End = et.End.ToString(@"hh\:mm")
+            }).ToList();
+
+            return basicInfo;
+        }
+
+        private async Task<AllowanceModel> GetAllowanceOfProctorBySemester(string username, string semester)
+        {
+            var registrations = await _registrations
+                .Where(r => r.UserName.Equals(username) && r.IdtNavigation.Semester.Equals(semester))
+                .Include(r => r.IdtNavigation)
+                .Include(r => r.UserNameNavigation)
+                .ToListAsync();
+
+            var allowance = new AllowanceModel();
+
+            if (registrations.Any())
+            {
+                allowance.Username = username;
+                allowance.Fullname = registrations.First().UserNameNavigation.Name;
+                allowance.TotalTime = Math.Round(registrations.Sum(r => (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours), 2);
+                allowance.Allowance = string.Format("{0:N0}VND", registrations.Sum(r => (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours) * 100000).Replace(",", ".");
+            }
+
+            return allowance;
+        }
+
+        public async Task<List<AllowanceModelOfLecturerView>> GetAllRegisteredAndAllowance(string username, List<string> semesterList)
+        {
+            var allowances = new List<AllowanceModelOfLecturerView>();
+            foreach (var semester in semesterList)
+            {
+                allowances.Add(new AllowanceModelOfLecturerView
+                {
+                    Semester = semester,
+                    ExamTime = await GetRegisteredListInSemester(username, semester),
+                    AllowanceModel = await GetAllowanceOfProctorBySemester(username, semester)
+                });
+            }
+            return allowances;
         }
 
         private async Task<List<AllowanceModel>> GetAllExamTimeOfProctorsBySemester(List<string> usernames, string semester)
@@ -58,8 +112,8 @@ namespace ESMS_Data.Repositories.RegistrationRepository
                 .GroupBy(r => r.UserName)
                 .Select(group => new AllowanceModel
                 {
-                    Username = group.Key,  // Key is the grouped Username
-                    Fullname = group.First().UserNameNavigation.Name,  // Assuming Fullname is the same for each group
+                    Username = group.Key,
+                    Fullname = group.First().UserNameNavigation.Name,
                     TotalTime = Math.Round(group.Sum(r => (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours), 2),
                     Allowance = string.Format("{0:N0}VND", group.Sum(r => (r.IdtNavigation.End - r.IdtNavigation.Start).TotalHours) * 100000).Replace(",", ".")
                 })
@@ -67,8 +121,6 @@ namespace ESMS_Data.Repositories.RegistrationRepository
 
             return groupedRegistrations;
         }
-
-
 
         public async Task<List<AllowanceStatistic>> GetAllowanceStatistic(List<string> username, List<string> semesterList)
         {

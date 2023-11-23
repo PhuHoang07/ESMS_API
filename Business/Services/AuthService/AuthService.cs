@@ -1,5 +1,5 @@
 ﻿using Business.Services.SecretService;
-using ESMS_Data.Entities;
+using ESMS_Data.Entities.UserModel;
 using ESMS_Data.Repositories.UserRepository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

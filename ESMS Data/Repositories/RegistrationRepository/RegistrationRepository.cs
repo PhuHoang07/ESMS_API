@@ -89,12 +89,16 @@ namespace ESMS_Data.Repositories.RegistrationRepository
             var allowances = new List<AllowanceModelOfLecturerView>();
             foreach (var semester in semesterList)
             {
-                allowances.Add(new AllowanceModelOfLecturerView
+                var examTime = await GetRegisteredListInSemester(username, semester);
+                if (examTime.Count > 0)
                 {
-                    Semester = semester,
-                    ExamTime = await GetRegisteredListInSemester(username, semester),
-                    AllowanceModel = await GetAllowanceOfProctorBySemester(username, semester)
-                });
+                    allowances.Add(new AllowanceModelOfLecturerView
+                    {
+                        Semester = semester,
+                        ExamTime = examTime,
+                        AllowanceModel = await GetAllowanceOfProctorBySemester(username, semester)
+                    });
+                }
             }
             return allowances;
         }
